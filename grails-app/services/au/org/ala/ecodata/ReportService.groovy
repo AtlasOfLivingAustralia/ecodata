@@ -72,8 +72,11 @@ class ReportService {
 
     }
 
-    private void queryPaginated(List filters, String searchTerm, Closure action, String index = HOMEPAGE_INDEX) {
+    private void queryPaginated(List filters, String searchTerm, Closure action, String index = HOMEPAGE_INDEX, List projectPropertiesToInclude = []) {
         Map params = [offset:0, max:20, fq:filters]
+        if (projectPropertiesToInclude) {
+            params.include = projectPropertiesToInclude
+        }
 
         SearchResponse results = elasticSearchService.search(searchTerm, params, index)
         def total = results.hits.totalHits.value
@@ -104,7 +107,7 @@ class ReportService {
 
     }
 
-    private void queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {
+    private void queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action, List projectPropertiesToInclude = null) {
 
         Closure aggregateActivityData = { Map project ->
             List activities = project.activities
@@ -112,7 +115,7 @@ class ReportService {
                 activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
             }
             if (activities) {
-                List activityIds = activities?.collect{it.activityId}
+                List activityIds = activities?.findAll{!it.externalIds}?.collect{it.activityId}
                 Output.withNewSession {
                     List outputs = Output.findAllByActivityIdInListAndStatusNotEqual(activityIds, Status.DELETED)
                     Map<String, List> outputsByActivityId = outputs.groupBy { it.activityId }
@@ -124,7 +127,7 @@ class ReportService {
             }
         }
 
-        queryPaginated(filters, searchTerm, aggregateActivityData)
+        queryPaginated(filters, searchTerm, aggregateActivityData, HOMEPAGE_INDEX, projectPropertiesToInclude)
     }
 
     def aggregate(List filters, String searchTerm) {
@@ -136,7 +139,7 @@ class ReportService {
         aggregate(filters, null)
     }
 
-    def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null, boolean approvedActivitiesOnly = true) {
+    def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null, boolean approvedActivitiesOnly = true, List projectPropertiesToInclude = null) {
 
         AggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
@@ -148,7 +151,7 @@ class ReportService {
             aggregateActivity(aggregatorIf, activity)
             updateMetadata(activity, metadata)
         }
-        queryPaginated(filters, searchTerm, approvedActivitiesOnly, aggregator, aggregateActivityWithMetadata)
+        queryPaginated(filters, searchTerm, approvedActivitiesOnly, aggregator, aggregateActivityWithMetadata, projectPropertiesToInclude)
 
         GroupedAggregationResult allResults = aggregator.result()
         def outputData = allResults
@@ -270,8 +273,9 @@ class ReportService {
     def outputTargetReport(List filters, String searchTerm, scores, boolean approvedActivitiesOnly = true) {
 
         def groupingSpec = [property:'activity.programSubProgram', type:'discrete']
+        List projectPropertiesToInclude = ['projectId', 'activities']
 
-        aggregate(filters, searchTerm, scores, groupingSpec, approvedActivitiesOnly)
+        aggregate(filters, searchTerm, scores, groupingSpec, approvedActivitiesOnly, projectPropertiesToInclude)
     }
 
     def outputTargetsBySubProgram(params) {
@@ -280,9 +284,11 @@ class ReportService {
 
     def outputTargetsBySubProgram(params, scores) {
 
-        params += [offset:0, max:100]
+        params += [offset:0, max:200]
         def targetsBySubProgram = [:]
         def queryString = params.query ?: "*:*"
+        List include = ["associatedProgram", "associatedSubProgram", "outputTargets"]
+        params.include = include
         SearchResponse results = elasticSearchService.search(queryString, params, "homepage")
 
         def propertyAccessor = new PropertyAccessor("target")
@@ -529,7 +535,7 @@ class ReportService {
 
     /**
      * Returns aggregated scores for a specified project.
-     * @param organisationId the organisation of interest.
+     * @param organisation the organisation of interest.
      * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
      * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'organisation', 'site>, property: String <the entity property to group by>}, ...]
      *
@@ -537,9 +543,12 @@ class ReportService {
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
-    List organisationSummary(String organisationId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
+    List organisationSummary(Organisation organisation, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
 
-        List activities = activityService.findAllForOrganisationId(organisationId, 'FLAT')
-        aggregate(activities, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
+        List activities = activityService.findAllForOrganisationId(organisation.organisationId, 'FLAT')
+        // Make the organisation available to the aggregation as one of the Scores
+        // needs access to it.
+        List aggregationData = activities.collect{it+[organisation:organisation]}
+        aggregate(aggregationData, aggregationSpec, approvedActivitiesOnly, topLevelAggregationConfig)
     }
 }

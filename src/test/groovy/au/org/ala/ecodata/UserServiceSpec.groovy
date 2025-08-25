@@ -1,15 +1,11 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import au.org.ala.ws.security.client.AlaOidcClient
-import au.org.ala.ws.security.profile.AlaOidcUserProfile
+import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import org.pac4j.core.config.Config
-import org.pac4j.core.credentials.AnonymousCredentials
-import org.pac4j.core.credentials.Credentials
-import org.pac4j.core.profile.UserProfile
 import spock.lang.Unroll
 
 /**
@@ -20,7 +16,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
 
     WebService webService = Mock(WebService)
     AuthService authService = Mock(AuthService)
-    AlaOidcClient alaOidcClient
     Config pack4jConfig
 
     def user
@@ -43,6 +38,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
     def cleanup() {
         User.findAll().each{it.delete(flush:true)}
         Hub.findAll().each{it.delete(flush:true)}
+        service.clearCurrentUser()
     }
 
     def "The recordLoginTime method requires a hubId and userId to be supplied"() {
@@ -160,28 +156,45 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         "h1"  | "2021-04-15T00:00:00Z" | "2021-05-01T00:00:00Z" | 0
     }
 
-    void "getUserFromJWT returns user when Authorization header is passed"() {
-        setup:
-        def result
-        alaOidcClient = GroovyMock([global: true], AlaOidcClient)
-        pack4jConfig =  GroovyMock([global: true], Config)
-        service.alaOidcClient = alaOidcClient
-        service.config = pack4jConfig
-        AlaOidcUserProfile person = new AlaOidcUserProfile(user.userId)
-        Optional<Credentials> credentials = new Optional<Credentials>(AnonymousCredentials.INSTANCE)
-        Optional<UserProfile> userProfile = new Optional<UserProfile>(person)
-
+    void "The user service can identify the user using the authService and make it available on a ThreadLocal"() {
         when:
-        request.addHeader('Authorization', 'Bearer abcdef')
-        result = service.getUserFromJWT()
+        service.setUser()
 
         then:
-        alaOidcClient.getCredentials(*_) >> credentials
-        alaOidcClient.getUserProfile(*_) >> userProfile
-        authService.getUserForUserId(user.userId)  >> userDetails
-        result.userName == user.userName
-        result.displayName == "${user.firstName} ${user.lastName}"
-        result.userId == user.userId
+        1 * authService.getUserId() >> user.userId
+        1 * authService.getUserForUserId(user.userId)  >> userDetails
+
+        UserService.currentUser() == userDetails
+    }
+
+    void "The user service can identify an ALA M2M access token and identify the user from a request header"() {
+        setup:
+        AuditInterceptor.httpRequestHeaderForUserId = 'userId'
+        request.addUserRole("ecodata/read_test")
+
+        when:
+        request.addHeader('userId', user.userId)
+        service.setUser()
+
+        then:
+        0 * authService.getUserId() >> null
+
+        1 * authService.getUserForUserId(user.userId)  >> userDetails
+
+        UserService.currentUser() == userDetails
+    }
+
+    void "The user service will not read the userId from the header if the caller isn't an ALA system"() {
+        when:
+        request.addHeader('userId', user.userId)
+        service.setUser()
+
+        then:
+        1 * authService.getUserId() >> null
+        0 * authService.getUserDetailsById(_)
+        UserService.currentUser() == null
+
+
     }
 
 

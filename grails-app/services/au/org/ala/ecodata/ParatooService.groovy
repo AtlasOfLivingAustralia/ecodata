@@ -164,14 +164,17 @@ class ParatooService {
         List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevels.keySet()), Status.ACTIVE)
 
         List paratooProjects = projects.collect { Project project ->
-            List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
-            AccessLevel accessLevel = projectAccessLevels[project.projectId]
-            mapProject(project, accessLevel, sites)
+            paratooProjectFromProject(project, projectAccessLevels[project.projectId])
         }
 
         paratooProjects = paratooProjects.findAll { it.isParatooEnabled()}
         paratooProjects
 
+    }
+
+    ParatooProject paratooProjectFromProject(Project project, AccessLevel accessLevel) {
+        List<Site> sites = siteService.sitesForProjectWithTypes(project.projectId, [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA])
+        mapProject(project, accessLevel, sites)
     }
 
     Map mintCollectionId(String userId, ParatooCollectionId paratooCollectionId) {
@@ -212,21 +215,20 @@ class ParatooService {
      * @param userId - user making the data submission
      * @return
      */
-    Map submitCollection(ParatooCollection collection, ParatooProject project, String userId = null) {
+    Map submitCollection(ParatooCollection collection, ParatooProject project, String userId = null, boolean canModifySite = false) {
         userId = userId ?: userService.currentUserDetails?.userId
         Map dataSet = project.project.custom?.dataSets?.find{it.dataSetId == collection.orgMintedUUID}
 
         if (!dataSet) {
             throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
         }
-        dataSet.progress = Activity.STARTED
         dataSet.surveyId.coreSubmitTime = new Date()
         dataSet.surveyId.survey_metadata.provenance.putAll(collection.coreProvenance)
 
         Map authHeader = getAuthHeader()
         Promise promise = task {
             userService.setCurrentUser(userId)
-            asyncFetchCollection(collection, authHeader, userId, project)
+            asyncFetchCollection(collection, authHeader, userId, project, canModifySite)
         }
         promise.onError { Throwable e ->
             log.error("An error occurred feching ${collection.orgMintedUUID}: ${e.message}", e)
@@ -242,7 +244,7 @@ class ParatooService {
         [updateResult: result, promise: promise]
     }
 
-    Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project) {
+    Map asyncFetchCollection(ParatooCollection collection, Map authHeader, String userId, ParatooProject project, boolean canModifySite) {
         Activity.withSession { session ->
             int counter = 0
             Map surveyDataAndObservations = null
@@ -253,6 +255,7 @@ class ParatooService {
                 throw new RuntimeException("Unable to find data set with orgMintedUUID: "+collection.orgMintedUUID)
             }
 
+            log.info("Fetching collection data for ${collection.orgMintedUUID} in project ${project.project.projectId} by user ${userId}")
             // wait for 5 seconds before fetching data
             while(response == null && counter < PARATOO_MAX_RETRIES) {
                 sleep(5 * 1000)
@@ -282,15 +285,26 @@ class ParatooService {
                 // If we are unable to create a site, null will be returned - assigning a null siteId is valid.
 
                 String siteName = null
-                if (!dataSet.siteId) {
-                    try {
-                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, surveyId, project.project, config, form)
+                try {
+                    if (!dataSet.siteId) {
+                        Map site = createSiteFromSurveyData(surveyDataAndObservations, collection, project.project, config, form)
                         dataSet.siteId = site.siteId
                         siteName = site.name
+
                     }
-                    catch (Exception ex) {
-                        log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
+                    else if (canModifySite) {
+                        Map siteProps = mapSurveyDataToSite(surveyDataAndObservations, collection, project.project, config, form)
+                        log.info("Updating site ${dataSet.siteId} for collection ${collection.orgMintedUUID}")
+                        siteService.update(siteProps, dataSet.siteId)
+                        siteName = siteProps.name
                     }
+                    else {
+                        Map siteProps = siteService.get(dataSet.siteId, [SiteService.FLAT])
+                        siteName = siteProps.name
+                    }
+                }
+                catch (Exception ex) {
+                    log.error("Error creating site for ${collection.orgMintedUUID}: ${ex.message}")
                 }
 
                 // plot layout is of type geoMap. Therefore, expects a site id.
@@ -298,6 +312,7 @@ class ParatooService {
                     surveyDataAndObservations[PARATOO_DATAMODEL_PLOT_LAYOUT] = dataSet.siteId
                 }
 
+                dataSet.progress = Activity.STARTED
                 dataSet.startDate = config.getStartDate(surveyDataAndObservations)
                 dataSet.endDate = config.getEndDate(surveyDataAndObservations)
                 dataSet.format = DATASET_DATABASE_TABLE
@@ -596,52 +611,61 @@ class ParatooService {
         output
     }
 
-    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, ParatooCollectionId surveyId, Project project, ParatooProtocolConfig config, ActivityForm form) {
-        String siteId = null
-        Date updatedPlotLayoutDate
-        // Create a site representing the location of the collection
-        Map siteProps = null
+    /**
+     * Transforms data from the Monitor protocol to a form suitable for creating or updating a Site
+     */
+    private Map mapSurveyDataToSite(Map observation, ParatooCollection collection, Project project, ParatooProtocolConfig config, ActivityForm form) {
         Map geoJson = config.getGeoJson(observation, form)
+        Map siteProps = null
         if (geoJson) {
             siteProps = siteService.propertiesFromGeoJson(geoJson, 'upload')
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
-            if (features)
+            if (features) {
                 siteProps.type = Site.TYPE_COMPOUND
-            else
+            }
+            else {
                 siteProps.type = Site.TYPE_SURVEY_AREA
+            }
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId
             if (config.usesPlotLayout) {
                 if (externalId) {
                     siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
-                }
-                else {
+                } else {
                     log.error("No externalId found for plot layout for survey ${collection.orgMintedUUID}, project ${project.projectId}")
                 }
-            }
-            else {
+            } else {
                 // non-plot based data sets will have the dataSetId/orgMintedUUID as the external id
                 siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: collection.orgMintedUUID)]
             }
-            Site site
+        }
+        siteProps
+    }
+
+    private Map createSiteFromSurveyData(Map observation, ParatooCollection collection, Project project, ParatooProtocolConfig config, ActivityForm form) {
+        String siteId = null
+        Date updatedPlotLayoutDate = null
+        // Create a site representing the location of the collection
+        Map siteProps = mapSurveyDataToSite(observation, collection, project, config, form)
+        if (siteProps) {
+            Site site = null
             // create new site for every non-plot submission
             if (config.usesPlotLayout) {
                 updatedPlotLayoutDate = config.getPlotLayoutUpdatedAt(observation)
+                String externalId = siteProps.externalIds?.find { it.idType == ExternalId.IdType.MONITOR_PLOT_GUID }?.externalId
                 List sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, externalId, [sort: "lastUpdated", order: "desc"])
-                if (sites)
+                if (sites) {
                     site = sites.first()
+                }
             }
 
             Map result
             // If the plot layout has been updated, create a new site
             if (!site) {
-                result = siteService.create(siteProps)
-            }
-            else if(isUpdatedPlotLayout(site.lastUpdated, updatedPlotLayoutDate)){
-                siteProps.name = "${siteProps.name} - ${DateUtil.formatAsDisplayDateTime(updatedPlotLayoutDate)}"
+                log.info("Creating a new site for survey ${collection.orgMintedUUID}, project ${project.projectId} with name: ${siteProps.name}")
                 result = siteService.create(siteProps)
             }
             else {
@@ -655,21 +679,6 @@ class ParatooService {
             siteId = result.siteId
         }
         [siteId:siteId, name:siteProps?.name]
-    }
-
-    /**
-     * check if the plot layout has been updated after site has been updated. This means user has edited plot layout and
-     * a new site should be created.
-     * @param siteLastUpdated
-     * @param plotLayoutLastUpdated
-     * @return
-     */
-    static boolean isUpdatedPlotLayout (Date siteLastUpdated, Date plotLayoutLastUpdated) {
-        if ((siteLastUpdated != null) && (plotLayoutLastUpdated != null)) {
-            return plotLayoutLastUpdated.after(siteLastUpdated)
-        }
-
-        return false
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {
@@ -750,7 +759,7 @@ class ParatooService {
             result.messages << "Form ${activityForm.name} with guid: ${activityForm.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }.externalId} has been deleted"
         }
 
-        log.debug("Completed syncing paratoo protocols")
+        log.info("Completed syncing paratoo protocols")
         result
 
     }
@@ -877,7 +886,10 @@ class ParatooService {
 
         String url = paratooBaseUrl + apiEndpoint
         Map response = webService.doPost(url, payload, false, authHeader)
-        log.debug((response as JSON).toString())
+        if (log.isDebugEnabled()) {
+            log.debug((response as JSON).toString())
+        }
+
 
         response?.resp
     }
@@ -1059,10 +1071,10 @@ class ParatooService {
                 cleanedDefinition << cleanSwaggerDefinition(value)
             }
         } else {
-            try {
-                cleanedDefinition = definition?.clone()
+            if (definition instanceof Cloneable) {
+                cleanedDefinition = definition.clone()
             }
-            catch (CloneNotSupportedException e) {
+            else {
                 // if not cloneable, then it is a primitive type
                 cleanedDefinition = definition
             }
@@ -1279,7 +1291,10 @@ class ParatooService {
         resolveModelReferences(cleanedProperties, components)
 //        cleanedProperties = rearrangePropertiesAccordingToModelRelationship(cleanedProperties, template.relationships.apiOutput, template.relationships.ecodata)
         cleanedProperties = deepCopy(cleanedProperties)
-        log.debug((properties as JSON).toString())
+        if (log.isDebugEnabled()) {
+            log.debug((properties as JSON).toString())
+        }
+
 
         if (isPlotLayoutNeededByProtocol(protocol)) {
             template.dataModel.addAll(grailsApplication.config.getProperty("paratoo.defaultPlotLayoutDataModels", List))
@@ -1297,6 +1312,7 @@ class ParatooService {
             }
         }
 
+        addInsertions(template.dataModel, template.viewModel, "", config)
         template
     }
 
@@ -1521,6 +1537,7 @@ class ParatooService {
             modelVisitStack.pop()
         }
 
+        addInsertions(model.dataModel, model.viewModel, path, config)
         model
     }
 
@@ -1537,6 +1554,24 @@ class ParatooService {
             Map override = overrides?.viewModel[path]
             if (override) {
                 viewModel.putAll(override)
+            }
+        }
+    }
+
+    void addInsertions(List dataModels, List viewModels, String path = "", ParatooProtocolConfig config) {
+        path = path ?: "<root>"
+        Map insertions = config.insertions
+        if (insertions?.dataModel?.containsKey(path)) {
+            List items = insertions?.dataModel[path] as List
+            if (items) {
+                dataModels.addAll(items)
+            }
+        }
+
+        if (insertions?.viewModel?.containsKey(path)) {
+            List items = insertions?.viewModel[path] as List
+            if (items) {
+                viewModels.addAll(items)
             }
         }
     }
@@ -2097,7 +2132,7 @@ class ParatooService {
         }
 
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
-        String commonName, scientificName = name
+        String commonName, scientificName, taxonRank
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
         Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
@@ -2105,17 +2140,18 @@ class ParatooService {
         if (matcher.find()) {
             commonName = matcher.group(1)?.trim()
             scientificName = matcher.group(3)?.trim()
-            result.taxonRank = matcher.group(2)?.trim()
-            result.scientificName = scientificName
-            result.commonName = commonName
+            taxonRank = matcher.group(2)?.trim()
+            result.taxonRank = taxonRank
+            result.scientificName = scientificName == null ? result.scientificName : scientificName
+            result.commonName = commonName == null ? result.commonName : commonName
         }
 
-        Map resp = speciesReMatchService.searchByName(scientificName)
+        Map resp = speciesReMatchService.searchByName(result.scientificName)
         if (resp) {
             result.putAll(resp)
         }
         // try again with common name
-        if ((result.guid == null) && commonName) {
+        if ((result.guid == null) && result.commonName) {
             resp = speciesReMatchService.searchByName(commonName, false, true)
             if (resp) {
                 result.putAll(resp)
@@ -2123,7 +2159,15 @@ class ParatooService {
             }
         }
 
-        result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
+        if (result.commonName != result.scientificName) {
+            result.name = result.commonName ? result.scientificName ? "${result.scientificName} (${result.commonName})" : result.commonName : result.scientificName
+        }
+        else {
+            result.name = result.scientificName
+            // clear common name if it is same as scientific name
+            result.commonName = null
+        }
+
         List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
         // do not create record for special cases
         if (specialCases.contains(name)) {

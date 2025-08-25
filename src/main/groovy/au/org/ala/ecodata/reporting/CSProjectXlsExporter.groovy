@@ -41,8 +41,11 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Verification status','Latitude', 'Longitude', 'Centroid Latitude', 'Centroid Longitude','Site Name', 'Site External Id']
 
-    List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
-    List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
+    List<String> recordHeaders = ["Occurrence ID", "Activity ID", "GUID", "Scientific Name", "Vernacular name", "Common name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia","Individual Count"]
+    List<String> recordProperties = ["occurrenceID", "activityId", "guid", "scientificName", "vernacularName", "commonName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper), "individualCount" ]
+
+    List<String> documentHeaders = ['Project ID', 'Project name', 'Document ID', 'Name', 'Description', 'Role', 'Content type', 'Citation', 'ISBN', 'Labels', 'Filename', 'URL', 'Video', 'Date created', 'Last updated']
+    List<String> documentProperties = ['projectId', 'projectName', 'documentId', 'name', 'description', 'role', 'contentType', 'citation', 'isbn', 'labels', 'filename', 'url', 'embeddedVideo', new DatePropertyGetter('dateCreated', DateTimeParser.Style.DATE,null, null,  timeZone),new DatePropertyGetter('lastUpdated', DateTimeParser.Style.DATE,null, null,  timeZone)]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -65,10 +68,12 @@ class CSProjectXlsExporter extends ProjectExporter {
     RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
     PermissionService permissionService = Holders.grailsApplication.mainContext.getBean("permissionService")
+    DocumentService documentService = Holders.grailsApplication.mainContext.getBean("documentService")
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet recordSheet
+    AdditionalSheet documentSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
     Map<String, Object> documentMap
@@ -77,6 +82,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         super(exporter, [], documentMap, timeZone)
         this.useDateGetter = true
         this.useNumberGetter = true
+        this.addAdditionalSpeciesColumns = true
         this.documentMap = documentMap
     }
 
@@ -123,6 +129,28 @@ class CSProjectXlsExporter extends ProjectExporter {
 
         int row = projectSheet.getSheet().lastRowNum
         projectSheet.add([project], projectProperties, row + 1)
+    }
+
+    @Override
+    void exportDocumentsByProject(String projectId, Set<String> documentIds) {
+        Map project = projectService.get(projectId, ProjectService.BASIC)
+        documentIds?.each { String documentId ->
+            def doc = documentService.get(documentId)
+            if (doc) {
+                addProjectAttributes(doc, project)
+                // Add the document to the sheet.
+                def sheet = documentSheet()
+                int row = sheet.getSheet().lastRowNum + 1
+                sheet.add([doc], documentProperties, row)
+            } else {
+                log.warn("Document with ID ${documentId} not found.")
+            }
+        }
+
+    }
+
+    private void addProjectAttributes(Map doc, Map project) {
+        doc.projectName = project.name
     }
 
     private void addSites(Map project) {
@@ -456,6 +484,13 @@ class CSProjectXlsExporter extends ProjectExporter {
             recordSheet = exporter.addSheet('DwC Records', recordHeaders)
         }
         recordSheet
+    }
+
+    private AdditionalSheet documentSheet() {
+        if (!documentSheet) {
+            documentSheet = exporter.addSheet('Product', documentHeaders)
+        }
+        documentSheet
     }
 
 }

@@ -1,5 +1,4 @@
 package au.org.ala.ecodata.reporting
-
 /**
  * An AggregationBuilder can create instances of the Aggregator class based on the supplied information about
  * how the aggregation should be performed.
@@ -10,8 +9,10 @@ class AggregatorFactory {
         if (config instanceof GroupingAggregationConfig) {
             new GroupingAggregator(config)
         }
+        else if (config instanceof ExpressionAggregationConfig) {
+            new ExpressionAggregator(config)
+        }
         else if (config instanceof CompositeAggregationConfig) {
-
             new CompositeAggregator(config)
         }
         else if (config instanceof FilteredAggregationConfig) {
@@ -36,6 +37,11 @@ class AggregatorFactory {
 
             configObject = new GroupingAggregationConfig(label:config.label, groups: groupingConfig, childAggregations: createChildConfig(config))
         }
+        else if (config.containsKey('expression')) {
+            configObject = new ExpressionAggregationConfig(
+                    expression:config.expression, label:config.label, childAggregations: createChildConfig(config)
+            )
+        }
         else if (config.containsKey('filter')) {
             GroupingConfig filterConfig = new GroupingConfig(config.filter)
 
@@ -43,6 +49,9 @@ class AggregatorFactory {
         }
         else if (config.containsKey('childAggregations')) {
             configObject =  new CompositeAggregationConfig(label:config.label, childAggregations: createChildConfig(config))
+        }
+        else if (config.keyProperty) {
+            configObject =  new DistinctAggregationConfig(config)
         }
         else {
             configObject =  new Aggregation(config)
@@ -77,11 +86,14 @@ class AggregatorFactory {
                 return new Aggregators.AverageAggregator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.HISTOGRAM.name():
-                return new Aggregators.HistogramAggregator(config.label, config.property)
+                return new Aggregators. HistogramAggregator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.SET.name():
                 return new Aggregators.SetAggregator(config.label, config.property)
                 break;
+           case Score.AGGREGATION_TYPE.DISTINCT_SUM.name():
+                return new Aggregators.DistinctSumAggregator(config.label, config.property, ((DistinctAggregationConfig)config).keyProperty)
+                break
             default:
                 throw new IllegalAccessException("Invalid aggregation type: ${config.type}, label:${config.label}, property:${config.property}")
         }

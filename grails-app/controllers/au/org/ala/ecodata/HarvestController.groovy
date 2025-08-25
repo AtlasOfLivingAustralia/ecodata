@@ -3,10 +3,11 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.apache.http.HttpStatus
 
-import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat
 
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class HarvestController {
+    static responseFormats = ['json']
 
     RecordService recordService
     ProjectService projectService
@@ -70,9 +71,11 @@ class HarvestController {
      * @param sort = asc | desc | default:asc
      * @param lastUpdated = date | dd/MM/yyyy | default:null
      * @param status = active | deleted | default:active
-     *
+     * @deprecated ALA's records harvester will use getDarwinCoreArchiveForProject once Events system is setup.
+     * To access it use archiveURL property from {@link HarvestController#listHarvestDataResource}.
      */
-    def listRecordsForDataResourceId (){
+    @Deprecated
+    def listRecordsForDataResourceId () {
         def result = [], error, project
         Date lastUpdated = null
         try {
@@ -133,5 +136,30 @@ class HarvestController {
 
         response.setContentType("application/json")
         render result as JSON
+    }
+
+    /**
+     * Get Darwin Core Archive for a project that has ala harvest enabled.
+     * @param projectId
+     * @return
+     * At the moment, you need to add their IP address to whitelist.
+     */
+    def getDarwinCoreArchiveForProject (String projectId) {
+        if (projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if(project?.alaHarvest) {
+                // This is done to get the correct URL for documents.
+                String hostname = project.isMERIT ? grailsApplication.config.getProperty("fieldcapture.baseURL") : grailsApplication.config.getProperty("biocollect.baseURL")
+                DocumentHostInterceptor.documentHostUrlPrefix.set(hostname)
+                String filename = "darwin-core-${projectId}.zip"
+                boolean force = params.getBoolean("force", false)
+                response.setContentType("application/zip")
+                response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
+                recordService.getDarwinCoreArchiveForProjectFromDiskOrOnDemand(response.outputStream, project, force)
+            } else
+                respond([error: "project not found or ala harvest flag is switched off"], status: HttpStatus.SC_NOT_FOUND)
+        } else {
+            respond([error: "projectId is required"], status: HttpStatus.SC_BAD_REQUEST)
+        }
     }
 }

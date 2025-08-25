@@ -12,7 +12,7 @@ class MetadataController {
     static responseFormats = ['json']
 
     def metadataService, activityService, commonService, projectService, webService
-
+    ActivityFormService activityFormService
     def activitiesModel() {
         render metadataService.activitiesModel()
     }
@@ -72,7 +72,21 @@ class MetadataController {
             render result as JSON
             return null
         }
-        def annotatedModel = metadataService.annotatedOutputDataModel(outputName)
+        String activityForm = params.activityForm
+        Integer formVersion = params.getInt('formVersion', null)
+        def annotatedModel
+        if (activityForm) {
+            ActivityForm form = activityFormService.findActivityForm(activityForm, formVersion)
+            if (!form) {
+                def result = [status:400, error:'No form with name '+activityForm+' and version '+formVersion+' was found']
+                render result as JSON
+                return null
+            }
+            annotatedModel = form.getFormSection(outputName).annotatedTemplate()
+        }
+        else {
+            annotatedModel = metadataService.annotatedOutputDataModel(outputName)
+        }
 
         if (!annotatedModel) {
             def result = [status:404, error:"No output of type ${outputName} exists"]
@@ -83,6 +97,27 @@ class MetadataController {
         render annotatedModel as JSON
     }
 
+    private Map getModelAndAnnotatedModel(String outputName, String activityFormName, Integer activityFormVersion, def expandList) {
+        List annotatedModel
+        def model
+        if (activityFormName) {
+            ActivityForm form = activityFormService.findActivityForm(activityFormName, activityFormVersion)
+            model = form?.sections?.find{it.name == outputName}
+            OutputMetadata metadata = new OutputMetadata(model?.template)
+            annotatedModel = metadata.annotateDataModel()
+        }
+        else {
+            // Legacy support
+            model = metadataService.getOutputDataModelByName(outputName)
+            if (expandList && expandList == 'true') {
+                annotatedModel = metadataService.annotatedOutputDataModel(outputName, true)
+            } else {
+                annotatedModel = metadataService.annotatedOutputDataModel(outputName)
+            }
+        }
+        return [model:model, annotatedModel:annotatedModel]
+    }
+
     /**
      * Returns an Excel template that can be populated with output data and uploaded.
      */
@@ -90,16 +125,20 @@ class MetadataController {
 
         def outputName, listName, data, expandList
         boolean editMode, allowExtraRows, autosizeColumns, includeDataPathHeader
+        String activityForm
+        Integer formVersion
         def json = request.getJSON()
         if (json) {
+            activityForm = json.activityForm
+            formVersion = json.formVersion
             outputName = json.type
             listName = json.listName
             editMode = Boolean.valueOf(json.editMode)
             allowExtraRows = Boolean.valueOf(json.allowExtraRows)
             autosizeColumns = json.autosizeColumns != null ? Boolean.valueOf(json.autosizeColumns) : true
             includeDataPathHeader = json.includeDataPathHeader != null ? Boolean.valueOf(json.includeDataPathHeader) : false
-            data = JSON.parse(json.data)
-
+            data = json.data ? JSON.parse(json.data) : null
+            expandList = json.expandList
 
         }
         else {
@@ -110,6 +149,8 @@ class MetadataController {
             allowExtraRows = params.getBoolean('allowExtraRows', false)
             autosizeColumns = params.getBoolean('autosizeColumns', true)
             includeDataPathHeader = params.getBoolean('includeDataPathHeader', false)
+            activityForm = params.activityForm
+            formVersion = params.getInt('formVersion', null)
         }
 
 
@@ -119,13 +160,9 @@ class MetadataController {
             return null
         }
 
-        Map model = metadataService.getOutputDataModelByName(outputName)
-        def annotatedModel = null
-        if (expandList && expandList == 'true') {
-            annotatedModel = metadataService.annotatedOutputDataModel(outputName, true)
-        } else {
-            annotatedModel = metadataService.annotatedOutputDataModel(outputName)
-        }
+        Map modelAndAnnotatedModel = getModelAndAnnotatedModel(outputName, activityForm, formVersion, expandList)
+        def model = modelAndAnnotatedModel.model
+        List annotatedModel = modelAndAnnotatedModel.annotatedModel
         if (!annotatedModel) {
             def result = [status:404, error:"No output of type ${outputName} exists"]
             render result as JSON
@@ -172,9 +209,6 @@ class MetadataController {
         builder.setResponseHeaders(response)
 
         builder.save(response.outputStream)
-
-     //   response.getOutputStream().flush();
-     //   response.getOutputStream().close();
 
     }
 
@@ -339,9 +373,32 @@ class MetadataController {
         render( text: indices as JSON, contentType: 'application/json')
     }
 
-    /** Returns all Services, including associated Scores based on the forms assocaited with each service */
+    /** Returns all Services, including associated Scores based on the forms associated with each service */
     def services() {
         render metadataService.getServiceList() as JSON
+    }
+
+    def terms(String category, String hubId) {
+        respond metadataService.findTermsByCategory(category, hubId)
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def deleteTerm(String termId) {
+        Term term = metadataService.deleteTerm(termId)
+        if (term.hasErrors()) {
+            respond term.errors
+        }
+        else {
+            Map result = [status:Status.DELETED]
+            respond result
+        }
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def updateTerm() {
+        Map termProperties = request.JSON
+        Term term = metadataService.updateTerm(termProperties)
+        respond term
     }
 
 }

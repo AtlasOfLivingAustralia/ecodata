@@ -5,7 +5,6 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
-import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexRequestBuilder
@@ -23,6 +22,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
     PermissionService permissionService = Stub(PermissionService)
     ProgramService programService = Stub(ProgramService)
     ProjectService projectService = Mock(ProjectService)
+    ProjectActivityService projectActivityService = Mock(ProjectActivityService)
     RestHighLevelClient client = GroovyMock(RestHighLevelClient) // Need a groovy mock here due to final methods
     SiteService siteService = Mock(SiteService)
     ActivityService activityService = Mock(ActivityService)
@@ -38,6 +38,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         service.projectService = projectService
         service.siteService = siteService
         service.activityService = activityService
+        service.projectActivityService = projectActivityService
         service.documentService = documentService
         service.projectActivityService = projectActivityService
 
@@ -369,6 +370,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == projectProps.projectId}, RequestOptions.DEFAULT) >>
                 { index, options -> result = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * projectService.toMap(project, ProjectService.FLAT) >> projectProps
 
         and:
@@ -397,6 +399,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         then:
         1 * client.index({ IndexRequest index -> index.index() == ElasticIndex.HOMEPAGE_INDEX && index.id() == meritProjectProps.projectId}, RequestOptions.DEFAULT) >>
                 { index, options  -> meritResult = new JsonSlurper().parseText(index.source().utf8ToString()); Mock(IndexResponse) }
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * projectService.toMap(meritProject, ProjectService.FLAT) >> meritProjectProps
         1 * siteService.findAllForProjectId(meritProject.projectId, SiteService.FLAT) >> [site1]
 
@@ -493,7 +496,7 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
 
         then:
         1 * projectService.toMap(project, ProjectService.FLAT) >> meritProjectProps
-
+        1 * projectService.findStateAndElectorateForProject(_) >> [:]
         1 * client.get(_, _) >> getResponse
         1 * getResponse.exists >> true
         1 * client.delete(_, _)

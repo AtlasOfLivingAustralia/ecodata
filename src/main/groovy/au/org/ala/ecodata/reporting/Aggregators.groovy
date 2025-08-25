@@ -184,4 +184,33 @@ class Aggregators {
         }
     }
 
+    /**
+     * The DistinctSumAggregator will sum the values of a property where a second property is distinct.
+     * The use case for this is to sum data in values that appear more than once during aggregation.
+     * For example, most aggregation is done with Output data, and each one contains the Activity and owner (e.g. Project)
+     * data as well.
+     * The specific use case for this is to sum the data from Organisation reports and divide by the total
+     * funding, which is a property on the Organisation object.
+     * The keyProperty is the property that is used to determine if the value is distinct.  The case of the
+     * organisation funding amount, the organisationId would be used as the key property.
+     */
+    static class DistinctSumAggregator extends SummingAggegrator {
+        protected PropertyAccessor keyPropertyAccessor
+        protected Set seenKeys
+        DistinctSumAggregator(String label, String property, String keyProperty) {
+            super(label, property)
+            keyPropertyAccessor = new PropertyAccessor(keyProperty)
+            seenKeys = new HashSet()
+        }
+
+        void aggregateSingle(Map data) {
+            def key = keyPropertyAccessor.getPropertyValue(data)
+            if (!seenKeys.contains(key)) {
+                seenKeys.add(key)
+                super.aggregateSingle(data)
+            }
+        }
+
+    }
+
 }

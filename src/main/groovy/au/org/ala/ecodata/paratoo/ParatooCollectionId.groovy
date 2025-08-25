@@ -51,7 +51,7 @@ class ParatooCollectionId implements Validateable {
 
     static ParatooCollectionId fromMap(Map map) {
 
-        Date eventTime = map.eventTime ? DateUtil.parseWithMilliseconds(map.eventTime) : null
+        Date eventTime = map.eventTime ? DateUtil.parseDateWithAndWithoutMilliSeconds(map.eventTime) : null
         new ParatooCollectionId(
                 eventTime: eventTime,
                 survey_metadata: ParatooSurveyMetadata.fromMap(map.survey_metadata),

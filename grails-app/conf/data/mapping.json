@@ -25,6 +25,9 @@
         "grantId": {
           "type": "keyword"
         },
+        "allParticipants" : {
+          "type" : "keyword"
+        },
         "origin" : {
           "type" : "keyword"
         },
@@ -86,6 +89,17 @@
           "copy_to" : "dateCreatedSort"
         },
         "dateCreatedSort" : {
+          "type" : "keyword", "normalizer" : "case_insensitive_sort"
+        },
+        "serviceProviderName": {
+          "type" : "text",
+          "copy_to": ["organisationName","organisationFacet", "organisationSort"]
+        },
+        "lastUpdated": {
+          "type" : "date",
+          "copy_to" : "lastUpdatedSort"
+        },
+        "lastUpdatedSort" : {
           "type" : "keyword", "normalizer" : "case_insensitive_sort"
         },
         "associatedOrgs": {
@@ -209,11 +223,27 @@
           "type": "text",
           "index": "false"
         },
+        "services": {
+          "type": "keyword"
+        },
+        "projectElectFacet": {
+          "type": "keyword"
+        },
+        "projectStateFacet": {
+          "type": "keyword"
+        },
         "extent":{
           "properties": {
             "geometry": {
               "properties": {
-
+                "geometry": {
+                  "properties": {
+                    "intersectionAreaByFacets": {
+                      "type": "object",
+                      "enabled": false
+                    }
+                  }
+                }
 
               }
             }
@@ -225,7 +255,10 @@
               "properties": {
                 "geometry": {
                   "properties": {
-
+                    "intersectionAreaByFacets": {
+                      "type": "object",
+                      "enabled": false
+                    }
                   }
                 }
               }
@@ -250,6 +283,10 @@
             },
             "notes": {
               "type": "text"
+            },
+            "area": {
+              "type": "text",
+              "index": false
             },
             "features": {
               "type": "object",
@@ -311,6 +348,8 @@
         "activityLastUpdatedYearFacet":{"type":"keyword"},
         "activityLastUpdatedMonthFacet":{"type":"keyword"},
         "recordNameFacet":{"type":"keyword"},
+        "scientificNameFacet":{"type":"keyword"},
+        "commonNameFacet":{"type":"keyword"},
         "surveyImage": {
           "type": "boolean"
         },
@@ -399,6 +438,14 @@
                 "name":{
                   "type":"text",
                   "copy_to": "recordNameFacet"
+                },
+                "scientificName":{
+                  "type": "text",
+                  "copy_to": "scientificNameFacet"
+                },
+                "commonName":{
+                  "type": "text",
+                  "copy_to": "commonNameFacet"
                 },
                 "eventTime":{
                   "type": "text"
@@ -681,6 +728,17 @@
                       "type": "text"
                     }
                   }
+                },
+                "assets": {
+                  "properties": {
+                    "category": {
+                      "type": "keyword"
+                    },
+                    "description": {
+                      "type": "text",
+                      "copy_to": "meriPlanAssetFacet"
+                    }
+                  }
                 }
 
               }
@@ -716,6 +774,10 @@
         },
         "geographicInfo": {
           "properties": {
+            "nationwide": {
+              "type": "keyword",
+              "copy_to": "nationwideFacet"
+            },
             "primaryState": {
               "type": "keyword",
               "copy_to": "stateFacet"
@@ -791,6 +853,15 @@
       },
       "dynamic_templates": [
         {
+          "investment_priorities_template": {
+            "path_match":"custom.details.outcomes.*.assets",
+            "mapping": {
+              "type":"keyword",
+              "copy_to":"meriPlanAssetFacet"
+            }
+          }
+        },
+        {
           "output_template": {
             "path_match": "outputTargets.*",
             "mapping": {
@@ -803,6 +874,14 @@
             "path_match":"custom.details.budget.rows.costs.dollar",
             "mapping": {
               "type":"keyword"
+            }
+          }
+        },
+        {
+          "custom_funding_totals_template": {
+            "path_match":"custom.details.funding.columnTotal.data",
+            "mapping": {
+              "type":"float"
             }
           }
         },

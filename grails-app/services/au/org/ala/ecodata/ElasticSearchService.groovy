@@ -16,6 +16,8 @@
 package au.org.ala.ecodata
 
 
+import au.org.ala.ecodata.metadata.OutputDateGetter
+import au.org.ala.ecodata.metadata.OutputMetadata
 import com.mongodb.client.model.Filters
 import grails.async.Promise
 import grails.async.Promises
@@ -107,11 +109,12 @@ class ElasticSearchService {
     CacheService cacheService
     ProgramService programService
     ManagementUnitService managementUnitService
+    ActivityFormService activityFormService
 
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name, ProjectActivity.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
 
@@ -642,6 +645,14 @@ class ElasticSearchService {
                     indexHomePage(doc, Project.class.name)
                 }
                 break
+            case ProjectActivity.class.name:
+                // make sure updates to project activity updates project object.
+                // helps BioCollect mobile app show correct surveys.
+                ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(docId)
+                if (projectActivity?.projectId) {
+                    indexDocType(projectActivity.projectId, Project.class.name)
+                }
+                break
         }
     }
 
@@ -1013,6 +1024,13 @@ class ElasticSearchService {
             }
         }
 
+        // Switch the homepage index to the new one
+        indexManager.updateAlias(HOMEPAGE_INDEX, newIndexes[HOMEPAGE_INDEX])
+        // We've already swapped this so we don't want to do that again when the rest of the indexing completes
+        newIndexes.remove(HOMEPAGE_INDEX)
+
+        log.info "Homepage indexing complete"
+
         log.info "Indexing all sites"
         int count = 0
         Site.withNewSession { session ->
@@ -1129,7 +1147,7 @@ class ElasticSearchService {
         // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
-        if(projectMap.isMERIT){
+        if (projectMap.isMERIT) {
 
             // Allow ESP sites to be hidden, even on the project explorer.  Needs to be tided up a bit as MERIT sites were
             // already marked as private to avoid discovery via BioCollect
@@ -1138,9 +1156,9 @@ class ElasticSearchService {
                     site.remove('geoIndex')
                     site
                 }
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true)
             } else {
-                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name()).collect{[type:it.type]}
+                projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name(), false, true).collect{[type:it.type]}
             }
 
             // If we don't flatten these values into the root of the project, they are not currently usable by
@@ -1159,6 +1177,9 @@ class ElasticSearchService {
                 it.remove('periodTargets')
                 it.remove('outcomeTargets')
             } // Not useful for searching and is causing issues with the current mapping.
+
+            // add algorithmically generated or manually selected states and electorates of a project
+            projectMap << projectService.findStateAndElectorateForProject(projectMap)
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
@@ -1166,18 +1187,18 @@ class ElasticSearchService {
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
-
-            List projectActivities = projectActivityService.search([projectId: projectMap?.projectId])
-            if (projectActivities?.size() > 0) {
-                boolean publicParticipation = true
-                projectActivities.each {projectActivity ->
-                    if (projectActivity.publicAccess == false) {
-                        publicParticipation = false
-                    }
-                }
-                projectMap.publicParticipation = publicParticipation
-                projectMap.numberOfRecords = projectActivities.size()
-            }
+            projectMap.projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
+                [
+                        id: it.id,
+                        projectId: it.projectId,
+                        projectActivityId: it.projectActivityId,
+                        name: it.name,
+                        startDate: it.startDate,
+                        endDate: it.endDate,
+                        published: it.published,
+                        publicAccess: it.publicAccess
+                ]
+            })
         }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI

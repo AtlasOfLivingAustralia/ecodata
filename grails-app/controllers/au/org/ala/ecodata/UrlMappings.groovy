@@ -129,8 +129,14 @@ class UrlMappings {
             action = [POST:"search"]
         }
 
-		"/ws/$controller/$action?/$id?(.$format)?" {
+        "/reporting/ws/$controller/$action?/$id?(.$format)?" {
+        }
+
+        "/ws/$controller/$action?/$id?(.$format)?" {
 		}
+
+        "/reporting/$controller/$action?/$id?(.$format)?" {
+        }
 
 		"/$controller/$action?/$id?(.$format)?" {
 		}
@@ -197,6 +203,7 @@ class UrlMappings {
         "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
+        "/ws/project/$projectId/archive"(controller: "harvest", action: "getDarwinCoreArchiveForProject")
         "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
         "/ws/project/findStateAndElectorateForProject"(controller: "project", action: "findStateAndElectorateForProject")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
@@ -206,6 +213,7 @@ class UrlMappings {
         }
 
         "/ws/dataSetSummary/bulkUpdate/$projectId"(controller:'dataSetSummary', action:'bulkUpdate')
+        "/ws/dataSetSummary/resync/$projectId/$dataSetId"(controller:'dataSetSummary', action:'resync')
 
         "/ws/document/download"(controller:"document", action:"download")
 
@@ -280,6 +288,11 @@ class UrlMappings {
         "/ws/paratoo/projects/$id" {
             controller = 'paratoo'
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
+        }
+
+        "/ws/metadata/term/$termId?" {
+            controller = 'metadata'
+            action = [POST: 'updateTerm', DELETE: 'deleteTerm']
         }
 
         "/"(redirect:[controller:"documentation"])

@@ -29,6 +29,15 @@ class ProjectService {
      * is to support concurrent edits on different project data set summaries which are currently modelled as
      * an embedded array but can be added and updated by both the UI and the Monitor (Parataoo) application API */
     static final Map PROJECT_UPDATE_LOCKS = Collections.synchronizedMap([:].withDefault{ new Object() })
+    public static final String PRIMARY_STATE = "primarystate"
+    public static final String PRIMARY_ELECT = "primaryelect"
+    public static final String PROJECT_STATE_FACET = "projectStateFacet"
+    public static final String PROJECT_ELECT_FACET = "projectElectFacet"
+    public static final String OTHER_STATES_LIST = "otherStates"
+    public static final String OTHER_ELECTORATES_LIST = "otherElectorates"
+    public static final String OTHER_STATE = "otherstate"
+    public static final String OTHER_ELECT = "otherelect"
+    public static final String GEOGRAPHIC_RANGE_OVERRIDDEN = "geographicRangeOverridden"
 
     GrailsApplication grailsApplication
     MessageSource messageSource
@@ -145,7 +154,19 @@ class ProjectService {
             order(params.sort, params.order)
         }
 
-        [total: list?.totalCount, list: list?.collect { toMap(it, "basic") }]
+        def total = list?.totalCount
+        list = list?.collect { toMap(it, "basic") }
+        addArchiveLink(list)
+        [total: total, list: list]
+    }
+
+    /**
+     * Adds archive URL to projects
+     * @param projects
+     * @return
+     */
+    def addArchiveLink (List projects) {
+        projects?.each { it.archiveURL = grailsApplication.config.getProperty("grails.serverURL") + "/ws/project/${it.projectId}/archive" }
     }
 
     def listProjects(Map params) {
@@ -232,6 +253,8 @@ class ProjectService {
                     mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
                 }
 
+                // add geographic info attributes such as primarystate, otherstate, primaryelect and otherelect
+                mapOfProperties << findAndFormatStatesAndElectoratesForProject(mapOfProperties)
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
                 Lock lock = lockService.get(project.projectId)
@@ -1171,17 +1194,108 @@ class ProjectService {
         }
     }
 
+    /** Data sets that have been used in a Report cannot be deleted */
+    private static boolean canModifyDataSet(Map dataSet) {
+        return (!dataSet.publicationStatus || dataSet.publicationStatus == PublicationStatus.DRAFT) && !dataSet.reportId
+    }
+
+    /**
+     * Returns true if every data set associated with the site can be modified.
+     * @param site the site to check
+     * @param project optionally supplied to prevent re-querying a project already available in the calling context
+     */
+    boolean canModifyDataSetSite(Map site, Project project = null) {
+        if (!site) {
+            return false
+        }
+        boolean canModifySite = true
+        if (site.projects.size() != 1) {
+            canModifySite = false
+        }
+        else {
+            if (site.projects[0] != project?.projectId) {
+                project = Project.findByProjectId(site.projects[0])
+            }
+        }
+
+        if (project) {
+            project.custom?.dataSets?.each { Map dataSet ->
+                if (dataSet.siteId == site.siteId) {
+                    canModifySite = canModifySite && canModifyDataSet(dataSet)
+                }
+            }
+        }
+        canModifySite
+    }
+
+    /**
+     * Returns true if the Site associated with a data set can be deleted.  Generally it can only be
+     * deleted if it was created by the Monitor app and is only associated with the supplied data set and no others.
+     * @param dataSetId The id of the data set the Site is related to.
+     * @param site The Site to check
+     * @param project The Project related to the Site to check (used to prevent an unnecessary query if available.
+     * @return true if the Site can be deleted.
+     */
+    private boolean canDeleteDataSetSite(String dataSetId, Map site, Project project = null) {
+        if (!site) {
+            return false
+        }
+        boolean canDelete = true
+        /// Don't delete the site if it's used by another Project
+        if (site.projects.size() != 1) {
+            canDelete = false
+        }
+        else {
+            if (site.projects[0] != project?.projectId) {
+                project = Project.findByProjectId(site.projects[0])
+            }
+        }
+
+        // Don't delete the site if it's used by another data set in this project.
+        if (project) {
+            project.custom?.dataSets?.each { Map dataSet ->
+                if (dataSet.siteId == site.siteId && dataSet.dataSetId != dataSetId) {
+                    canDelete = false
+                }
+            }
+        }
+        canDelete
+    }
+
     Map deleteDataSet(String projectId, String dataSetId) {
         synchronized (PROJECT_UPDATE_LOCKS.get(projectId)) {
+            Map result
             Project project = Project.findByProjectId(projectId)
 
-            boolean foundMatchingDataSet = project?.custom?.dataSets?.removeAll { it.dataSetId == dataSetId }
-            if (!foundMatchingDataSet) {
-                return [status: 'error', error: 'No such data set']
+            Map matchingDataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
+
+            if (!matchingDataSet || !canModifyDataSet(matchingDataSet)) {
+                return [status: 'error', error: 'Data set with id: '+dataSetId + ' cannot be deleted']
             }
             else {
-                update([custom: project.custom], project.projectId, false)
+                project.custom.dataSets.remove(matchingDataSet)
+                result = update([custom: project.custom], project.projectId, false)
+
+                if (result.status != 'error') {
+                    String activityId = matchingDataSet.activityId
+                    if (activityId) {
+                        Map activityResult = activityService.delete(activityId)
+                        result.activityStatus = activityResult.status
+                    }
+                    String siteId = matchingDataSet.siteId
+                    if (siteId) {
+
+                        Map site = siteService.get(siteId)
+                        if (canDeleteDataSetSite(dataSetId, site, project)) {
+                            siteService.delete(siteId)
+                        }
+
+                    }
+
+                }
+
             }
+            result
         }
     }
 
@@ -1194,10 +1308,10 @@ class ProjectService {
         Map<String,Map<String,Double>> sumOfIntersectionsByLayer = [:].withDefault { [:].withDefault { 0 } }
         Map orderedIntersectionsByArea = [:]
         Map config = metadataService.getGeographicConfig(project.hubId)
-        List layers = config.checkForBoundaryIntersectionInLayers
+        List layers = config?.checkForBoundaryIntersectionInLayers
         List projectSites = getRepresentativeSitesOfProject(project)
         projectSites?.each { Map site ->
-            layers.each { String layer ->
+            layers?.each { String layer ->
                 Map facet = metadataService.getGeographicFacetConfig(layer, project.hubId)
                 site.extent?.geometry?.get(SpatialService.INTERSECTION_AREA)?.get(facet.name)?.get(SiteService.INTERSECTION_CURRENT)?.each { String layerValue, value ->
                     sumOfIntersectionsByLayer[layer][layerValue] += value
@@ -1216,9 +1330,9 @@ class ProjectService {
 
     /**
      * Get representative sites of a project.
-     * 1. Check EMSA/Reporting sites
-     * 2. If there are no EMSA/Reporting sites, return planning/project extent sites
-     * 3. If there are no EMSA/Reporting/Planning/extent sites, return Management Unit boundaries.
+     * 1. All sites except project area. This includes Reporting, EMSA and Planning sites.
+     * 2. Get project area(s)
+     * 3. If there are no sites associated with project, return Management Unit boundaries.
      * 4. Where none exist, return none
      * @param project
      * @return
@@ -1226,9 +1340,9 @@ class ProjectService {
     List getRepresentativeSitesOfProject(Map project) {
         if (project) {
             List sites = project.sites
-            List projectSites = siteService.filterSitesByPurposeIsReportingOrEMSA(sites) ?: []
+            List projectSites = siteService.findAllSitesExceptProjectArea(sites) ?: []
             if (projectSites.isEmpty()) {
-                projectSites =  siteService.filterSitesByPurposeIsPlanning(sites) ?: []
+                projectSites =  siteService.findAllSitesByTypeProjectArea(sites) ?: []
                 if (projectSites.isEmpty() && project.managementUnitId) {
                     ManagementUnit mu = ManagementUnit.findByManagementUnitId(project.managementUnitId)
                     String managementUnitSiteId = mu?.managementUnitSiteId
@@ -1244,35 +1358,62 @@ class ProjectService {
             return projectSites
         }
 
-
         []
+    }
+
+    Map findAndFormatStatesAndElectoratesForProject(Map project) {
+        Map result = findStateAndElectorateForProject (project)
+        if(!result) {
+            return [:]
+        }
+
+        List electorates = result.remove(OTHER_ELECTORATES_LIST) as List
+        List states = result.remove(OTHER_STATES_LIST) as List
+        def separator = "; "
+        if (states) {
+            result[OTHER_STATE] = states.join(separator)
+        }
+
+        if (electorates) {
+            result[OTHER_ELECT] = electorates.join(separator)
+        }
+
+        result
     }
 
     /**
      * Find primary/other state(s)/electorate(s) for a project.
-     * 1. If isDefault is true, use manually assigned state(s)/electorate(s) i.e project.geographicInfo.
-     * 2. If isDefault is false or missing, use the state(s)/electorate(s) from sites using site precedence.
-     * 3. If isDefault is false and there are no sites, use manual state(s)/electorate(s) in project.geographicInfo.
+     * 1. Get eligible sites and do automatic ordering of states and electorates
+     * 2. If overridePrimaryState and/or overridePrimaryElectorate is true, then override calculated value with manual value.
+     * 3. Add all other states and electorates to end of list
+     * 4. Remove any value in exclude list
+     * @params project - map of a project with all sites associated in sites property
+     * @return [
+     *  "projectStateFacet": [] - all states
+     *  "projectElectFacet": [] - all electorates
+     *  "primarystate": "",
+     *  "primaryelect": "",
+     *  "otherStates": []
+     *  "otherElectorates": []
+     * ]
      */
-    Map findStateAndElectorateForProject(Map project) {
+    Map findStateAndElectorateForProject (Map project) {
         Map result = [:]
         if(project == null) {
             return result
         }
 
         Map geographicInfo = project?.geographicInfo
-        // isDefault is false or missing
-        if (geographicInfo == null || (geographicInfo.isDefault == false)) {
+        if (!geographicInfo?.statewide && !geographicInfo?.nationwide) {
             Map intersections = orderLayerIntersectionsByAreaOfProjectSites(project)
             Map config = metadataService.getGeographicConfig()
-            List intersectionLayers = config.checkForBoundaryIntersectionInLayers
+            List intersectionLayers = config?.checkForBoundaryIntersectionInLayers
             intersectionLayers?.each { layer ->
                 Map facetName = metadataService.getGeographicFacetConfig(layer)
                 if (facetName.name) {
                     List intersectionValues = intersections[layer]
                     if (intersectionValues) {
-                        result["primary${facetName.name}"] = intersectionValues.pop()
-                        result["other${facetName.name}"] = intersectionValues.join("; ")
+                        result["project${facetName.name.capitalize()}Facet"] = intersectionValues
                     }
                 }
                 else
@@ -1280,19 +1421,70 @@ class ProjectService {
             }
         }
 
-        //isDefault is true or false and no sites.
-        if (geographicInfo) {
-            // load from manually assigned electorates/states
-            if (!result.containsKey("primaryelect")) {
-                result["primaryelect"] = geographicInfo.primaryElectorate
-                result["otherelect"] = geographicInfo.otherElectorates?.join("; ")
-            }
+        // take a copy of calculated states & electorates for comparison
+        List statesInferredFromSites = result[PROJECT_STATE_FACET] ? new ArrayList<String>(result[PROJECT_STATE_FACET]) : []
+        List electoratesInferredFromSites = result[PROJECT_ELECT_FACET] ? new ArrayList<String>(result[PROJECT_ELECT_FACET]) : []
 
-            if (!result.containsKey("primarystate")) {
-                result["primarystate"] = geographicInfo.primaryState
-                result["otherstate"] = geographicInfo.otherStates?.join("; ")
+        // override primary state with manually entered value
+        if (geographicInfo?.overridePrimaryState) {
+            if (geographicInfo.primaryState) {
+                List states = result[PROJECT_STATE_FACET] = result[PROJECT_STATE_FACET] ?: []
+                states.add(0, geographicInfo.primaryState)
+                states.unique()
             }
         }
+
+        // override primary electorate with manually entered value
+        if (geographicInfo?.overridePrimaryElectorate) {
+            if (geographicInfo.primaryElectorate) {
+                List elects = result[PROJECT_ELECT_FACET] = result[PROJECT_ELECT_FACET] ?: []
+                elects.add(0, geographicInfo.primaryElectorate)
+                elects.unique()
+            }
+        }
+
+        List otherStates = new ArrayList(result[PROJECT_STATE_FACET] ?: [] as Collection)
+        List otherElectorates = new ArrayList(result[PROJECT_ELECT_FACET] ?: [] as Collection)
+        // choose primary states and electorates here so that values in other fields do not
+        // influence the result
+        result[PRIMARY_STATE] = otherStates ? otherStates.pop() : null
+        result[PRIMARY_ELECT] = otherElectorates ? otherElectorates.pop() : null
+
+        // adds missing states
+        if (geographicInfo?.otherStates) {
+            otherStates.addAll(geographicInfo.otherStates)
+            otherStates = otherStates.toUnique()
+        }
+
+        // removes excluded states
+        if (geographicInfo?.otherExcludedStates) {
+            otherStates.removeAll(geographicInfo.otherExcludedStates)
+        }
+
+        // otherElectorates are by default added to end of list
+        if (geographicInfo?.otherElectorates) {
+            otherElectorates.addAll(geographicInfo.otherElectorates)
+            otherElectorates = otherElectorates.toUnique()
+        }
+
+        // removes excluded electorates
+        if (geographicInfo?.otherExcludedElectorates) {
+            otherElectorates.removeAll(geographicInfo.otherExcludedElectorates)
+        }
+
+        // update fields containing all states and electorates
+        result[PROJECT_STATE_FACET] = result[PRIMARY_STATE] ? [result[PRIMARY_STATE]] + otherStates : otherStates
+        result[PROJECT_ELECT_FACET] = result[PRIMARY_ELECT] ? [result[PRIMARY_ELECT]] + otherElectorates : otherElectorates
+
+        // add other fields to result
+        result[OTHER_STATES_LIST] = otherStates
+        result[OTHER_ELECTORATES_LIST] = otherElectorates
+
+        // compare inferred values and final values to find if they are the same
+        if ((statesInferredFromSites != result[PROJECT_STATE_FACET]) || (electoratesInferredFromSites != result[PROJECT_ELECT_FACET] ))
+            result[GEOGRAPHIC_RANGE_OVERRIDDEN] = true
+        else
+            result[GEOGRAPHIC_RANGE_OVERRIDDEN] = false
 
         result
     }

@@ -8,6 +8,7 @@ import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
+import grails.web.databinding.DataBinder
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -20,7 +21,7 @@ import java.util.zip.ZipInputStream
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
-class MetadataService {
+class MetadataService implements DataBinder {
 
     static final String BUILD_VERSION_PROPERTY = "git.build.version"
     private static final String GIT_PROPERTIES_FILE = "git.properties"
@@ -66,7 +67,7 @@ class MetadataService {
         Map maxVersionsByName = [:]
         Map activitiesByName = [:]
 
-        ActivityForm.findAllWhereStatusNotEqualAndPublicationStatusEquals(Status.DELETED, PublicationStatus.PUBLISHED).each { ActivityForm activityForm ->
+        ActivityForm.findAllByPublicationStatusAndStatusNotEqual(PublicationStatus.PUBLISHED, Status.DELETED).each { ActivityForm activityForm ->
             Map activityModel = [
                     name: activityForm.name,
                     gmsId: activityForm.gmsId,
@@ -826,6 +827,10 @@ class MetadataService {
         return false
     }
 
+    boolean areDataEmpty(Map data) {
+        data?.every { it.value == null || it.value == "" }
+    }
+
     def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
         firstRow = firstRow ?: rows.first()
         rows?.eachWithIndex { Map row, int index->
@@ -833,7 +838,10 @@ class MetadataService {
             listData?.each { key, value ->
                 Map model = models?.find { it.name == key }
                 if ((row == firstRow) && !(firstRow[key] instanceof List)) {
-                    firstRow[key] = [firstRow[key]]
+                    if (!areDataEmpty(firstRow[key]))
+                        firstRow[key] = [firstRow[key]]
+                    else
+                        firstRow[key] = []
                 }
 
                 switch (model.dataType) {
@@ -843,12 +851,14 @@ class MetadataService {
                                 firstRow[key].add(value)
                         }
 
-                        rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        if (firstRow[key])
+                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
                         break
                     case DataTypes.IMAGE:
                     case DataTypes.PHOTOPOINTS:
-                        if (!firstRow[key].contains(value))
-                            firstRow[key].add(value)
+                        if (!areDataEmpty(value) && !firstRow[key].contains(value)) {
+                                firstRow[key].add(value)
+                        }
                         break
                 }
             }
@@ -901,10 +911,6 @@ class MetadataService {
         String searchName = (data?.scientificName)?.trim()
         if (!data?.guid && (searchName)) {
             Map bestMatch = speciesReMatchService.searchByName(searchName)
-            if(!bestMatch && data.commonName) {
-                String commonName = data.commonName
-                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
-            }
 
             if (bestMatch) {
                 data.guid = bestMatch?.guid
@@ -936,14 +942,14 @@ class MetadataService {
 
         properties.scoreId = Identifiers.getNew(true, '')
         Score score = new Score(scoreId:properties.scoreId)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
 
     Score updateScore(String id, Map properties) {
         Score score = Score.findByScoreId(id)
-        commonService.updateProperties(score, properties)
+        score.properties = properties
         score.save(flush:true)
         return score
     }
@@ -1216,7 +1222,7 @@ class MetadataService {
         // Make a copy of the services as we are going to augment them with target information.
         List results = projectServices.collect { service ->
             [
-                    name:service.name,
+                    name:service.getNameForProgramId(project.programId),
                     id: service.id,
                     scores: service.scores()?.collect { score ->
                         [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
@@ -1275,6 +1281,52 @@ class MetadataService {
 
     }
 
+    List<Term> findTermsByCategory(String category, String hubId = null) {
+        List<Term> terms = Term.createCriteria().list {
+            if (hubId) { // Support categories that are used in multiple hubs
+                eq('hubId', hubId)
+            }
+            eq('category', category)
+            ne('status', Status.DELETED)
+            order('term', 'asc')
+        }
+        terms
+    }
 
+    Term deleteTerm(String termId) {
+
+        Term term = Term.findByTermIdAndStatus(termId, Status.ACTIVE)
+        if (!term) {
+            return null
+        }
+
+        // Because of the unique constraint on Terms, if the same Term is deleted then
+        // re-added we can't soft delete it a second time without hard deleting any existing
+        // soft deleted Term.
+        Term deletedTerm = Term.findByTermAndCategoryAndHubIdAndStatus(
+                term.term, term.category, term.hubId, Status.DELETED)
+        if (deletedTerm) {
+            deletedTerm.delete(flush:true)
+        }
+
+        term.status = Status.DELETED
+        term.save(flush:true)
+
+        term
+    }
+
+    Term updateTerm(Map termProps) {
+        Term term
+        if (!termProps?.termId) {
+            term = new Term()
+        }
+        else {
+            term = Term.findByTermId(termProps.termId)
+        }
+
+        bindData(term, termProps)
+        term.save(flush:true)
+        term
+    }
 
 }

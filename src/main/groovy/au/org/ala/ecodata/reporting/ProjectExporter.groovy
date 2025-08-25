@@ -19,6 +19,10 @@ abstract class ProjectExporter extends TabbedExporter {
         // to be overridden if needed
     }
 
+    void exportDocumentsByProject(String projectId, Set<String> documentIds) {
+        // to be overridden if needed
+    }
+
     public void exportAllProjects(List<Map> projects) {
         projects.each { export(it) }
     }
@@ -27,6 +31,14 @@ abstract class ProjectExporter extends TabbedExporter {
         Project.withSession { session ->
             activityIdsByProjectId.each { projectId, activityIds ->
                 export(projectId, activityIds)
+            }
+        }
+    }
+
+    public void exportDocumentsByProjects(Map<String, Set<String>> documentIdsByProjectId) {
+        Project.withSession { session ->
+            documentIdsByProjectId.each { projectId, documentIds ->
+                exportDocumentsByProject(projectId, documentIds)
             }
         }
     }

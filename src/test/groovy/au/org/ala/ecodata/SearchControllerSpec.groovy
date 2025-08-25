@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.command.TargetReportCommand
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
@@ -89,8 +90,8 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         projectExporter instanceof ProjectXlsExporter
         ((ProjectXlsExporter)projectExporter).formSectionPerTab == formSectionPerTab
         projectExporter.tabsToExport == params.tabs
-        ((ProjectXlsExporter)projectExporter).configurableIntersectionHeaders == ["Primary State(s) (Interpreted)",	"Other State(s) (Interpreted)",	"Primary Electorate(s) (Interpreted)",	"Other Electorate(s) (Interpreted)"]
-        ((ProjectXlsExporter)projectExporter).configurableIntersectionProperties == ["primarystate", "otherstate", "primaryelect", "otherelect"]
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionHeaders == ["Geographic range overridden", "Primary State(s) (Interpreted)",	"Other State(s) (Interpreted)",	"Primary Electorate(s) (Interpreted)",	"Other Electorate(s) (Interpreted)"]
+        ((ProjectXlsExporter)projectExporter).configurableIntersectionProperties == [ProjectService.GEOGRAPHIC_RANGE_OVERRIDDEN, "primarystate", "otherstate", "primaryelect", "otherelect"]
 
         where:
         formSectionPerTab | _
@@ -222,6 +223,35 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         0 * userService.getCurrentUserDisplayName()
         0 * downloadService.downloadProjectDataAsync(_, _)
         response.status == HttpStatus.SC_UNPROCESSABLE_ENTITY
+    }
+
+    def "The targetsReportForScoreIds and targetsReportForScoreLabels delegates to the ReportService"() {
+        setup:
+        List scores = [
+            [scoreId:'s1', label:'Score 1'],
+            [scoreId:'s2', label:'Score 2']
+        ]
+        TargetReportCommand command = new TargetReportCommand(scoreIds:['s1', 's2'], fq:["programId:p1"], approvedActivitiesOnly: true)
+        command.reportService = reportService
+
+        when:
+        controller.targetsReportForScoreIds(command)
+
+        then:
+        1 * reportService.findScoresByScoreId(command.scoreIds) >> scores
+        1 * reportService.outputTargetsBySubProgram([fq:command.fq, query:command.query], scores)
+        1 * reportService.aggregate(command.fq, command.query, scores, null, command.approvedActivitiesOnly)
+
+        when:
+        command.scoreIds = null
+        command.scoreLabels = ['Score 1', 'Score 2']
+        controller.targetsReportForScoreIds(command)
+
+        then:
+        1 * reportService.findScoresByLabel(['Score 1', 'Score 2']) >> scores
+        1 * reportService.outputTargetsBySubProgram([fq:command.fq, query:command.query], scores)
+        1 * reportService.aggregate(command.fq, command.query, scores, null, command.approvedActivitiesOnly)
+
     }
 
 }

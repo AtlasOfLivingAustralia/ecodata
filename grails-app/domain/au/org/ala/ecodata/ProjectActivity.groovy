@@ -48,6 +48,7 @@ class ProjectActivity {
     MapLayersConfiguration mapLayersConfig
     String surveySiteOption
     boolean canEditAdminSelectedSites
+    boolean published
     Date dateCreated
     Date lastUpdated
 
@@ -87,6 +88,7 @@ class ProjectActivity {
         mapLayersConfig nullable: true
         surveySiteOption nullable: true, inList: ['sitepick','sitecreate', 'sitepickcreate']
         canEditAdminSelectedSites nullable: true
+        published nullable: true
     }
 
     static mapping = {

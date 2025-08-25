@@ -1,10 +1,8 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.graphql.mappers.OrganisationGraphQLMapper
-import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 import org.bson.types.ObjectId
 import org.springframework.validation.Errors
-
 /**
  * Represents an organisation that manages projects in MERIT and BioCollect.
  * Allows some branding as well as grouping / ownership of projects.
@@ -39,6 +37,8 @@ class Organisation {
 
     /** Stores configuration information for how reports should be generated for this organisation (if applicable) */
     Map config
+    /** Stores service target details like MeriPlan in projects */
+    Map custom
 
     String collectoryInstitutionId // Reference to the Collectory
 
@@ -74,6 +74,7 @@ class Organisation {
         config nullable: true
         sourceSystem nullable: true
         externalIds nullable: true
+        custom nullable: true
         hubId nullable: true, validator: { String hubId, Organisation organisation, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(organisation, 'organisationId', 'hubId', errors)
         }

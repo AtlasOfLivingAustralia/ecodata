@@ -48,6 +48,7 @@ class SiteService {
             ExternalId.IdType.values().toList().each {
                 if (it.name().startsWith('MONITOR_')) {
                     monitorIdTypes << it
+                    monitorIdTypes << it.name()
                 }
             }
 
@@ -207,7 +208,7 @@ class SiteService {
         ]
         Map geojson
 
-        if (site.type == Site.TYPE_COMPOUND) {
+        if (site.features) {
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
@@ -301,12 +302,12 @@ class SiteService {
         }
     }
 
-    def update(Map props, String id, boolean enableCentroidRefresh = true) {
+    def update(Map props, String id, boolean forceRefresh = false) {
         Site site = Site.findBySiteId(id)
 
         if (site) {
             try {
-                updateSite(site, props, enableCentroidRefresh)
+                updateSite(site, props, forceRefresh)
                 return [status:'ok']
             } catch (Exception e) {
                 Site.withSession { session -> session.clear() }
@@ -331,7 +332,7 @@ class SiteService {
 
         assignPOIIds(props)
         // If the site location is being updated, refresh the location metadata.
-        if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
+        if (forceRefresh || hasGeometryChanged(toMap(site, FLAT), props)) {
             if (asyncUpdate){
                 // Sharing props object between thread causes ConcurrentModificationException.
                 // Cloned object is used by spawned thread.
@@ -370,7 +371,8 @@ class SiteService {
 
         return (site.extent?.source != newProps.extent.source) ||
                 (site.extent?.geometry?.coordinates != newProps.extent.geometry.coordinates) ||
-                (site.extent?.geometry?.pid != newProps.extent.geometry.pid)
+                (site.extent?.geometry?.pid != newProps.extent.geometry.pid) ||
+                (site.features != newProps.features)
     }
 
     void delete(String siteId, boolean destroy = false) {
@@ -1083,12 +1085,14 @@ class SiteService {
         code
     }
 
-    List filterSitesByPurposeIsReportingOrEMSA (List<Map> sites) {
-        sites?.findAll { getPurpose(it) == Site.EMSA_SITE_CODE || getPurpose(it) == Site.REPORTING_SITE_CODE }
+    List findAllSitesExceptProjectArea(List<Map> sites) {
+        sites?.findAll {
+            it.type != Site.TYPE_PROJECT_AREA
+        }
     }
 
-    List filterSitesByPurposeIsPlanning (List<Map> sites) {
-        sites?.findAll { getPurpose(it) == Site.PLANNING_SITE_CODE }
+    List findAllSitesByTypeProjectArea(List<Map> sites) {
+        sites?.findAll { it.type == Site.TYPE_PROJECT_AREA }
     }
 
     /**

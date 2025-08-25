@@ -1,19 +1,10 @@
 package au.org.ala.ecodata
 
-import au.org.ala.userdetails.UserDetailsClient
 import au.org.ala.web.AuthService
-import au.org.ala.ws.security.client.AlaOidcClient
 import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.pac4j.core.config.Config
-import org.pac4j.core.context.WebContext
-import org.pac4j.core.credentials.Credentials
-import org.pac4j.core.util.FindBest
-import org.pac4j.jee.context.JEEContextFactory
-import org.springframework.beans.factory.annotation.Autowired
 
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class UserService {
 
@@ -22,11 +13,7 @@ class UserService {
     AuthService authService
     WebService webService
     GrailsApplication grailsApplication
-    UserDetailsClient userDetailsClient
-    @Autowired(required = false)
-    Config config
-    @Autowired(required = false)
-    AlaOidcClient alaOidcClient
+
 
     /** Limit to the maximum number of Users returned by queries */
     static final int MAX_QUERY_RESULT_SIZE = 1000
@@ -59,9 +46,7 @@ class UserService {
 
         def userDetails = getUserForUserId(userId)
         if (!userDetails) {
-            if (log.debugEnabled) {
-                log.debug("Unable to lookup user details for userId: ${userId}")
-            }
+            log.warn("Unable to lookup user details for userId: ${userId}")
             userDetails = new UserDetails(userId: userId, userName: 'unknown', displayName: 'Unknown')
         }
 
@@ -179,38 +164,60 @@ class UserService {
     }
 
 
-    /**
-     * Get user from JWT.
-     * @param authorizationHeader
-     * @return
-     */
-    au.org.ala.web.UserDetails getUserFromJWT(String authorizationHeader = null) {
-        if((config == null) || (alaOidcClient == null))
-            return
-        try {
-            GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup()
-            HttpServletRequest request = grailsWebRequest.getCurrentRequest()
-            HttpServletResponse response = grailsWebRequest.getCurrentResponse()
-            if (!authorizationHeader)
-                authorizationHeader = request?.getHeader(AUTHORIZATION_HEADER_FIELD)
-            if (authorizationHeader?.startsWith("Bearer")) {
-                final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
-                def optCredentials = alaOidcClient.getCredentials(context, config.sessionStore)
-                if (optCredentials.isPresent()) {
-                    Credentials credentials = optCredentials.get()
-                    def optUserProfile = alaOidcClient.getUserProfile(credentials, context, config.sessionStore)
-                    if (optUserProfile.isPresent()) {
-                        def userProfile = optUserProfile.get()
-                        String userId = userProfile?.userId ?: userProfile?.getAttribute(grailsApplication.config.getProperty('userProfile.userIdAttribute'))
-                        if (userId) {
-                            return authService.getUserForUserId(userId)
-                        }
-                    }
-                }
-            }
-        } catch (Throwable e) {
-            log.error("Failed to get user details from JWT", e)
+    private String checkForDelegatedUserId(HttpServletRequest request) {
+        // When BioCollect or MERIT calls ecodata, they use a M2M access token which contains custom scopes to
+        // enable access to the ecodata API.
+        // We can trust the requests containing bearer tokens with this scope and extract the userId from a header.
+        String scope = grailsApplication.config.getProperty('app.readScope')
+        if (!scope) {
+            log.error("No read scope specified in config.")
             return null
+        }
+
+        if (request.isUserInRole(scope)) {
+            return request.getHeader(AuditInterceptor.httpRequestHeaderForUserId)
+        }
+        return null
+    }
+
+    def setUser() {
+        GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup()
+        HttpServletRequest request = grailsWebRequest.getCurrentRequest()
+
+        // First check if we've already saved the profile.
+        def userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
+
+        if (userDetails) {
+            return userDetails
+        }
+
+        // if the token is an ALA M2M token from MERIT or BioCollect, we can obtain the userId
+        // from a separate header.  This is the most common scenario as most calls to ecodata will fall into
+        // this category.
+        String userId = checkForDelegatedUserId(request)
+
+        // Otherwise, if the user has logged in interactively or supplies a bearer token which identifies the user
+        // (e.g. the Monitor app passes the user token) the authService will be able to resolve the user from the token.
+        // If the OIDC provider is CAS, authService.getUser() will return the clientId, if it's Cognito, it will return null.
+        if (!userId) {
+            userId = authService.getUserId()
+        }
+        if (userId) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting current user to ${userId}")
+            }
+
+
+            userDetails = setCurrentUser(userId)
+            if (userDetails) {
+                // We set the current user details in the request scope because
+                // the 'afterView' hook can be called prior to the actual rendering (despite the name)
+                // and the thread local can get clobbered before it is actually required.
+                // Consumers who have access to the request can simply extract current user details
+                // from there rather than use the service.
+                request.setAttribute(UserDetails.REQUEST_USER_DETAILS_KEY, userDetails)
+                return userDetails
+            }
         }
     }
 }

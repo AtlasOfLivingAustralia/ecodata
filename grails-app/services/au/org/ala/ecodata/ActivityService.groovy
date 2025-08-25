@@ -165,13 +165,19 @@ class ActivityService {
         }
     }
 
-    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false, includeExternalActivities = false) {
         List activities
         if (includeDeleted) {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
-        else {
+        else if (includeExternalActivities) {
             activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
+        else {
+            // By specifying externalIds:null we are excluding Monitor activities from the search as they can't
+            // contribute to the output scores and for some projects there are a lot of them and they can have
+            // a very large amount of data associated with them.
+            activities = Activity.findAllByProjectIdAndStatusAndExternalIds(id, ACTIVE, null).collect { toMap(it, levelOfDetail) }
         }
         activities
     }
@@ -649,6 +655,36 @@ class ActivityService {
         }
     }
 
+    def getAllActivityIdsForProject(String projectId) {
+        Activity.withCriteria {
+            eq "projectId", projectId
+            projections {
+                property("activityId")
+            }
+        }
+    }
+
+
+    /**
+     * An activity is embargoed if either of the below conditions are satisfied
+     * 1. embargoed flag is set to true on an activity
+     * 2. project activity is embargoed until a defined date
+     * @param activity
+     * @param projectActivity
+     * @return
+     */
+    boolean isActivityEmbargoed(Activity activity, ProjectActivity projectActivity){
+        if (activity.embargoed) {
+            return activity.embargoed
+        }
+
+        if (projectActivity?.visibility?.embargoUntil) {
+            return projectActivity?.visibility?.embargoUntil.after(new Date())
+        }
+
+        return false
+    }
+
     List findAllForOrganisationId(id, levelOfDetail = [], includeDeleted = false) {
         List activities
         if (includeDeleted) {
@@ -659,5 +695,4 @@ class ActivityService {
         }
         activities
     }
-
 }

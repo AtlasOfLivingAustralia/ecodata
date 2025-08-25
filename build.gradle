@@ -20,7 +20,8 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-version "5.1-SNAPSHOT"
+
+version "$ecodataVersion"
 group "au.org.ala"
 description "Ecodata"
 
@@ -38,7 +39,7 @@ if (Boolean.valueOf(enableJacoco)) {
 }
 
 sourceCompatibility = '11'
-targetCompatibility = '11'
+targetCompatibility = '17'
 
 apply from: "${project.projectDir}/gradle/publish.gradle"
 
@@ -73,7 +74,8 @@ dependencies {
     implementation "org.grails:grails-plugin-services"
     implementation "org.grails:grails-plugin-url-mappings"
     implementation "org.grails:grails-plugin-interceptors"
-    implementation "org.grails.plugins:cache"
+    implementation "org.grails.plugins:cache-ehcache:3.0.0"
+    implementation "org.ehcache:ehcache:3.10.8"
     implementation "org.grails.plugins:async"
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:events"
@@ -98,13 +100,11 @@ dependencies {
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "org.elasticsearch.client:elasticsearch-rest-client:$elasticsearchVersion"
 
-    implementation "com.spatial4j:spatial4j:0.5"
-
-    implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.7'
-    implementation group: 'org.locationtech.jts', name: 'jts-core', version: '1.15.0'
+    implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.8'
 
     implementation 'org.apache.poi:poi:5.2.2'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
+    implementation 'org.apache.poi:poi-ooxml-full:5.2.2'
     implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
@@ -134,6 +134,7 @@ dependencies {
     implementation "com.drewnoakes:metadata-extractor:2.10.1"
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
 
     implementation 'org.grails.plugins:quartz:2.0.13'
     implementation 'org.quartz-scheduler:quartz:2.2.1' // Need transitive dependency from plugin
@@ -207,16 +208,6 @@ tasks.withType(Test) {
         exceptionFormat 'full'
         showStandardStreams true
     }
-}
-
-tasks.register("mongoSpecTests", Test) {
-    useJUnitPlatform {
-        includeTags "mongo"
-    }
-}
-
-test {
-    dependsOn "mongoSpecTests"
 }
 
 assets {

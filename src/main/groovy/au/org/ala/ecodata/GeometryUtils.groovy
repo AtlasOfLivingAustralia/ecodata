@@ -12,6 +12,7 @@ import org.geotools.referencing.GeodeticCalculator
 import org.locationtech.jts.geom.*
 import org.locationtech.jts.io.WKTReader
 import org.locationtech.jts.io.WKTWriter
+import org.locationtech.jts.operation.buffer.BufferOp
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier
 import org.locationtech.jts.util.GeometricShapeFactory
 import org.opengis.referencing.crs.CoordinateReferenceSystem
@@ -19,7 +20,6 @@ import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
 import java.nio.charset.StandardCharsets
-
 /**
  * Helper class for working with site geometry.
  */
@@ -147,6 +147,25 @@ class GeometryUtils {
         }
     }
 
+    /**
+     * Converts a LineString or MultiLineString to a thin polygon by buffering the geometry.
+     * @param geom
+     * @param bufferDistance - distance in meter in one side of the line. Therefore, 0.5m buffer will create a 1m wide polygon.
+     * @return
+     */
+    static Geometry convertLineStringOrMultiLineStringToThinPolygon (Geometry geom, double bufferDistance) {
+        if (geom.geometryType in ['LineString', 'MultiLineString']) {
+            CoordinateReferenceSystem utmCrs = getUtmCoordinateReferenceSystem(geom)
+            // convert to utm geometry
+            Geometry utmGeom = wgs84ToUtm(geom)
+            Geometry polygonGeom = BufferOp.bufferOp(utmGeom, bufferDistance)
+            // convert back to wgs84
+            return utmToWgs84(polygonGeom, utmCrs)
+        }
+
+        return geom
+    }
+
     static MultiPolygon polygonToMultiPolygon(Polygon polygon) {
         Polygon[] multiPolygon = new Polygon[1]
         multiPolygon[0] = polygon
@@ -215,10 +234,30 @@ class GeometryUtils {
         utmGeom.area
     }
 
+    static double lengthM2(Geometry wgs84Geom) {
+        Geometry utmGeom = wgs84ToUtm(wgs84Geom)
+        utmGeom.length
+    }
+
+    static boolean isLine(Geometry geom) {
+        return geom.geometryType in ['LineString', 'MultiLineString']
+    }
+
     static Geometry wgs84ToUtm(Geometry wgs84Geom) {
-        CoordinateReferenceSystem utm = CRS.decode("AUTO2:42001,"+wgs84Geom.centroid.x+","+wgs84Geom.centroid.y, true)
+        CoordinateReferenceSystem utm = getUtmCoordinateReferenceSystem(wgs84Geom)
         MathTransform toMetres = CRS.findMathTransform(sourceCRS, utm)
         JTS.transform(wgs84Geom, toMetres)
+    }
+
+    static CoordinateReferenceSystem getUtmCoordinateReferenceSystem(Geometry wgs84Geom) {
+        CoordinateReferenceSystem utm = CRS.decode("AUTO2:42001," + wgs84Geom.centroid.x + "," + wgs84Geom.centroid.y, true)
+        return utm
+    }
+
+    static Geometry utmToWgs84(Geometry utmGeom, CoordinateReferenceSystem utm) {
+        CoordinateReferenceSystem targetCRS = sourceCRS
+        MathTransform toDegrees = CRS.findMathTransform(utm, targetCRS)
+        JTS.transform(utmGeom, toDegrees)
     }
 
     static Geometry geometryForCircle(double centreLat, double centreLon, double radiusInMetres) {

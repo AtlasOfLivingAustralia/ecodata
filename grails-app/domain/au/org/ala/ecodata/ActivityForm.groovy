@@ -145,6 +145,4 @@ class ActivityForm {
             status != Status.DELETED
         }.find()
     }
-
-
 }

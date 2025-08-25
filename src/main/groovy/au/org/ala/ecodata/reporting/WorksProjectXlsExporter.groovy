@@ -21,8 +21,10 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Status']
     List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'funding', 'keywords', 'outcomeDate', new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Project Description', 'Status', 'External ID', 'RAID', 'Program ID', 'Project Manager', 'Organisations', 'Grant ID',  'Planned Start Date', 'Planned End Date', 'Date Created', 'Date Last Updated', 'Project Type', 'Science Type', 'EcoScience Type', 'Tags',
+                                   'Org ID Grantee', 'Org ID Sponsor', 'Project Life Cycle Status', 'Funding Type']
+    List<String> projectProperties = ['projectId', 'name', 'description', 'status', 'externalId', 'raidExternalId', 'programId', 'managerEmail', 'allOrganisations', 'grantId', 'plannedStartDate', 'plannedEndDate', 'dateCreated', 'lastUpdated', 'projectType', 'scienceType', 'ecoScienceType', 'tags',
+                                      'orgIdGrantee', 'orgIdSponsor', 'projLifecycleStatus', 'fundingType']
 
     List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
     List<String> outcomeProperties = commonProjectProperties + [new ISODateStringGetter('date'), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
@@ -85,14 +87,32 @@ class WorksProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
-        projectSheet()
+        List<String> headers = new ArrayList<>(projectHeaders)
+        List<String> properties = new ArrayList<>(projectProperties)
+
+        if (project.isEcoScience) {
+            headers += ['Category', 'National Scale', 'Indigenous Cultural IP', 'Ethics Approval', 'Ethics Approval Number', 'Ethics Contact Details']
+            properties += ['customMetadata.category', 'geographicInfo.nationwide', 'customMetadata.indigenousCulturalIP', 'customMetadata.ethicsApproval', 'customMetadata.ethicsApprovalNumber', 'customMetadata.ethicsContactDetails']
+        }
+
+        def raidEntry = (project.externalIds ?: []).find { it?.idType == ExternalId.IdType.ARDC_RAID }
+        project.raidExternalId = raidEntry?.externalId ?: ''
+
+        if (!projectSheet) {
+            projectSheet = exporter.addSheet('Project', headers)
+        }
         int row = projectSheet.getSheet().lastRowNum
         project.allOrganisations = organisationNames(project).join(',')
+        project.scienceType = project.scienceType?.join(',') ?: ''
+        project.ecoScienceType = project.ecoScienceType?.join(',') ?: ''
+        project.tags = project.tags?.join(',') ?: ''
+
         Map outcome = mostRecentOutcome(project)
         project.outcomeDate = outcome?.date ?: ''
         project.outcome = outcome?.progress ?: ''
         project.outcomeType = outcome?.type ?: ''
-        projectSheet.add([project], projectProperties, row + 1)
+
+        projectSheet.add([project], properties, row + 1)
     }
 
     private String projectStatus(Map project) {

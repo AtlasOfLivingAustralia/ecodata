@@ -45,6 +45,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
     def reportingService = Mock(ReportingService)
     def activityFormService = Mock(ActivityFormService)
     def permissionService = Mock(PermissionService)
+    def documentService = Mock(DocumentService)
     def xlsExporter
     CSProjectXlsExporter csProjectXlsExporter
 
@@ -64,6 +65,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
             userService(UserService)
             reportingService(ReportingService)
             activityFormService(ActivityFormService)
+            documentService(DocumentService)
         }
         outputFile = File.createTempFile('test', '.xlsx')
         String name = outputFile.absolutePath
@@ -79,6 +81,7 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         csProjectXlsExporter.userService = userService
         csProjectXlsExporter.permissionService = permissionService
         csProjectXlsExporter.activityFormService = activityFormService
+        csProjectXlsExporter.documentService = documentService
     }
 
     void teardown() {
@@ -140,6 +143,36 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         recordsSheet.physicalNumberOfRows == 2
         List recordRow1 =  ExportTestUtils.readRow(1, recordsSheet)
         recordRow1[0] == 'occurs123'
+    }
+
+    def "CsProjectXlsExporter.exportDocumentsByProject is creating work sheet"() {
+        setup:
+        Map documentsByProjects = [
+                "abc": new LinkedHashSet<String>(['doc1', 'doc2']),
+        ]
+
+        documentService.get('doc1') >> [name: 'doc 1', type: 'image', role: 'primary', projectId: 'abc', documentId: 'doc1', filepath: '/path/to/doc1.jpg']
+        documentService.get('doc2') >> [name: 'doc 2', type: 'image', role: 'primary', projectId: 'abc', documentId: 'doc2', filepath: '/path/to/doc1.jpg']
+        projectService.get('abc', projectService.BASIC) >> [projectId: 'abc', name: 'Project ABC', organisationName: 'Test Org']
+        when:
+        csProjectXlsExporter.exportDocumentsByProjects(documentsByProjects)
+        xlsExporter.save()
+        Workbook workbook =  ExportTestUtils.readWorkbook(outputFile)
+        Sheet products = workbook.getSheet("Product")
+        List doc1Row =  ExportTestUtils.readRow(1, products)
+        List doc2Row =  ExportTestUtils.readRow(2, products)
+
+        then:
+        workbook.numberOfSheets == 1
+        products.physicalNumberOfRows == 3 //returns 2 rows, header and one data row
+        doc1Row[0] == 'abc'
+        doc1Row[1] == 'Project ABC'
+        doc1Row[2] == 'doc1'
+        doc1Row[3] == 'doc 1'
+        doc2Row[0] == 'abc'
+        doc1Row[1] == 'Project ABC'
+        doc2Row[2] == 'doc2'
+        doc2Row[3] == 'doc 2'
     }
 
 
