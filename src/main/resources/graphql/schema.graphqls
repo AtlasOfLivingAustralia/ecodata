@@ -193,8 +193,8 @@ type Program {
 }
 
 type Project {
-    dateCreated: Date
-    lastUpdated: Date
+    dateCreated: DateTime
+    lastUpdated: DateTime
     status: Status
     "A list of organisations that have a relationship with this Project.  "
     associatedOrgs: [AssociatedOrg]
@@ -226,6 +226,8 @@ type Project {
 
 type Site {
     siteId: String
+    dateCreated: DateTime
+    lastUpdated: DateTime
     name: String
     geoJson: GeoJson
 }
@@ -262,7 +264,6 @@ type Query {
         startDate: String
     ): [ManagementUnit]
     searchMeritProjects(
-        activities: [activities],
         assetsAddressed: [String],
         associatedProgram: [String],
         associatedSubProgram: [String],
@@ -281,6 +282,7 @@ type Query {
         max: Int,
         meritProjectID: [String],
         myProjects: Boolean,
+        order: AscDesc,
         organisation: [String],
         otherRegion: [String],
         page: Int,
@@ -289,11 +291,12 @@ type Query {
         projectId: String,
         reports: ReportQuery,
         secondaryOutcomes: [String],
+        sort: String,
         state: [String],
         status: [String],
         tags: [String],
-        "yyyy-mm-dd"
-        toDate: String,
+        toDate: Date,
+        updatedAfter: String,
         userNominatedProject: [String]
     ): ProjectPagedResult
     sites(max: Int, page: Int, siteIds: [String], term: String!): [Site]
@@ -368,6 +371,11 @@ enum YesNo {
     yes
 }
 
+enum AscDesc {
+    asc
+    desc
+}
+
 input ReportQuery {
     "yyyy-mm-dd"
     fromDate: String
@@ -395,6 +403,7 @@ input outputInput {
 }
 
 scalar Date
+scalar DateTime
 scalar ObjectId
 scalar object
 scalar Schema

@@ -50,6 +50,7 @@ class GraphQLConfig {
                  GraphQLScalarType.newScalar().name("Summary").description("").coercing(new SummaryConverter()).build(),
                  GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build(),
                  GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build(),
+                 GraphQLScalarType.newScalar().name("DateTime").description("").coercing(new DateTimeFormatting()).build(),
                  GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build(),
                  GraphQLScalarType.newScalar().name('AmountDelivered').description("Amount delivered").coercing(new MapConverter()).build(),
                  GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
