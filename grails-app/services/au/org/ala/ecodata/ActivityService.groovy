@@ -695,4 +695,8 @@ class ActivityService {
         }
         activities
     }
+
+    long countOfProjectActivities(String projectId) {
+        ProjectActivity.countByProjectIdAndStatusNotEqual(projectId, Status.DELETED)
+    }
 }
