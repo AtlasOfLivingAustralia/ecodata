@@ -27,7 +27,6 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
     SiteService siteService = Mock(SiteService)
     ActivityService activityService = Mock(ActivityService)
     DocumentService documentService = Mock(DocumentService)
-    ProjectActivityService projectActivityService = Mock(ProjectActivityService)
     CacheService cacheService = new CacheService()
 
     def setup() {
@@ -40,7 +39,6 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         service.activityService = activityService
         service.projectActivityService = projectActivityService
         service.documentService = documentService
-        service.projectActivityService = projectActivityService
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
