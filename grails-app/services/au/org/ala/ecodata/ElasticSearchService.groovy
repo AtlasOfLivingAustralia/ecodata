@@ -1230,6 +1230,16 @@ class ElasticSearchService {
             it.userId
         }?.unique(false)
 
+        // Add keyword ALL to project participants if any survey is open to public. This will be helpful in places such
+        // as  PWA app to list user's project or project with publicly accessible surveys.
+        if (projectMap.projectActivities?.any { it.publicAccess && it.published }) {
+            if (projectMap.allParticipants == null) {
+                projectMap.allParticipants = []
+            }
+
+            projectMap.allParticipants << 'ALL'
+        }
+
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
         if(projectMap.managementUnitId)
@@ -1253,6 +1263,16 @@ class ElasticSearchService {
                 if (!projectMap.visibility && program.inheritedConfig?.visibility) {
                     projectMap.visibility = program.inheritedConfig.visibility
                 }
+                List services = project.findProjectServices()
+
+                if (services) {
+                    projectMap.services = services?.collect{
+                        it.getProgramLabels()?[project.programId]?.label ?: it.name
+                    }
+                }
+
+
+
             }
             else {
                 log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
@@ -1391,7 +1411,6 @@ class ElasticSearchService {
             }
 
             addYearAndMonthToEntity(activity, activity)
-
             // Attempt to get survey date from outputs. The above code does not capture date if no species occurrence
             // is created from a survey.
             if (eventDate == null) {
