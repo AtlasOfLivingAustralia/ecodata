@@ -4,11 +4,15 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
 import au.org.ala.ecodata.graphql.models.TargetMeasure
-import graphql.schema.GraphQLEnumType
-import graphql.schema.GraphQLScalarType
+import graphql.schema.*
 import graphql.schema.idl.EnumValuesProvider
 import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.SchemaGenerator
+import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.util.TraversalControl
+import graphql.util.TraverserContext
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.execution.BatchLoaderRegistry
@@ -158,6 +162,37 @@ class GraphQLConfig {
                 [(service.legacyId): service]
             })
         })
+    }
+
+    /** Here we transform the schema to add descriptions from the DataDescription collection. */
+    @Bean
+    GraphQlSourceBuilderCustomizer sourceBuilderCustomizer() {
+        return (builder) ->
+                builder.schemaFactory { TypeDefinitionRegistry typeDefinitionRegistry, RuntimeWiring runtimeWiring ->
+                    GraphQLSchema schema = new SchemaGenerator().makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
+                    //def enhancedSchema = new GraphQLSchemaDescriptionEnhancer().enhanceSchemaWithDescriptions(schema)
+                    SchemaTransformer.transformSchema(schema, new GraphQLTypeVisitorStub() {
+                        @Override
+                        TraversalControl visitGraphQLObjectType(GraphQLObjectType node, TraverserContext<GraphQLSchemaElement> context) {
+                            List<DataDescription> descriptions = DataDescription.findAllByEntity('au.org.ala.ecodata.'+node.name)
+                            if (descriptions) {
+
+                                changeNode(context, node.transform({ GraphQLObjectType.Builder objectBuilder ->
+                                    node.fieldDefinitions.each { GraphQLFieldDefinition field ->
+                                        DataDescription description = descriptions.find{it.graphQlName == field.name }
+                                        if (description) {
+                                            objectBuilder.field(field.transform {it.description(description.graphQLDescription?:description.description)})
+                                        }
+
+                                    }
+                                }) )
+                            }
+                            return super.visitGraphQLObjectType(node, context)
+                        }
+                    })
+                }
+
+
     }
 
 }
