@@ -4,6 +4,8 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
 import au.org.ala.ecodata.graphql.models.TargetMeasure
+import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.instrumentation.tracing.TracingInstrumentation
 import graphql.schema.*
 import graphql.schema.idl.EnumValuesProvider
 import graphql.schema.idl.RuntimeWiring
@@ -41,6 +43,11 @@ class GraphQLConfig {
     @Bean
     WebGraphQlInterceptor webGraphQlInterceptor() {
        new GraphQLInterceptor(userService, hubService, permissionService)
+    }
+
+    @Bean
+    Instrumentation instrumentation() {
+        return new TracingInstrumentation()
     }
 
     @Bean
@@ -139,10 +146,6 @@ class GraphQLConfig {
 
             Mono.just(outputs)
         })
-
-        registry.forTypePair(String, AmountDelivered).registerMappedBatchLoader { (scoreIds, env) ->
-            new AmountDelivered()
-        }
 
         registry.forTypePair(String, TargetMeasure).registerMappedBatchLoader ( (scoreIds, env) -> {
             Map<String, TargetMeasure> targetMeasures = Score.findAllByScoreIdInList(new ArrayList(scoreIds)).collectEntries { Score score ->
