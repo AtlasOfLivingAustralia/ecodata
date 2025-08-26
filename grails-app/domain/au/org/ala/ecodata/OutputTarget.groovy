@@ -2,32 +2,12 @@ package au.org.ala.ecodata
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import grails.databinding.BindingFormat
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 /**
  * Stores details of a target a project plans to achieve.
  */
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class OutputTarget {
-
-    static graphql = GraphQLMapping.build {
-        operations.get.enabled false
-        operations.list.enabled false
-        operations.count.enabled false
-        operations.create.enabled false
-        operations.update.enabled false
-        operations.delete.enabled false
-        exclude('scoreId', 'periodTargets', 'outcomeTargets')
-        add('targetMeasure', Score) {
-            description("A target measure")
-            dataFetcher { OutputTarget outputTarget ->
-                if (outputTarget?.scoreId) {
-                    Score.findByScoreId(outputTarget.scoreId)
-                }
-
-            }
-        }
-    }
 
     static constraints = {
         targetDate nullable: true

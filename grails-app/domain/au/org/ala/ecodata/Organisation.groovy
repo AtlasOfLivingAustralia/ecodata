@@ -1,15 +1,14 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.OrganisationGraphQLMapper
+
 import org.bson.types.ObjectId
 import org.springframework.validation.Errors
+
 /**
  * Represents an organisation that manages projects in MERIT and BioCollect.
  * Allows some branding as well as grouping / ownership of projects.
  */
 class Organisation {
-
-    static graphql = OrganisationGraphQLMapper.graphqlMapping()
 
     ObjectId id
     /** The hubId of the Hub in which this organisation was created */

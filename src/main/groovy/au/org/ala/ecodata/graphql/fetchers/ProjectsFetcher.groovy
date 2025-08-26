@@ -52,7 +52,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
     private Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
         EcodataGraphQLContextBuilder.EcodataGraphQLContext context = ecodataGraphQLContextBuilder.buildContext(null)
-        environment.graphQlContext.put("securityContext", context)
+
         String query = queryString ?:"*:*"
         SearchResponse searchResponse
 

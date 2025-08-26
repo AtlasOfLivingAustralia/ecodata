@@ -222,6 +222,8 @@ type Project {
     reports: [Report]
 
     sites: [Site]
+
+    documents: [Document]
 }
 
 type Site {
@@ -324,6 +326,25 @@ type TargetMeasure {
     targetMeasureId: String
     service: Service
     label: String
+}
+
+type Document {
+    documentId: String
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    name: String
+    attribution: String
+    license: String
+    type: String
+    role: String
+    citation: String
+    doiLink: String
+    url: String
+    hosted: String
+    identifier: String
+    dateTaken: DateTime
+
 }
 
 enum Status {

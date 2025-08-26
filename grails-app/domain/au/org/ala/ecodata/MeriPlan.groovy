@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.MeriPlanGraphQLMapper
+
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
@@ -119,8 +119,6 @@ class ManagementPlan {
  */
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class MeriPlan {
-
-    static graphql = MeriPlanGraphQLMapper.graphqlMapping()
 
     Map details
     List<OutputTarget> outputTargets

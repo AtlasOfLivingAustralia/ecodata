@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
@@ -12,8 +11,6 @@ import static au.org.ala.ecodata.Status.COMPLETED
 
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class Project {
-
-    static graphql = ProjectGraphQLMapper.graphqlMapping()
 
     /*
     Associations:

@@ -1,7 +1,6 @@
 package au.org.ala.ecodata.graphql.controller
 
 import au.org.ala.ecodata.*
-import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder.EcodataGraphQLContext
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import grails.compiler.GrailsCompileStatic
@@ -9,7 +8,6 @@ import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.graphql.data.method.annotation.ContextValue
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
@@ -60,6 +58,11 @@ class ProjectQueryController {
         resultList
     }
 
+    @SchemaMapping(typeName = "Project", field = "documents")
+    List<Document> documents(Project project) {
+        Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'desc'])
+    }
+
     @SchemaMapping(typeName = "Project", field = "program")
     CompletableFuture<Program> program(Project project, DataLoader<String, Program> programDataLoader) {
         programDataLoader.load(project.programId)
@@ -78,7 +81,7 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Project", field = "sites")
-    List<Site> sites(Project project, @ContextValue EcodataGraphQLContext securityContext) {
+    List<Site> sites(Project project) {
 
         Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
 

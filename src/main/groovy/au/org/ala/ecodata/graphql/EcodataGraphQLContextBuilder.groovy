@@ -2,18 +2,16 @@ package au.org.ala.ecodata.graphql
 
 import au.org.ala.ecodata.*
 import grails.core.GrailsApplication
-import org.grails.gorm.graphql.plugin.GraphQLContextBuilder
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class EcodataGraphQLContextBuilder implements GraphQLContextBuilder {
+class EcodataGraphQLContextBuilder  {
 
     @Autowired
     GrailsApplication grailsApplication
 
-    @Override
     EcodataGraphQLContext buildContext(GrailsWebRequest request) {
 
         EcodataGraphQLContext context = new EcodataGraphQLContext()

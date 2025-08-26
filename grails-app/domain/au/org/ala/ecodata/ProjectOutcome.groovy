@@ -2,15 +2,6 @@ package au.org.ala.ecodata
 
 class ProjectOutcome {
 
-    static graphql = {
-        operations.get.enabled false
-        operations.list.enabled false
-        operations.count.enabled false
-        operations.create.enabled false
-        operations.update.enabled false
-        operations.delete.enabled false
-        exclude('details', 'errors', 'id')
-    }
     String description
     String relatedOutcome
     String code

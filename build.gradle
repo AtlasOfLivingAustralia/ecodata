@@ -83,8 +83,7 @@ dependencies {
     implementation "org.grails:grails-plugin-databinding"
     implementation "org.grails:grails-plugin-codecs"
     implementation "org.grails.plugins:mongodb:$gormMongoVersion"
-    implementation "org.grails.plugins:gorm-graphql-plugin:3.0.0"
-    // Without this override, 18.1 is being included which is not compatible with the graphql-plugin
+
     implementation "com.graphql-java:graphql-java:21.0"
     implementation "org.grails.plugins:gsp"
     console "org.grails:grails-console"

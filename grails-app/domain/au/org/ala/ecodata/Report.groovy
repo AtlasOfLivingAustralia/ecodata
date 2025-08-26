@@ -1,10 +1,7 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.models.TargetMeasure
-import grails.util.Holders
+
 import org.bson.types.ObjectId
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
-import org.grails.gorm.graphql.fetcher.impl.ClosureDataFetchingEnvironment
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 
@@ -14,39 +11,6 @@ import org.joda.time.DateTimeConstants
  * generally all MERIT programmes will require a stage report, which is a report on works activities during a period of time.
  */
 class Report {
-
-    static graphql = GraphQLMapping.lazy {
-
-        // Disable default operations, including get as we only want to expose UUIDs in the API not internal ones
-        operations.get.enabled false
-        operations.list.enabled false
-        operations.count.enabled false
-        operations.create.enabled false
-        operations.update.enabled false
-        operations.delete.enabled false
-
-        add('targetMeasures', [TargetMeasure]) {
-            description("The Project target measures as calculated from the data in this report")
-            dataFetcher { Report report, ClosureDataFetchingEnvironment env ->
-                Map activity = Holders.applicationContext.activityService.get(report.activityId)
-                List<Score> scores = Holders.applicationContext.projectService.getProjectTargetMeasures(activity.projectId)
-                ReportService reportService = Holders.applicationContext.reportService
-                List<TargetMeasure> targetMeasures = []
-                if (report.progress == Activity.FINISHED || report.progress == Activity.STARTED) {
-                    List results = reportService.aggregateActivities([activity], scores, false)
-                    results.each {
-                        def result = it.result?.result
-                        TargetMeasure targetMeasure = new TargetMeasure(label: it.label, result: result)
-                        targetMeasures << targetMeasure
-                    }
-                }
-                targetMeasures
-
-            }
-
-
-        }
-    }
 
     public static final String REPORT_APPROVED = 'published'
     public static final String REPORT_SUBMITTED = 'pendingApproval'

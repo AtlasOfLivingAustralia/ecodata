@@ -1,12 +1,11 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.SiteGraphQLMapper
-import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.operation.valid.IsValidOp
-import org.locationtech.jts.operation.valid.TopologyValidationError
 import grails.converters.JSON
 import org.bson.types.ObjectId
 import org.geotools.geojson.geom.GeometryJSON
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.operation.valid.IsValidOp
+import org.locationtech.jts.operation.valid.TopologyValidationError
 
 class Site {
 
@@ -17,8 +16,6 @@ class Site {
     static String EMSA_SITE_CODE = 'E'
     static String REPORTING_SITE_CODE = 'R'
     static String PLANNING_SITE_CODE = 'P'
-
-    static graphql = SiteGraphQLMapper.graphqlMapping()
 
     def siteService
 
