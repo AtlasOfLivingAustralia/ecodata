@@ -14,9 +14,16 @@ class KeyEvaluationQuestion {
     }
 }
 
-class AmountDelivered {
-    TargetMeasure targetMeasure
+class DeliveredAgainstTarget {
+    String scoreId
     double amountDelivered
+    Double target
+
+    DeliveredAgainstTarget(Map aggregationResult) {
+        this.scoreId = aggregationResult.scoreId
+        this.target = aggregationResult.target ?: null
+        this.amountDelivered = aggregationResult.result?.result ?: 0
+    }
 }
 
 class KeyThreat {

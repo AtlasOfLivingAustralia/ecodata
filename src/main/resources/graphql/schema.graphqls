@@ -224,6 +224,8 @@ type Project {
     sites: [Site]
 
     documents: [Document]
+
+    deliveredAgainstTargets: [DeliveredAgainstTarget]
 }
 
 type Site {
@@ -311,15 +313,16 @@ type Report {
     "name"
     name: String
     "The Project target measures as calculated from the data in this report"
-    targetsDelivery: [TargetDelivered]
+    deliveredAgainstTargets: [DeliveredAgainstTarget]
     fromDate: Date
     toDate: Date
     activity: Activity
 }
 
-type TargetDelivered {
+type DeliveredAgainstTarget {
     targetMeasure: TargetMeasure
     amountDelivered: Float
+    target: Float
 }
 
 type TargetMeasure {

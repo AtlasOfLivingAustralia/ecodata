@@ -3,11 +3,15 @@ package au.org.ala.ecodata.graphql.controller
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
 import au.org.ala.ecodata.graphql.models.TargetMeasure
+import au.org.ala.ecodata.reporting.GroupedResult
 import grails.compiler.GrailsCompileStatic
 import graphql.GraphQLContext
+import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.DataFetchingFieldSelectionSet
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.LocalContextValue
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
@@ -39,6 +43,9 @@ class ProjectQueryController {
     @Autowired
     SiteService siteService
 
+    @Autowired
+    ProjectService projectService
+
 
     @QueryMapping
     Map<Integer, List<Project>> searchMeritProjects(DataFetchingEnvironment env) {
@@ -50,12 +57,31 @@ class ProjectQueryController {
     }
 
     @SchemaMapping(typeName = "Project", field = "reports")
-    List<Report> reports(Project project, GraphQLContext context) {
+    DataFetcherResult<List<Report>> reports(Project project, DataFetchingFieldSelectionSet selectionSet) {
+        // Create a new local context and store the author value
+        GraphQLContext localContext = GraphQLContext.getDefault()
+                .put("project", project);
 
-        context.put("project", project)
+        if (selectionSet.contains("deliveredAgainstTargets")) {
+            List<String> scoreIds = project.outputTargets?.collect {it.scoreId}
+            if (scoreIds) {
+                Map aggregationConfig = [type:'discrete', property:'activity.activityId']
+                List<GroupedResult> results = (List<GroupedResult>)projectService.projectMetrics(project.projectId, false, true, scoreIds, aggregationConfig, false)
+                Map<String, List> deliveredByActivityId = results?.collectEntries {
+                    [(it.group): (List)it.results]
+                }
+                localContext.put("deliveredByActivityId", deliveredByActivityId)
+            }
+
+        }
+
+        DataFetcherResult.Builder<List<Report>> resultBuilder = DataFetcherResult.newResult()
 
         List<Report> resultList = (List<Report>)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
-        resultList
+        return resultBuilder
+                .data(resultList)
+                .localContext(localContext)
+                .build()
     }
 
     @SchemaMapping(typeName = "Project", field = "documents")
@@ -108,6 +134,9 @@ class ProjectQueryController {
         if (!activity) {
             return null
         }
+        if (activity.activityId != output.activityId) {
+            throw new IllegalStateException("Activity in context does not match activity for output")
+        }
         context.delete("activity")
 
         String formName = activity.type
@@ -139,6 +168,43 @@ class ProjectQueryController {
     @SchemaMapping(typeName = "OutputTarget", field = "targetMeasure")
     CompletableFuture<TargetMeasure> targetMeasure(OutputTarget outputTarget, DataLoader<String, TargetMeasure> dataLoader) {
         dataLoader.load(outputTarget.scoreId)
+    }
+
+    @SchemaMapping(typeName = "DeliveredAgainstTarget", field = "targetMeasure")
+    CompletableFuture<TargetMeasure> targetMeasure(DeliveredAgainstTarget deliveredAgainstTarget, DataLoader<String, TargetMeasure> dataLoader) {
+        dataLoader.load(deliveredAgainstTarget.scoreId)
+    }
+
+    @SchemaMapping(typeName = "Report", field = "deliveredAgainstTargets")
+    List<DeliveredAgainstTarget> deliveredAgainstTargets(Report report,
+                                                         @LocalContextValue Project project,
+                                                         @LocalContextValue Map<String, List> deliveredByActivityId) {
+
+        List<DeliveredAgainstTarget> deliveredAgainstTargets = null
+        if (project?.projectId != report.projectId) {
+            throw new IllegalStateException("Project in context does not match project for report")
+        }
+        if (deliveredByActivityId) {
+            List<Map> deliveredAgainstTargetsData = deliveredByActivityId[report.activityId]
+            if (deliveredAgainstTargetsData) {
+                deliveredAgainstTargets = deliveredAgainstTargetsData.collect { new DeliveredAgainstTarget(it) }
+            }
+        }
+        deliveredAgainstTargets?.findAll{it.amountDelivered > 0}
+
+    }
+
+    @SchemaMapping(typeName = "Project", field = "deliveredAgainstTargets")
+    List<DeliveredAgainstTarget> deliveredAgainstTargets(Project project) {
+
+        boolean approvedOnly = true
+        List scoreIds = project.outputTargets?.collect {it.scoreId}
+        if (!scoreIds) {
+            return null
+        }
+        List<Map> metrics = (List<Map>)projectService.projectMetrics(project.projectId, false, approvedOnly, scoreIds)
+        metrics.collect { new DeliveredAgainstTarget(it) }
+
     }
 
     private static CompletableFuture targetMeasuresFromScoreIds(List<String> scoreIds, DataLoader<String, TargetMeasure> targetMeasureDataLoader) {
