@@ -154,6 +154,10 @@ class MeriPlan {
 
     }
 
+    String getProjectId() {
+        project?.projectId
+    }
+
     String getPublicationStatus() {
         String planStatus = project.planStatus
 

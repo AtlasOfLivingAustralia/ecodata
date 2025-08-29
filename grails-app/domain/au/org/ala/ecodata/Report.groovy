@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-
+import grails.compiler.GrailsCompileStatic
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
@@ -10,12 +10,8 @@ import org.joda.time.DateTimeConstants
  * Different programmes can require certain types of report as a part of the Programme reporting design, but
  * generally all MERIT programmes will require a stage report, which is a report on works activities during a period of time.
  */
+@GrailsCompileStatic
 class Report {
-
-    public static final String REPORT_APPROVED = 'published'
-    public static final String REPORT_SUBMITTED = 'pendingApproval'
-    public static final String REPORT_NOT_APPROVED = 'unpublished'
-    public static final String REPORT_CANCELLED = 'cancelled'
 
     /**
      *  An activity report is the one that is applied to all activities performed during the
@@ -102,7 +98,7 @@ class Report {
     String cancelledBy
 
     /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
-    String publicationStatus = REPORT_NOT_APPROVED
+    String publicationStatus = PublicationStatus.DRAFT
 
     /** Only non-null for reports of type 'Adjustment' - references the id of the Report that the adjustment applies to */
     String adjustedReportId
@@ -136,12 +132,12 @@ class Report {
     }
 
     public boolean isSubmittedOrApproved() {
-        return publicationStatus == REPORT_SUBMITTED ||
-                publicationStatus == REPORT_APPROVED
+        return publicationStatus == PublicationStatus.SUBMITTED_FOR_REVIEW ||
+                publicationStatus == PublicationStatus.PUBLISHED
     }
 
     public boolean isApproved() {
-        return publicationStatus == REPORT_APPROVED
+        return publicationStatus == PublicationStatus.PUBLISHED
     }
 
     public boolean isAdjusted() {
@@ -154,17 +150,17 @@ class Report {
 
 
     public void approve(String userId, String comment = '' , Date changeDate = new Date()) {
-        if (publicationStatus != REPORT_SUBMITTED) {
+        if (publicationStatus != PublicationStatus.SUBMITTED_FOR_REVIEW) {
             throw new IllegalArgumentException("Only submitted reports can be approved.")
         }
         if (!approvalDeltaInWeekdays) {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
-        StatusChange change = changeStatus(userId, 'approved', changeDate, comment)
+        StatusChange change = changeStatus(userId, StatusChange.APPROVED, changeDate, comment)
         markDirty("approvedBy")
         markDirty("dateApproved")
         markDirty("publicationStatus")
-        publicationStatus = REPORT_APPROVED
+        publicationStatus = PublicationStatus.PUBLISHED
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
     }
@@ -173,7 +169,7 @@ class Report {
         if (isSubmittedOrApproved()) {
             throw new IllegalArgumentException("An approved or submitted report cannot be resubmitted")
         }
-        StatusChange change = changeStatus(userId, 'submitted', changeDate, comment)
+        StatusChange change = changeStatus(userId, StatusChange.SUBMITTED, changeDate, comment)
 
         if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
@@ -181,27 +177,27 @@ class Report {
         markDirty("submittedBy")
         markDirty("dateSubmitted")
         markDirty("publicationStatus")
-        publicationStatus = REPORT_SUBMITTED
+        publicationStatus = PublicationStatus.SUBMITTED_FOR_REVIEW
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
     }
 
     public void returnForRework(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'returned', changeDate, comment, categories)
+        StatusChange change = changeStatus(userId, StatusChange.RETURNED, changeDate, comment, categories)
         markDirty("returnedBy")
         markDirty("dateReturned")
         markDirty("publicationStatus")
-        publicationStatus = REPORT_NOT_APPROVED
+        publicationStatus = PublicationStatus.DRAFT
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
     }
 
     public void cancel(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'cancelled', changeDate, comment, categories)
+        StatusChange change = changeStatus(userId, StatusChange.CANCELLED, changeDate, comment, categories)
         markDirty("cancelledBy")
         markDirty("dateCancelled")
         markDirty("publicationStatus")
-        publicationStatus = REPORT_CANCELLED
+        publicationStatus = PublicationStatus.CANCELLED
         cancelledBy = change.changedBy
         dateCancelled = change.dateChanged
     }
@@ -211,13 +207,13 @@ class Report {
         if (!isApproved() || isAdjusted()) {
             throw new IllegalArgumentException("Only approved reports can be adjusted")
         }
-        StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
+        StatusChange change = changeStatus(userId, StatusChange.ADJUSTED, changeDate, comment)
 
         markDirty("adjustedBy")
         markDirty("dateAdjusted")
         markDirty("publicationStatus")
 
-        publicationStatus = REPORT_APPROVED
+        publicationStatus = PublicationStatus.PUBLISHED
         adjustedBy = change.changedBy
         dateAdjusted = change.dateChanged
     }
@@ -267,7 +263,7 @@ class Report {
         category nullable:true
         generatedBy nullable:true
         statusChangeHistory nullable: true
-        adjustedReportId nullable:true, validator: { value, report ->
+        adjustedReportId nullable:true, validator: { String value, Report report ->
             // Adjustment reports must reference another report
             if (report.type == TYPE_ADJUSTMENT) {
                 if (value == null) {

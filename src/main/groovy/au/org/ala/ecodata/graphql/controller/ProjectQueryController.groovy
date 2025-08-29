@@ -164,6 +164,11 @@ class ProjectQueryController {
         targetMeasuresFromScoreIds(monitoringMethodology.relatedTargetMeasures, dataLoader)
     }
 
+    @SchemaMapping(typeName = "MeriPlan", field = "statusChangeHistory")
+    List<StatusChange> statusChangeHistory(MeriPlan meriPlan) {
+        projectService.getMeriPlanApprovalHistory(meriPlan.projectId, false)
+    }
+
 
     @SchemaMapping(typeName = "OutputTarget", field = "targetMeasure")
     CompletableFuture<TargetMeasure> targetMeasure(OutputTarget outputTarget, DataLoader<String, TargetMeasure> dataLoader) {

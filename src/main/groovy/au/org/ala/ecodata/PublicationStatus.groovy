@@ -7,4 +7,5 @@ interface PublicationStatus {
     String DRAFT = "unpublished"
     String SUBMITTED_FOR_REVIEW = "pendingApproval"
     String PUBLISHED = "published"
+    String CANCELLED = "cancelled"
 }

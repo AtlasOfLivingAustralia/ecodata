@@ -112,7 +112,7 @@ class ReportService {
         Closure aggregateActivityData = { Map project ->
             List activities = project.activities
             if (approvedActivitiesOnly) {
-                activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
+                activities = activities?.findAll{it.publicationStatus == PublicationStatus.PUBLISHED}
             }
             if (activities) {
                 List activityIds = activities?.findAll{!it.externalIds}?.collect{it.activityId}
@@ -246,7 +246,7 @@ class ReportService {
 
     List aggregateActivities(List activities, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
         if (approvedActivitiesOnly) {
-            activities = activities.findAll{it.publicationStatus == Report.REPORT_APPROVED}
+            activities = activities.findAll{it.publicationStatus == PublicationStatus.PUBLISHED}
         }
 
         AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec, topLevelAggregationConfig)

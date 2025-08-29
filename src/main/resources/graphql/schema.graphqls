@@ -58,6 +58,8 @@ type MeriPlan {
     lastUpdated: Date
     publicationStatus: PublicationStatus
 
+    statusChangeHistory: [StatusChangeHistory]
+
     firstNationsPeopleInvolvement: String
 
     supportedPriorityPlaces: [String]
@@ -308,6 +310,7 @@ type Query {
 
 type Report {
     publicationStatus: PublicationStatus
+
     "category"
     category: String
     "name"
@@ -316,7 +319,23 @@ type Report {
     deliveredAgainstTargets: [DeliveredAgainstTarget]
     fromDate: Date
     toDate: Date
+    submissionDate: Date
+    dateSubmitted: DateTime
+    dateApproved: DateTime
+    dateReturned: DateTime
+    dateCancelled: DateTime
+
+    statusChangeHistory: [StatusChangeHistory]
+
     activity: Activity
+}
+
+type StatusChangeHistory {
+    dateChanged: DateTime
+    changedBy: String
+    status: String
+    comment: String
+    categories: [String]
 }
 
 type DeliveredAgainstTarget {

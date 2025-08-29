@@ -4,6 +4,7 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
+import org.apache.http.HttpStatus
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -1082,24 +1083,41 @@ class ProjectService {
      * @param projectId the project to get the approval history for.
      * @return a List of Maps with keys approvalDate, approvedBy.
      */
-    List getMeriPlanApprovalHistory(String projectId){
+    List<StatusChange> getMeriPlanApprovalHistory(String projectId, boolean lookupUserDetails = true) {
         Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
-        List<Map> histories = []
-        results?.documents.collect{
+        List<StatusChange> histories = []
+        results?.documents?.collect{
             def data = documentService.readJsonDocument(it)
+            StatusChange doc
+            if (!data.error) {
+                String approvedBy = data.approvedBy
+                if (lookupUserDetails) {
+                    approvedBy = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
+                }
 
-            if (!data.error){
-                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
-                def doc = [
-                        approvalDate:data.dateApproved,
-                        approvedBy:displayName,
-                        comment:data.reason,
-                        changeOrderNumber:data.referenceDocument
-                ]
-                histories.push(doc)
+                doc = new StatusChange(
+                        dateChanged:data.dateApproved,
+                        changedBy:approvedBy,
+                        status:StatusChange.APPROVED,
+                        reference:data.referenceDocument,
+                        documentId: it.documentId,
+                        comment: data.reason
+                )
+
             }
+            else {
+                doc = new StatusChange(
+                        documentId:it.documentId,
+                        dateChanged: it.lastUpdated,
+                        reference: it.filename,
+                        comment: "Error: "+it.name +" document is missing or damaged!"
+                )
+            }
+            histories.push(doc)
         }
-        histories
+        histories.sort({it.dateChanged})
+        histories.reverse()
+
     }
 
     /**
@@ -1107,9 +1125,9 @@ class ProjectService {
      * @param projectId the project.
      * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
      */
-    Map getMostRecentMeriPlanApproval(String projectId) {
-        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
-        meriApprovalHistory.max{it.approvalDate}
+    StatusChange getMostRecentMeriPlanApproval(String projectId) {
+        List<StatusChange> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
+        meriApprovalHistory.max{it.dateChanged}
     }
 
     /**
