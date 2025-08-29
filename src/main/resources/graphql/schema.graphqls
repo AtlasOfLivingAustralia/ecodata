@@ -218,7 +218,7 @@ type Project {
     name: String
     "The program or sub-program that is funding this Project"
     program: Program
-    "Unique indentifier of a MERIT project"
+    "Unique identifier of a MERIT project"
     projectId: String
     "Has reports"
     reports: [Report]
@@ -228,6 +228,12 @@ type Project {
     documents: [Document]
 
     deliveredAgainstTargets: [DeliveredAgainstTarget]
+
+    funding: Float
+    fundingType: String
+    portfolio: String
+    manager: String
+
 }
 
 type Site {

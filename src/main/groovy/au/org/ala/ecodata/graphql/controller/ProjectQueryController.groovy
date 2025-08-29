@@ -63,15 +63,17 @@ class ProjectQueryController {
                 .put("project", project);
 
         if (selectionSet.contains("deliveredAgainstTargets")) {
+            Map<String, List> deliveredByActivityId = [:]
             List<String> scoreIds = project.outputTargets?.collect {it.scoreId}
             if (scoreIds) {
                 Map aggregationConfig = [type:'discrete', property:'activity.activityId']
                 List<GroupedResult> results = (List<GroupedResult>)projectService.projectMetrics(project.projectId, false, true, scoreIds, aggregationConfig, false)
-                Map<String, List> deliveredByActivityId = results?.collectEntries {
+                deliveredByActivityId = results?.collectEntries {
                     [(it.group): (List)it.results]
                 }
-                localContext.put("deliveredByActivityId", deliveredByActivityId)
+
             }
+            localContext.put("deliveredByActivityId", deliveredByActivityId)
 
         }
 
