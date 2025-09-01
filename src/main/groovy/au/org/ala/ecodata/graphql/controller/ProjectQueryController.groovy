@@ -67,7 +67,7 @@ class ProjectQueryController {
             List<String> scoreIds = project.outputTargets?.collect {it.scoreId}
             if (scoreIds) {
                 Map aggregationConfig = [type:'discrete', property:'activity.activityId']
-                List<GroupedResult> results = (List<GroupedResult>)projectService.projectMetrics(project.projectId, false, true, scoreIds, aggregationConfig, false)
+                List<GroupedResult> results = (List<GroupedResult>)projectService.projectMetrics(project.projectId, false, true, scoreIds, aggregationConfig, false, true)
                 deliveredByActivityId = results?.collectEntries {
                     [(it.group): (List)it.results]
                 }
@@ -205,11 +205,14 @@ class ProjectQueryController {
     List<DeliveredAgainstTarget> deliveredAgainstTargets(Project project) {
 
         boolean approvedOnly = true
-        List scoreIds = project.outputTargets?.collect {it.scoreId}
+        List scoreIds = []
+        project.outputTargets?.each {
+            scoreIds << it.scoreId
+        }
         if (!scoreIds) {
             return null
         }
-        List<Map> metrics = (List<Map>)projectService.projectMetrics(project.projectId, false, approvedOnly, scoreIds)
+        List<Map> metrics = (List<Map>)projectService.projectMetrics(project.projectId, false, approvedOnly, scoreIds, null, true, true)
         metrics.collect { new DeliveredAgainstTarget(it) }
 
     }
