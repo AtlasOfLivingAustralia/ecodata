@@ -97,7 +97,8 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         Map params = meritParams
         params["fq"] = fqList
 
-        int max = Math.min(environment.arguments.get("max"), 50)
+
+        int max = Math.min(environment.arguments.get("max")?:10, 50)
         params["max"] = max
         int page = Math.max(1, environment.arguments.get("page") as Integer ?: 1)
         params["offset"] = max*(page-1)
@@ -141,7 +142,9 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
             }
         }
 
-        fqList << "_query:(${dateQueries.join(" AND ")})"
+        if (dateQueries) {
+            fqList << "_query:(${dateQueries.join(" AND ")})"
+        }
 
         String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
         Map<Integer, List<Project>> results =  queryElasticSearch(environment, query, params)
