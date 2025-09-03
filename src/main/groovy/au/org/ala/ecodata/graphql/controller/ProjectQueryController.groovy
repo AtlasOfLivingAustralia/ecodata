@@ -13,6 +13,7 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingFieldSelectionSet
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.LocalContextValue
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
@@ -63,6 +64,20 @@ class ProjectQueryController implements DataBinder {
 
         println searchParams
         projectsFetcher.searchMeritProject(env)
+    }
+
+    @QueryMapping
+    Project project(@Argument String projectId, DataFetchingEnvironment env) {
+        Map hub = (Map)env.graphQlContext.get("hub")
+        if (!hub) {
+            throw new IllegalArgumentException("A hub context is required to access project data")
+        }
+        Project project = Project.findByProjectIdAndHubIdAndStatusNotEqual(projectId, hub.hubId, Status.DELETED)
+        if (!project) {
+            return null
+        }
+
+        project
     }
 
     @SchemaMapping(typeName = "Project", field = "reports")

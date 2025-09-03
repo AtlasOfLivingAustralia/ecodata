@@ -279,20 +279,8 @@ type ProjectPagedResult {
 }
 
 type Query {
-    activityForm(activityFormName: String!): ActivityForm
-    activityFormList(ignoreCase: Boolean, max: Int, offset: Int, order: String, sort: String): [ActivityForm]
-    outputList: [Summary]
-    outputTypeByName(outputTypeName: String!): Schema
-    outputs(output: [output]): [Output]
     project(projectId: String!): Project
-    searchManagementUnits(
-        "yyyy-mm-dd"
-        endDate: String,
-        managementUnitId: String,
-        name: String,
-        "yyyy-mm-dd"
-        startDate: String
-    ): [ManagementUnit]
+
     searchMeritProjects(
         assetsAddressed: [String],
         associatedProgram: [String],
@@ -329,7 +317,7 @@ type Query {
         updatedAfter: String,
         userNominatedProject: [String]
     ): ProjectPagedResult
-    sites(max: Int, page: Int, siteIds: [String], term: String!): [Site]
+
 }
 
 type Report {
