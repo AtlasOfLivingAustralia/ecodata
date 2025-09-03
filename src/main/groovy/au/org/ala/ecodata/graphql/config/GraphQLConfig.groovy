@@ -89,12 +89,19 @@ class GraphQLConfig {
                 "APPROVED": PublicationStatus.PUBLISHED,
                 "SUBMITTED": PublicationStatus.SUBMITTED_FOR_REVIEW
         ]
+
+        Map<String, String> sitePurposeCodeEnumValues = [
+                "PLANNING": Site.PLANNING_SITE_CODE,
+                "REPORTING": Site.REPORTING_SITE_CODE,
+                "EMSA": Site.EMSA_SITE_CODE]
+
         RuntimeWiringConfigurer configurer = new RuntimeWiringConfigurer() {
             @Override
             void configure(RuntimeWiring.Builder wiringBuilder) {
                 scalarTypes.each { scalarType ->
                     wiringBuilder.scalar(scalarType)
                 }
+                registerEnumMapping(wiringBuilder, "SitePurposeCode", sitePurposeCodeEnumValues)
                 registerEnumMapping(wiringBuilder, "Status", statusEnumValues)
                 registerEnumMapping(wiringBuilder, "PublicationStatus", publicationStatusValues)
             }

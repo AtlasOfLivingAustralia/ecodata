@@ -236,12 +236,30 @@ type Project {
 
 }
 
+enum SitePurpose {
+    PLANNING,
+    REPORTING,
+    EMSA
+}
+
 type Site {
     siteId: String
     dateCreated: DateTime
     lastUpdated: DateTime
     name: String
+    purposeCode: SitePurpose
     geoJson: GeoJson
+
+    areaM2: Float
+    centroid: [Float]
+    states : [IntersectionArea]
+    electorates: [IntersectionArea]
+}
+
+type IntersectionArea {
+    name: String
+    overlapPercent: Float
+    overlapM2: Float
 }
 
 type ProjectOutcome {
@@ -428,13 +446,16 @@ enum AscDesc {
 input ReportQuery {
     "yyyy-mm-dd"
     fromDate: String
-    max: Int
-    page: Int
-    reportId: String
-    reportType: String
     publicationStatus: [String]
+    dateSubmitted: DateRange
+    dateApproved: DateRange
     "yyyy-mm-dd"
-    toDate: String
+    toDate: DateRange
+}
+
+input DateRange {
+    from: String
+    to: String
 }
 
 input activities {

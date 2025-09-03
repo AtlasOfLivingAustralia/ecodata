@@ -2,9 +2,11 @@ package au.org.ala.ecodata.graphql.controller
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.input.SearchMeritProjects
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import au.org.ala.ecodata.reporting.GroupedResult
 import grails.compiler.GrailsCompileStatic
+import grails.web.databinding.DataBinder
 import graphql.GraphQLContext
 import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
@@ -20,7 +22,7 @@ import java.util.concurrent.CompletableFuture
 
 @GrailsCompileStatic
 @Controller
-class ProjectQueryController {
+class ProjectQueryController implements DataBinder {
 
     @Autowired
     UserService userService
@@ -53,6 +55,13 @@ class ProjectQueryController {
         if (hub.urlPath != "merit") {
             throw new IllegalArgumentException("The searchMeritProjects query is only available via the MERIT hub path")
         }
+        def report = env.getArgument("reports")
+
+        SearchMeritProjects searchParams = new SearchMeritProjects()
+        println env.getArguments()
+        bindData(searchParams, env.getArguments())
+
+        println searchParams
         projectsFetcher.searchMeritProject(env)
     }
 
@@ -120,6 +129,34 @@ class ProjectQueryController {
         // The scalar type converter will handle the conversion to GeoJSON
         site
     }
+
+    @SchemaMapping(typeName = "Site", field = "areaM2")
+    double areaM2(Site site) {
+        // The scalar type converter will handle the conversion to GeoJSON
+        site.areaM2()
+    }
+
+    @SchemaMapping(typeName = "Site", field = "centroid")
+    double[] centroid(Site site) {
+        // The scalar type converter will handle the conversion to GeoJSON
+        ((double[])((Map)site.extent?.geometry)?.centre) ?: null
+    }
+
+    @SchemaMapping(typeName = "Site", field = "states")
+    List<Map> states(Site site) {
+        site.intersectingStates()
+    }
+
+    @SchemaMapping(typeName = "Site", field = "electorates")
+    List<Map> electorates(Site site) {
+        site.intersectingElectorates()
+    }
+
+    @SchemaMapping(typeName = "Site", field = "purpose")
+    String purposeCode(Site site) {
+        siteService.getPurpose([type:site.type, externalIds: site.externalIds])
+    }
+
 
     @SchemaMapping(typeName = "Activity", field = "outputs")
     CompletableFuture<List<Output>> outputs(Activity activity, DataLoader<String, List<Output>> outputDataLoader, GraphQLContext context) {

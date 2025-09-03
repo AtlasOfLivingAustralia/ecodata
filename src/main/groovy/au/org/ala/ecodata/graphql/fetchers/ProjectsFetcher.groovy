@@ -112,6 +112,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         if(environment.arguments.get("toDate")) {
             params["toDate"] = environment.arguments.get("toDate").toString()
         }
+        List<String> dateQueries = []
         // Special last updated query handling
         if (environment.arguments.get("updatedAfter")) {
             String updatedAfter = environment.arguments.get("updatedAfter")
@@ -127,10 +128,20 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
             String lastUpdatedQuery = lastUpdatedFields.collect {
                 "${it}:[${updatedAfter} TO *]"
             }.join(" OR ")
-
-            fqList << "_query:(${lastUpdatedQuery})"
+            dateQueries << "(" + lastUpdatedQuery + ")"
 
         }
+        if (environment.arguments.get("reports")) {
+            Map reports = environment.arguments.get("reports")
+            if (reports.dateSubmitted) {
+                String from = reports.dateSubmitted.from ?: "*"
+                String to = reports.dateSubmitted.to ?: "*"
+
+                dateQueries << "reports.dateSubmitted:[${from} TO ${to}]"
+            }
+        }
+
+        fqList << "_query:(${dateQueries.join(" AND ")})"
 
         String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
         Map<Integer, List<Project>> results =  queryElasticSearch(environment, query, params)
