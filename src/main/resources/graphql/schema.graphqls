@@ -234,6 +234,15 @@ type Project {
     portfolio: String
     manager: String
 
+    statesAndElectorates: StatesAndElectorates
+}
+
+type StatesAndElectorates {
+    primaryState: String
+    primaryElectorate: String
+    otherStates: [String]
+    otherElectorates: [String]
+    manualOverrideUsed: Boolean
 }
 
 enum SitePurpose {

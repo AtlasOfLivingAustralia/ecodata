@@ -269,6 +269,18 @@ class ProjectQueryController implements DataBinder {
 
     }
 
+    @SchemaMapping(typeName = "Project", field = "statesAndElectorates")
+    Map statesAndElectorates(Project project) {
+        Map projectMap = projectService.toMap(project)
+        Map statesAndElectorates = projectService.findStateAndElectorateForProject(projectMap)
+        [primaryState: statesAndElectorates.primarystate,
+         primaryElectorate: statesAndElectorates.primaryelect,
+         otherStates: statesAndElectorates.otherStates,
+         otherElectorates: statesAndElectorates.otherElectorates,
+         manualOverrideUsed: statesAndElectorates.geographicRangeOverridden
+        ]
+    }
+
     private static CompletableFuture targetMeasuresFromScoreIds(List<String> scoreIds, DataLoader<String, TargetMeasure> targetMeasureDataLoader) {
         List<CompletableFuture> futures = scoreIds?.collect {
             targetMeasureDataLoader.load(it)
