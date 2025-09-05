@@ -82,12 +82,9 @@ class SearchMeritProjects implements Validateable {
     List buildFacetFilters() {
         List filters = new ArrayList(facetFilters?:[])
 
-        Map namedParams = this.properties
-        namedParams.each { String property, def value ->
-            String facetName = namedParameterToFacetNameMap[property]
-
-            if (facetName && value) {
-                value.each {
+        namedParameterToFacetNameMap.each { String property, String facetName ->
+            if (this[property]) {
+                this[property].each {
                     filters << "${facetName}:${it}"
                 }
 
