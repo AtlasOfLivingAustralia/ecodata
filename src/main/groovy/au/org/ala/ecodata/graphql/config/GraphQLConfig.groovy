@@ -95,6 +95,15 @@ class GraphQLConfig {
                 "REPORTING": Site.REPORTING_SITE_CODE,
                 "EMSA": Site.EMSA_SITE_CODE]
 
+
+        Map<String, String> progressEnumValues = [
+                "PLANNED": Activity.PLANNED,
+                "STARTED": Activity.STARTED,
+                "FINISHED": Activity.FINISHED,
+                "DEFERRED": Activity.DEFERRED,
+                "CANCELLED": Activity.CANCELLED
+        ]
+
         RuntimeWiringConfigurer configurer = new RuntimeWiringConfigurer() {
             @Override
             void configure(RuntimeWiring.Builder wiringBuilder) {
@@ -104,6 +113,7 @@ class GraphQLConfig {
                 registerEnumMapping(wiringBuilder, "SitePurposeCode", sitePurposeCodeEnumValues)
                 registerEnumMapping(wiringBuilder, "Status", statusEnumValues)
                 registerEnumMapping(wiringBuilder, "PublicationStatus", publicationStatusValues)
+                registerEnumMapping(wiringBuilder, "Progress", progressEnumValues)
             }
         }
         configurer

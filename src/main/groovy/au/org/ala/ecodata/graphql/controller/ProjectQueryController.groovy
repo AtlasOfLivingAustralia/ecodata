@@ -49,6 +49,9 @@ class ProjectQueryController implements DataBinder {
     @Autowired
     ProjectService projectService
 
+    @Autowired
+    MetadataService metadataService
+
 
     @QueryMapping
     Map<Integer, List<Project>> searchMeritProjects(DataFetchingEnvironment env) {
@@ -62,7 +65,6 @@ class ProjectQueryController implements DataBinder {
         println env.getArguments()
         bindData(searchParams, env.getArguments())
 
-        println searchParams
         projectsFetcher.searchMeritProject(env)
     }
 
@@ -79,6 +81,23 @@ class ProjectQueryController implements DataBinder {
 
         project
     }
+
+    @SchemaMapping(typeName = "Project", field = "dataSetSummaries")
+    List<DataSetSummary> dataSetSummaries(Project project) {
+        project.custom?.dataSets?.collect {
+            new DataSetSummary((Map)it)
+        }
+    }
+
+    @SchemaMapping(typeName = "DataSetSummary", field = "service")
+    Service service(DataSetSummary dataSetSummary) {
+        Service service = null
+        if (dataSetSummary.serviceId) {
+            service = metadataService.getServiceList().find{it.legacyId == dataSetSummary.serviceId}
+        }
+        service
+    }
+
 
     @SchemaMapping(typeName = "Project", field = "reports")
     DataFetcherResult<List<Report>> reports(Project project, DataFetchingFieldSelectionSet selectionSet) {

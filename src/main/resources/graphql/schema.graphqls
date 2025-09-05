@@ -226,7 +226,7 @@ type Project {
     sites: [Site]
 
     documents: [Document]
-
+    dataSetSummaries: [DataSetSummary]
     deliveredAgainstTargets: [DeliveredAgainstTarget]
 
     funding: Float
@@ -235,6 +235,45 @@ type Project {
     manager: String
 
     statesAndElectorates: StatesAndElectorates
+}
+
+type DataSetSummary {
+    dataSetId: String
+    reportId: String
+    siteId: String
+    name: String
+    status: Status
+    publicationStatus: PublicationStatus
+    progress: Progress
+    startDate: DateTime
+    endDate: DateTime
+    methods: [String]
+    type: String
+    collectorType: String
+    qa: String
+    measurementTypes: [String]
+    term: String
+    programOutcome: String
+    projectOutcomes: [String]
+    baselines: [String]
+    service: Service
+    addition: String
+    owner: String
+    methodDescription: String
+    custodian: String
+    dataCollectionOngoing: Boolean
+    format: String
+    published: String
+    sensitivities: [String]
+    investmentPriorities: [String]
+    storageType: String
+    publicationUrl: String
+    threatenedSpeciesIndex: String
+    threatenedSpeciesIndexUploadDate: Date
+    sizeUnknown: Boolean
+    protocol: String
+    collectionApp: String
+    orgMintedIdentifier: String
 }
 
 type StatesAndElectorates {
@@ -405,7 +444,7 @@ enum PublicationStatus {
 }
 
 enum Progress {
-    NOT_STARTED
+    PLANNED
     STARTED
     FINISHED
     CANCELLED
