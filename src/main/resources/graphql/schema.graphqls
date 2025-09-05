@@ -332,16 +332,16 @@ type Query {
 
     searchMeritProjects(
 
-        projectId: String,
-        meritProjectID: String
-        programId: UUID
-        program:String
-        subProgram: String
-        managementUnitId: UUID
-        managementUnit: String
-        organisationId: UUID
-        organisation: String
-        status: Status
+        projectId: [UUID],
+        meritProjectID: [String]
+        programId: [UUID]
+        program:[String]
+        subProgram: [String]
+        managementUnitId: [UUID]
+        managementUnit: [String]
+        organisationId: [UUID]
+        organisation: [String]
+        status: [Status]
 
         startDate: DateRange
         endDate: DateRange

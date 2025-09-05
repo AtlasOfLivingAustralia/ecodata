@@ -22,15 +22,16 @@ class SearchMeritProjects implements Validateable {
 
     ReportQuery reports
 
-    String projectId
-    String meritProjectID
-    String programId
-    String program
-    String subProgram
-    String managementUnit
-    String managementUnitId
-    String organisation
-    String organisationId
+    List<String> projectId
+    List<String> meritProjectID
+    List<String> programId
+    List<String> program
+    List<String> subProgram
+    List<String> managementUnit
+    List<String> managementUnitId
+    List<String> organisation
+    List<String> organisationId
+
     DateRange startDate
     DateRange endDate
     DateRange lastUpdated
@@ -82,11 +83,14 @@ class SearchMeritProjects implements Validateable {
         List filters = new ArrayList(facetFilters?:[])
 
         Map namedParams = this.properties
-        namedParams.each { String property, Object value ->
+        namedParams.each { String property, def value ->
             String facetName = namedParameterToFacetNameMap[property]
 
             if (facetName && value) {
-                filters << "${facetName}:${value}"
+                value.each {
+                    filters << "${facetName}:${it}"
+                }
+
             }
         }
 
