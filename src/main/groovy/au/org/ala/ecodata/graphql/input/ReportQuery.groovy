@@ -1,6 +1,8 @@
 package au.org.ala.ecodata.graphql.input
 
-class ReportQuery {
+import grails.validation.Validateable
+
+class ReportQuery implements Validateable {
     DateRange dateSubmitted
     DateRange dateApproved
     DateRange lastUpdated

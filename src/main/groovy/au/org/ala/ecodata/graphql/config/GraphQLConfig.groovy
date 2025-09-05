@@ -6,6 +6,7 @@ import au.org.ala.ecodata.graphql.converters.*
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.tracing.TracingInstrumentation
+import graphql.scalars.ExtendedScalars
 import graphql.schema.*
 import graphql.schema.idl.EnumValuesProvider
 import graphql.schema.idl.RuntimeWiring
@@ -54,18 +55,9 @@ class GraphQLConfig {
     RuntimeWiringConfigurer runtimeWiringConfigurer() {
 
         final List<GraphQLScalarType> scalarTypes = [
-                GraphQLScalarType.newScalar().name("ObjectId").description("Hex representation of a Mongo object id").coercing(new ObjectIdConverter()).build(),
-                 GraphQLScalarType.newScalar().name("object").description("").coercing(new ObjectConverter()).build(),
-                 GraphQLScalarType.newScalar().name("OutputData").description("").coercing(new OutputDataConverter()).build(),
-                 GraphQLScalarType.newScalar().name("SectionTemplate").description("").coercing( new SectionTemplateConverter()).build(),
-                 GraphQLScalarType.newScalar().name("Summary").description("").coercing(new SummaryConverter()).build(),
-                 GraphQLScalarType.newScalar().name("Schema").description("").coercing(new SchemaConverter()).build(),
-                 GraphQLScalarType.newScalar().name("Date").description("").coercing(new DateFormatting()).build(),
-                 GraphQLScalarType.newScalar().name("DateTime").description("").coercing(new DateTimeFormatting()).build(),
-                 GraphQLScalarType.newScalar().name('TargetMeasure').description('Target Measure').coercing(new TargetMeasureConverter()).build(),
-                 GraphQLScalarType.newScalar().name('AmountDelivered').description("Amount delivered").coercing(new MapConverter()).build(),
-                 GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
-
+             GraphQLScalarType.newScalar().name("Date").description("Date without time").coercing(new DateFormatting()).build(),
+             GraphQLScalarType.newScalar().name("DateTime").description("Date and time").coercing(new DateTimeFormatting()).build(),
+             GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
         ]
         GraphQLEnumType statusEnum = GraphQLEnumType.newEnum()
                 .name("Status")
@@ -110,6 +102,10 @@ class GraphQLConfig {
                 scalarTypes.each { scalarType ->
                     wiringBuilder.scalar(scalarType)
                 }
+                wiringBuilder.scalar(ExtendedScalars.UUID)
+                wiringBuilder.scalar(ExtendedScalars.Json)
+
+
                 registerEnumMapping(wiringBuilder, "SitePurposeCode", sitePurposeCodeEnumValues)
                 registerEnumMapping(wiringBuilder, "Status", statusEnumValues)
                 registerEnumMapping(wiringBuilder, "PublicationStatus", publicationStatusValues)

@@ -59,13 +59,10 @@ class ProjectQueryController implements DataBinder {
         if (hub.urlPath != "merit") {
             throw new IllegalArgumentException("The searchMeritProjects query is only available via the MERIT hub path")
         }
-        def report = env.getArgument("reports")
-
-        SearchMeritProjects searchParams = new SearchMeritProjects()
-        println env.getArguments()
+        SearchMeritProjects searchParams = new SearchMeritProjects(env)
         bindData(searchParams, env.getArguments())
 
-        projectsFetcher.searchMeritProject(env)
+        projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
     }
 
     @QueryMapping
@@ -80,6 +77,11 @@ class ProjectQueryController implements DataBinder {
         }
 
         project
+    }
+
+    @SchemaMapping(typeName = "Project", field = "meritProjectID")
+    String meritProjectID(Project project) {
+        project.grantId
     }
 
     @SchemaMapping(typeName = "Project", field = "dataSetSummaries")

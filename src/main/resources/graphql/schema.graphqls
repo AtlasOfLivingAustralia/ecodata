@@ -21,7 +21,7 @@ type ActivityForm {
 }
 
 type Organisation {
-    organisationId: String
+    organisationId: UUID
     name: String
     acronym: String
     abn: String
@@ -157,7 +157,7 @@ type Activity {
 type Output {
     name: String
     service: Service
-    data: OutputData
+    data: JSON
 }
 
 type OutcomeTarget {
@@ -184,20 +184,21 @@ type OutputTarget {
 }
 
 type Program {
-    "The acryonm the Program is known by"
+    "The acronym the Program is known by"
     acronym: String
     "The name of the Program"
     name: String
     "If this Program is a sub-program, this field identifies the parent Program"
     parent: Program
     "The unique identifier for the Program"
-    programId: String
+    programId: UUID
 }
 
 type Project {
     dateCreated: DateTime
     lastUpdated: DateTime
     status: Status
+    meritProjectID: String
     "A list of organisations that have a relationship with this Project.  "
     associatedOrgs: [AssociatedOrg]
     "A longer description of the Project"
@@ -219,7 +220,7 @@ type Project {
     "The program or sub-program that is funding this Project"
     program: Program
     "Unique identifier of a MERIT project"
-    projectId: String
+    projectId: UUID
     "Has reports"
     reports: [Report]
 
@@ -238,9 +239,9 @@ type Project {
 }
 
 type DataSetSummary {
-    dataSetId: String
-    reportId: String
-    siteId: String
+    dataSetId: UUID
+    reportId: UUID
+    siteId: UUID
     name: String
     status: Status
     publicationStatus: PublicationStatus
@@ -291,7 +292,7 @@ enum SitePurpose {
 }
 
 type Site {
-    siteId: String
+    siteId: UUID
     dateCreated: DateTime
     lastUpdated: DateTime
     name: String
@@ -330,47 +331,39 @@ type Query {
     project(projectId: String!): Project
 
     searchMeritProjects(
-        assetsAddressed: [String],
-        associatedProgram: [String],
-        associatedSubProgram: [String],
-        biogeographicRegion: [String],
-        cmz: [String],
-        federalElectorate: [String],
-        "yyyy-mm-dd"
-        fromDate: String,
-        grantManagerNominatedProject: [YesNo],
-        lga: [String],
-        mainTheme: [String],
-        majorVegetationGroup: [String],
-        managementArea: [String],
-        managementUnit: [String],
-        marineRegion: [String],
-        max: Int,
-        meritProjectID: [String],
-        myProjects: Boolean,
-        order: AscDesc,
-        organisation: [String],
-        otherRegion: [String],
-        page: Int,
-        partnerOrganisationType: [String],
-        primaryOutcome: [String],
+
         projectId: String,
+        meritProjectID: String
+        programId: UUID
+        program:String
+        subProgram: String
+        managementUnitId: UUID
+        managementUnit: String
+        organisationId: UUID
+        organisation: String
+        status: Status
+
+        startDate: DateRange
+        endDate: DateRange
+        lastUpdated: DateRange
+
         reports: ReportQuery,
-        secondaryOutcomes: [String],
+
+        query: String
+        facetFilters: [String]
+
+        page: Int,
+        max: Int,
         sort: String,
-        state: [String],
-        status: [String],
-        tags: [String],
-        toDate: Date,
-        updatedAfter: String,
-        userNominatedProject: [String]
+        order: String
+
     ): ProjectPagedResult
 
 }
 
 type Report {
     publicationStatus: PublicationStatus
-
+    reportId: UUID
     "category"
     category: String
     "name"
@@ -411,7 +404,7 @@ type TargetMeasure {
 }
 
 type Document {
-    documentId: String
+    documentId: UUID
     dateCreated: DateTime
     lastUpdated: DateTime
     status: Status
@@ -490,30 +483,13 @@ input ReportQuery {
 }
 
 input DateRange {
-    from: String
-    to: String
+    from: Date
+    to: Date
 }
 
-input activities {
-    activityType: String
-    output: [outputInput]
-}
 
-input output {
-    fields: [String]
-    outputType: String!
-}
-
-input outputInput {
-    outputType: String!
-}
-
-scalar Date
-scalar DateTime
-scalar ObjectId
-scalar object
-scalar Schema
-scalar Summary
-scalar TargetMeasure
+scalar Date @specifiedBy(url:"https://tools.ietf.org/html/rfc3339")
+scalar DateTime @specifiedBy(url:"https://tools.ietf.org/html/rfc3339")
+scalar JSON @specifiedBy(url:"https://json-schema.org/")
+scalar UUID @specifiedBy(url:"https://tools.ietf.org/html/rfc4122")
 scalar GeoJson
-scalar OutputData

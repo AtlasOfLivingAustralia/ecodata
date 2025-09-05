@@ -84,7 +84,8 @@ dependencies {
     implementation "org.grails:grails-plugin-codecs"
     implementation "org.grails.plugins:mongodb:$gormMongoVersion"
 
-    implementation "com.graphql-java:graphql-java:21.0"
+    implementation 'com.graphql-java:graphql-java:21.5'
+    implementation 'com.graphql-java:graphql-java-extended-scalars:24.0'
     implementation "org.grails.plugins:gsp"
     console "org.grails:grails-console"
     profile "org.grails.profiles:web"
@@ -113,16 +114,16 @@ dependencies {
 
     implementation "au.org.ala.grails:interceptor-annotation-matcher:1.0.0"
     implementation "org.codehaus.gpars:gpars:1.1.0"
-    implementation "org.apache.httpcomponents:httpclient:4.5.7"
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation "org.imgscalr:imgscalr-lib:4.2"
-    implementation "commons-io:commons-io:2.11.0"
+    implementation 'commons-io:commons-io:2.14.0'
     implementation ("com.github.fge:json-schema-validator:2.1.6")  {
         exclude module: "mailapi"
     }
 
     implementation 'org.grails.plugins:excel-export:2.1'
     implementation "org.locationtech.jts:jts-core:${jtsVersion}"
-    implementation "com.itextpdf:itextpdf:5.5.1"
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation "org.apache.httpcomponents:httpmime:4.2.1"
     implementation 'org.grails.plugins:csv:1.0.1'
     implementation "org.geotools.xsd:gt-xsd-kml:${geoToolsVersion}"
@@ -131,7 +132,7 @@ dependencies {
     implementation "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
     implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.6.4'
     implementation 'org.grails.plugins:mail:3.0.0'
-    implementation "com.drewnoakes:metadata-extractor:2.10.1"
+    implementation 'com.drewnoakes:metadata-extractor:2.18.0'
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
@@ -153,7 +154,7 @@ dependencies {
     testImplementation "org.grails.plugins:geb"
     testImplementation "org.grails:grails-web-testing-support"
 
-    testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:2.33.2"
+    testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.1'
     testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-safari-driver:$seleniumSafariDriverVersion"
@@ -169,7 +170,7 @@ dependencies {
     testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
 
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
-    runtimeOnly "org.hsqldb:hsqldb:2.3.1"
+    runtimeOnly 'org.hsqldb:hsqldb:2.7.1'
 }
 
 springBoot {

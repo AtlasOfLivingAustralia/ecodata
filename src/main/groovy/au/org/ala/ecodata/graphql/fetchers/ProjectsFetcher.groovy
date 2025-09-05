@@ -7,7 +7,6 @@ import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import graphql.schema.DataFetchingFieldSelectionSet
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,12 +34,8 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
     @Autowired
     EcodataGraphQLContextBuilder ecodataGraphQLContextBuilder
 
-    static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
-            "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet,grantId.keyword,grantManagerNominatedProject"
-    static Map meritParams = [hubFq:"isMERIT:true", flimit:1500, fsort:"term", query:"docType:project", facets:meritFacets, format:null, max:20]
-
-    static  Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
-                             hubFq:null, facets: null]
+    static Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
+                             hubFq:"isMERIT:false", facets: null]
 
     @Override
     Map<Integer, List<Project>> get(DataFetchingEnvironment environment) throws Exception {
@@ -49,7 +44,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         return queryElasticSearch(environment, query, [include:'projectId'])
     }
 
-    private Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
+    Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
         EcodataGraphQLContextBuilder.EcodataGraphQLContext context = ecodataGraphQLContextBuilder.buildContext(null)
 
@@ -87,72 +82,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         [totalCount: searchResponse.hits?.totalHits?.value ?: 0, results: results]
     }
 
-    Map<Integer, List<Project>> searchMeritProject (DataFetchingEnvironment environment) {
-
-        def fqList = mapFq(environment)
-
-        //validate the query
-        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
-
-        Map params = meritParams
-        params["fq"] = fqList
-
-
-        int max = Math.min(environment.arguments.get("max")?:10, 50)
-        params["max"] = max
-        int page = Math.max(1, environment.arguments.get("page") as Integer ?: 1)
-        params["offset"] = max*(page-1)
-
-        params["sort"] = environment.arguments.get("sort") ?: "dateCreated"
-        params["order"] = environment.arguments.get("order") ?: "desc"
-
-        if(environment.arguments.get("fromDate")) {
-            params["fromDate"] = environment.arguments.get("fromDate").toString()
-        }
-
-        if(environment.arguments.get("toDate")) {
-            params["toDate"] = environment.arguments.get("toDate").toString()
-        }
-        List<String> dateQueries = []
-        // Special last updated query handling
-        if (environment.arguments.get("updatedAfter")) {
-            String updatedAfter = environment.arguments.get("updatedAfter")
-            List lastUpdatedFields = ["lastUpdated"]
-            DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet()
-            if (selectionSet.contains("results/reports")) {
-                lastUpdatedFields << "reports.lastUpdated"
-            }
-            println selectionSet
-            if ( selectionSet.contains("results/sites")) {
-                lastUpdatedFields << "sites.lastUpdated"
-            }
-            String lastUpdatedQuery = lastUpdatedFields.collect {
-                "${it}:[${updatedAfter} TO *]"
-            }.join(" OR ")
-            dateQueries << "(" + lastUpdatedQuery + ")"
-
-        }
-        if (environment.arguments.get("reports")) {
-            Map reports = environment.arguments.get("reports")
-            if (reports.dateSubmitted) {
-                String from = reports.dateSubmitted.from ?: "*"
-                String to = reports.dateSubmitted.to ?: "*"
-
-                dateQueries << "reports.dateSubmitted:[${from} TO ${to}]"
-            }
-        }
-
-        if (dateQueries) {
-            fqList << "_query:(${dateQueries.join(" AND ")})"
-        }
-
-        String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
-        Map<Integer, List<Project>> results =  queryElasticSearch(environment, query, params)
-
-        return results
-    }
-
-    void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
+    static void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
 
         def datePattern = /\d{4}\-\d{2}\-\d{2}/
 
@@ -260,7 +190,7 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
         paramList.hub = environment.arguments.get("hub").toString()
 
         //validate the query
-        validateSearchQuery(environment, fqList, paramList, "docType: project", ["status"])
+        validateSearchQuery(environment, fqList, paramList, "isMERIT: false", ["status"])
 
         Map queryParams =  buildBioCollectProjectSearchQuery(environment.arguments, fqList)
         List<Project> projects =  queryElasticSearch(environment, queryParams["query"] as String, queryParams)
