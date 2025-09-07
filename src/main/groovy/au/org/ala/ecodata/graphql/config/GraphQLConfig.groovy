@@ -4,6 +4,7 @@ import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.controller.GraphQLInterceptor
 import au.org.ala.ecodata.graphql.converters.*
 import au.org.ala.ecodata.graphql.models.TargetMeasure
+import grails.config.Config
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.tracing.TracingInstrumentation
 import graphql.scalars.ExtendedScalars
@@ -15,6 +16,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.util.TraversalControl
 import graphql.util.TraverserContext
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -46,7 +49,8 @@ class GraphQLConfig {
        new GraphQLInterceptor(userService, hubService, permissionService)
     }
 
-    @Bean
+    @Bean()
+    @ConditionalOnProperty(value = "ecodata.graphql.enableTracingInstrumentation", havingValue = "true", matchIfMissing = false)
     Instrumentation instrumentation() {
         return new TracingInstrumentation()
     }
