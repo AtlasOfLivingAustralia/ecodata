@@ -37,8 +37,6 @@ type Query {
         endDate: DateRange
         lastUpdated: DateRange
 
-        reports: ReportQuery,
-
         query: String
         facetFilters: [String]
 
