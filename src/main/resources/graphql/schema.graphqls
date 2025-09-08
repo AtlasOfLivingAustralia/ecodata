@@ -16,15 +16,66 @@ directive @deprecated(
     reason: String! = "No longer supported"
 ) on FIELD_DEFINITION | ENUM_VALUE
 
-type ActivityForm {
-    name: String
+
+type Query {
+    meritProject(projectId: String!): MeritProject
+
+    searchMeritProjects(
+
+        projectId: [UUID],
+        meritProjectID: [String]
+        programId: [UUID]
+        program:[String]
+        subProgram: [String]
+        managementUnitId: [UUID]
+        managementUnit: [String]
+        organisationId: [UUID]
+        organisation: [String]
+        status: [Status]
+
+        startDate: DateRange
+        endDate: DateRange
+        lastUpdated: DateRange
+
+        reports: ReportQuery,
+
+        query: String
+        facetFilters: [String]
+
+        page: Int,
+        max: Int,
+        sort: String,
+        order: String
+
+    ): MeritProjects
+
+}
+
+type MeritProjects {
+    results: [MeritProject]
+    totalCount: Int
 }
 
 type Organisation {
+    hubId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
     organisationId: UUID
     name: String
+    description: String
     acronym: String
     abn: String
+    url: String
+    entityName: String
+    entityType: String
+    businessNames: [String]
+    state: String
+    postcode: Int
+    externalIds: [ExternalId]
+    indigenousOrganisationRegistration: [String]
+    associatedOrgs: [AssociatedOrg]
+    contractNames: [String]
 
 }
 
@@ -50,8 +101,17 @@ type ExternalId {
 }
 
 type ManagementUnit {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    managementUnitId: UUID
     name: String
     description: String
+    startDate: Date
+    endDate: Date
+    managementUnitSiteId: UUID
+    hubId: UUID
+
 }
 
 type MeriPlan {
@@ -143,18 +203,26 @@ type Service {
 }
 
 type Activity {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    activityId: UUID
+    status: Status
     type: String
+    formVersion: Int
     description: String
     progress: String
     startDate: Date
     endDate: Date
     plannedStartDate: Date
     plannedEndDate: Date
-    formVersion: Int
     outputs: [Output]
 }
 
 type Output {
+    outputId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
     name: String
     service: Service
     data: JSON
@@ -194,7 +262,19 @@ type Program {
     programId: UUID
 }
 
-type Project {
+interface Project {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    name: String
+    description: String
+    projectId: UUID
+    hubId: UUID
+    sites: [Site]
+    documents: [Document]
+}
+
+type MeritProject implements Project {
     dateCreated: DateTime
     lastUpdated: DateTime
     status: Status
@@ -210,7 +290,7 @@ type Project {
     "Mostly unique human readable identifier used for the Project.  Projects before 2018 sometimes share a grantId when run under a devolved grant.  When projects share a grantId, they are futher distinguished  via the externalId field.  The combination of grantId and externalId must be unique"
     grantId: String
     "The identifier of the Hub that was responsible for creating the Project"
-    hubId: String
+    hubId: UUID
     "The managed natural resource region in which the activities of this Project are taking place"
     managementUnit: ManagementUnit
     "Has a meriPlan"
@@ -234,6 +314,7 @@ type Project {
     fundingType: String
     portfolio: String
     manager: String
+    risks: Risks
 
     statesAndElectorates: StatesAndElectorates
 }
@@ -322,44 +403,6 @@ type ProjectOutcome {
     relatedOutcome: String
 }
 
-type ProjectPagedResult {
-    results: [Project]
-    totalCount: Int
-}
-
-type Query {
-    project(projectId: String!): Project
-
-    searchMeritProjects(
-
-        projectId: [UUID],
-        meritProjectID: [String]
-        programId: [UUID]
-        program:[String]
-        subProgram: [String]
-        managementUnitId: [UUID]
-        managementUnit: [String]
-        organisationId: [UUID]
-        organisation: [String]
-        status: [Status]
-
-        startDate: DateRange
-        endDate: DateRange
-        lastUpdated: DateRange
-
-        reports: ReportQuery,
-
-        query: String
-        facetFilters: [String]
-
-        page: Int,
-        max: Int,
-        sort: String,
-        order: String
-
-    ): ProjectPagedResult
-
-}
 
 type Report {
     publicationStatus: PublicationStatus
@@ -419,7 +462,26 @@ type Document {
     hosted: String
     identifier: String
     dateTaken: DateTime
+    thirdPartyConsentDeclarationMade: Boolean
+    thirdPartyConsentDeclarationText: String
 
+}
+
+
+type Risks {
+    dateUpdated: Date
+    overallRisk: String
+    risks: [Risk]
+}
+
+type Risk {
+    currentControl: String
+    consequence: String
+    threat: String
+    residualRisk: String
+    riskRating: String
+    description: String
+    likelihood: String
 }
 
 enum Status {

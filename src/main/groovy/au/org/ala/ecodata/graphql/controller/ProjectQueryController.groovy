@@ -66,7 +66,7 @@ class ProjectQueryController implements DataBinder {
     }
 
     @QueryMapping
-    Project project(@Argument String projectId, DataFetchingEnvironment env) {
+    Project meritProject(@Argument String projectId, DataFetchingEnvironment env) {
         Map hub = (Map)env.graphQlContext.get("hub")
         if (!hub) {
             throw new IllegalArgumentException("A hub context is required to access project data")
@@ -300,6 +300,11 @@ class ProjectQueryController implements DataBinder {
          otherElectorates: statesAndElectorates.otherElectorates,
          manualOverrideUsed: statesAndElectorates.geographicRangeOverridden
         ]
+    }
+
+    @SchemaMapping(typeName = "Risks", field = "risks")
+    List<Risk> risks(Risks risks) {
+        risks.rows
     }
 
     private static CompletableFuture targetMeasuresFromScoreIds(List<String> scoreIds, DataLoader<String, TargetMeasure> targetMeasureDataLoader) {
