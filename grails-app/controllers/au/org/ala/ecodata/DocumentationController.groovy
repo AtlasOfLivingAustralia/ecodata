@@ -9,6 +9,10 @@ class DocumentationController {
     def metadataService
 
     def index() {
+        Setting setting = Setting.findByKey("ecodata.api.documentation")
+    }
+
+    def activityForms() {
 
         def activitiesModel = metadataService.activitiesModel()
 
