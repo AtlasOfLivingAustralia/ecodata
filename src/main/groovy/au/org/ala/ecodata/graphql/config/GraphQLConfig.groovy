@@ -83,7 +83,8 @@ class GraphQLConfig {
         Map<String, String> publicationStatusValues = [
                 "DRAFT": PublicationStatus.DRAFT,
                 "APPROVED": PublicationStatus.PUBLISHED,
-                "SUBMITTED": PublicationStatus.SUBMITTED_FOR_REVIEW
+                "SUBMITTED": PublicationStatus.SUBMITTED_FOR_REVIEW,
+                "CANCELLED": PublicationStatus.CANCELLED
         ]
 
         Map<String, String> sitePurposeCodeEnumValues = [
