@@ -79,12 +79,12 @@ class ProjectQueryController implements DataBinder {
         project
     }
 
-    @SchemaMapping(typeName = "Project", field = "meritProjectID")
+    @SchemaMapping(typeName = "MeritProject", field = "meritProjectID")
     String meritProjectID(Project project) {
         project.grantId
     }
 
-    @SchemaMapping(typeName = "Project", field = "dataSetSummaries")
+    @SchemaMapping(typeName = "MeritProject", field = "dataSetSummaries")
     List<DataSetSummary> dataSetSummaries(Project project) {
         project.custom?.dataSets?.collect {
             new DataSetSummary((Map)it)
@@ -101,7 +101,7 @@ class ProjectQueryController implements DataBinder {
     }
 
 
-    @SchemaMapping(typeName = "Project", field = "reports")
+    @SchemaMapping(typeName = "MeritProject", field = "reports")
     DataFetcherResult<List<Report>> reports(Project project, DataFetchingFieldSelectionSet selectionSet) {
         // Create a new local context and store the author value
         GraphQLContext localContext = GraphQLContext.getDefault()
@@ -131,29 +131,29 @@ class ProjectQueryController implements DataBinder {
                 .build()
     }
 
-    @SchemaMapping(typeName = "Project", field = "documents")
+    @SchemaMapping(typeName = "MeritProject", field = "documents")
     List<Document> documents(Project project) {
         Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'desc'])
     }
 
-    @SchemaMapping(typeName = "Project", field = "program")
+    @SchemaMapping(typeName = "MeritProject", field = "program")
     CompletableFuture<Program> program(Project project, DataLoader<String, Program> programDataLoader) {
         programDataLoader.load(project.programId)
     }
 
-    @SchemaMapping(typeName = "Project", field = "managementUnit")
+    @SchemaMapping(typeName = "MeritProject", field = "managementUnit")
     CompletableFuture<ManagementUnit> managementUnit(Project project, DataLoader<String, ManagementUnit> managementUnitDataLoader) {
         managementUnitDataLoader.load(project.managementUnitId)
     }
 
-    @SchemaMapping(typeName = "Report", field = "activity")
+    @SchemaMapping(typeName = "MeritProject", field = "activity")
     CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader) {
 
         activityDataLoader.load(report.activityId)
 
     }
 
-    @SchemaMapping(typeName = "Project", field = "sites")
+    @SchemaMapping(typeName = "MeritProject", field = "sites")
     List<Site> sites(Project project) {
 
         Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
@@ -274,7 +274,7 @@ class ProjectQueryController implements DataBinder {
 
     }
 
-    @SchemaMapping(typeName = "Project", field = "deliveredAgainstTargets")
+    @SchemaMapping(typeName = "MeritProject", field = "deliveredAgainstTargets")
     List<DeliveredAgainstTarget> deliveredAgainstTargets(Project project) {
 
         boolean approvedOnly = true
@@ -290,7 +290,7 @@ class ProjectQueryController implements DataBinder {
 
     }
 
-    @SchemaMapping(typeName = "Project", field = "statesAndElectorates")
+    @SchemaMapping(typeName = "MeritProject", field = "statesAndElectorates")
     Map statesAndElectorates(Project project) {
         Map projectMap = projectService.toMap(project)
         Map statesAndElectorates = projectService.findStateAndElectorateForProject(projectMap)
