@@ -184,6 +184,10 @@ class AdminController {
         // clear any cached external config
         cacheService.clear()
         flash.message = "Metadata cache cleared."
+        grailsCacheManager.getCacheNames().each {
+            grailsCacheManager.getCache(it).clear()
+        }
+
         render 'done'
     }
 
