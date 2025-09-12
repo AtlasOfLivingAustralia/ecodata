@@ -307,6 +307,11 @@ class ProjectQueryController implements DataBinder {
         risks.rows
     }
 
+    @SchemaMapping(typeName = "Risks", field = "lastUpdated")
+    Date risksLastUpdated(Risks risks) {
+        risks.dateUpdated // lastUpdated is not used in the object as it is ignored by data binding.  However we map it to lastUpdated for API consistency
+    }
+
     private static CompletableFuture targetMeasuresFromScoreIds(List<String> scoreIds, DataLoader<String, TargetMeasure> targetMeasureDataLoader) {
         List<CompletableFuture> futures = scoreIds?.collect {
             targetMeasureDataLoader.load(it)

@@ -13,14 +13,14 @@ projectActivityIdRegex=".*\"projectActivityId\" : \"([^\"]+).*"
 documentPathRegex=".*\"filepath\" : \"([0-9-]+).*"
 documentFilenameRegex=".*\"filename\" : \"([^\"]+).*"
 
-mongoexport --db $DB --collection project --query "{projectId:'$PROJECT_ID'}" > project.json
-mongoexport --db $DB --collection site --query "{projects:'$PROJECT_ID'}" > site.json
-mongoexport --db $DB --collection activity --query "{projectId:'$PROJECT_ID'}" > activity.json
-mongoexport --db $DB --collection document --query "{projectId:'$PROJECT_ID'}" > document.json
-mongoexport --db $DB --collection userPermission --query "{entityId:'$PROJECT_ID'}" > userPermission.json
-mongoexport --db $DB --collection projectActivity --query "{projectId:'$PROJECT_ID'}" > projectActivity.json
-mongoexport --db $DB --collection record --query "{projectId:'$PROJECT_ID'}" > record.json
-mongoexport --db $DB --collection report --query "{projectId:'$PROJECT_ID'}" > report.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection project --query "{\"projectId\":\"$PROJECT_ID\"}" > project.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection site --query "{\"projects\":\"$PROJECT_ID\"}" > site.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection activity --query "{\"projectId\":\"$PROJECT_ID\"}" > activity.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection document --query "{\"projectId\":\"$PROJECT_ID\"}" > document.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection userPermission --query "{\"entityId\":\"$PROJECT_ID\"}" > userPermission.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection projectActivity --query "{\"projectId\":\"$PROJECT_ID\"}" > projectActivity.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection record --query "{\"projectId\":\"$PROJECT_ID\"}" > record.json
+mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection report --query "{\"projectId\":\"$PROJECT_ID\"}" > report.json
 
 
 if [ -f output.json ];
@@ -32,13 +32,13 @@ touch output.json
 
 while read activity; do
    [[ $activity =~ $activityRegex ]]
-   mongoexport -db $DB --collection output --query "{activityId:'${BASH_REMATCH[1]}'}" >> output.json
+   mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection output --query "{\"activityId\":\"${BASH_REMATCH[1]}\"}" >> output.json
 done <activity.json
 
 while read projectActivity; do
    [[ $projectActivity =~ $projectActivityIdRegex ]]
    echo ${BASH_REMATCH[1]}
-   mongoexport -db $DB --collection document --query "{projectActivityId:'${BASH_REMATCH[1]}', role:'logo'}" >> document.json
+   mongoexport -u ecodata -p $MONGO_PASSWORD --db $DB --collection document --query "{\"projectActivityId\":\"${BASH_REMATCH[1]}\", role:\"logo\"}" >> document.json
 done <projectActivity.json
 
 mkdir documents

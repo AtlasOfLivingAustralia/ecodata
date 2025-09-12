@@ -467,7 +467,7 @@ type Document {
 
 
 type Risks {
-    dateUpdated: Date
+    lastUpdated: DateTime
     overallRisk: String
     risks: [Risk]
 }
