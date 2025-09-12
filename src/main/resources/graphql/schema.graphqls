@@ -494,6 +494,7 @@ enum PublicationStatus {
     APPROVED
     SUBMITTED
     DRAFT
+    CANCELLED
 }
 
 enum Progress {
