@@ -50,4 +50,12 @@ class SpeciesConverter implements RecordFieldConverter {
 
         name?.trim()
     }
+
+    static boolean isRecordValid (Map record) {
+        if (!record)
+            return false
+
+        List invalid = [null, ""]
+        [record.scientificName, record.vernacularName].any { it !in invalid }
+    }
 }

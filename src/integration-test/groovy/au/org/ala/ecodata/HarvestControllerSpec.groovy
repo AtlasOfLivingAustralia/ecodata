@@ -25,6 +25,9 @@ class HarvestControllerSpec extends Specification {
     @Autowired
     WebApplicationContext ctx
 
+    @Autowired
+    RecordService recordService
+
     def setup() {
         cleanup()
         GrailsMockHttpServletRequest grailsMockHttpServletRequest = new GrailsMockHttpServletRequest()
@@ -48,8 +51,8 @@ class HarvestControllerSpec extends Specification {
         // create organization
         Date now = new Date()
         Date yesterday = now.minus(1)
-        String nowStr = DateUtil.formatWithMilliseconds(now)
-        String yesterdayStr = DateUtil.formatWithMilliseconds(yesterday)
+        String nowStr = recordService.toStringIsoDateTime(now)
+        String yesterdayStr = recordService.toStringIsoDateTime(yesterday)
         def organisation = new Organisation(name: "Test Organisation", organisationId: "org1")
         organisation.save(flush: true, failOnError: true)
         def project = new Project (

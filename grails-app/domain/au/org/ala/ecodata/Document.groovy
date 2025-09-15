@@ -14,9 +14,10 @@ class Document {
     static final String ROLE_LOGO = 'logo'
     static final String ROLE_HELP_RESOURCE = 'helpResource'
     static final String ROLE_MAIN_IMAGE = 'mainImage'
+    static final String ROLE_FAVICON_LOGO = 'faviconlogo'
 
     /** If a document is one of these roles, it is implicitly public */
-    static final List PUBLIC_ROLES = [ROLE_BANNER, ROLE_LOGO, ROLE_HELP_RESOURCE, ROLE_FOOTER_LOGO, ROLE_MAIN_IMAGE]
+    static final List PUBLIC_ROLES = [ROLE_BANNER, ROLE_LOGO, ROLE_HELP_RESOURCE, ROLE_FOOTER_LOGO, ROLE_MAIN_IMAGE, ROLE_FAVICON_LOGO]
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
     static final String THUMBNAIL_PREFIX = 'thumb_'
@@ -61,6 +62,7 @@ class Document {
     String managementUnitId
     String hubId
     String externalUrl
+    String isbn
     Boolean isSciStarter = false
     String hosted
     String identifier
@@ -192,5 +194,6 @@ class Document {
         contentType nullable: true
         hubId nullable: true
         imageId nullable: true
+        isbn nullable: true
     }
 }

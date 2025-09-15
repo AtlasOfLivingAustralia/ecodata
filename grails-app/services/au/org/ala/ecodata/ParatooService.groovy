@@ -668,10 +668,6 @@ class ParatooService {
                 log.info("Creating a new site for survey ${collection.orgMintedUUID}, project ${project.projectId} with name: ${siteProps.name}")
                 result = siteService.create(siteProps)
             }
-            else if(isUpdatedPlotLayout(site.lastUpdated, updatedPlotLayoutDate)){
-                siteProps.name = "${siteProps.name} - ${DateUtil.formatAsDisplayDateTime(updatedPlotLayoutDate)}"
-                result = siteService.create(siteProps)
-            }
             else {
                 result = [siteId: site.siteId]
             }
@@ -683,21 +679,6 @@ class ParatooService {
             siteId = result.siteId
         }
         [siteId:siteId, name:siteProps?.name]
-    }
-
-    /**
-     * check if the plot layout has been updated after site has been updated. This means user has edited plot layout and
-     * a new site should be created.
-     * @param siteLastUpdated
-     * @param plotLayoutLastUpdated
-     * @return
-     */
-    static boolean isUpdatedPlotLayout (Date siteLastUpdated, Date plotLayoutLastUpdated) {
-        if ((siteLastUpdated != null) && (plotLayoutLastUpdated != null)) {
-            return plotLayoutLastUpdated.after(siteLastUpdated)
-        }
-
-        return false
     }
 
     private Map syncParatooProtocols(List<Map> protocols) {

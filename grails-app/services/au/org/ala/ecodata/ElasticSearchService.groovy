@@ -16,6 +16,8 @@
 package au.org.ala.ecodata
 
 
+import au.org.ala.ecodata.metadata.OutputDateGetter
+import au.org.ala.ecodata.metadata.OutputMetadata
 import com.mongodb.client.model.Filters
 import grails.async.Promise
 import grails.async.Promises
@@ -107,6 +109,7 @@ class ElasticSearchService {
     CacheService cacheService
     ProgramService programService
     ManagementUnitService managementUnitService
+    ActivityFormService activityFormService
 
     RestHighLevelClient client
     ElasticSearchIndexManager indexManager
@@ -1184,7 +1187,7 @@ class ElasticSearchService {
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
-            projectMap.projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
+            List<Map> projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
                 [
                         id: it.id,
                         projectId: it.projectId,
@@ -1192,10 +1195,17 @@ class ElasticSearchService {
                         name: it.name,
                         startDate: it.startDate,
                         endDate: it.endDate,
-                        published: it.published
+                        published: it.published,
+                        publicAccess: it.publicAccess
                 ]
             })
+
+            projectMap.projectActivities = projectActivities
+            projectMap.numberOfRecords = activityService.countOfProjectActivities(projectMap.projectId)
+            boolean hasPublicPublished = projectActivities.any { it.publicAccess && it.published }
+            projectMap.publicParticipation = hasPublicPublished
         }
+
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
             // data causing the indexing to fail.
@@ -1219,6 +1229,16 @@ class ElasticSearchService {
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
         }?.unique(false)
+
+        // Add keyword ALL to project participants if any survey is open to public. This will be helpful in places such
+        // as  PWA app to list user's project or project with publicly accessible surveys.
+        if (projectMap.projectActivities?.any { it.publicAccess && it.published }) {
+            if (projectMap.allParticipants == null) {
+                projectMap.allParticipants = []
+            }
+
+            projectMap.allParticipants << 'ALL'
+        }
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
@@ -1269,6 +1289,39 @@ class ElasticSearchService {
         projectMap
     }
 
+    /**
+     * Get the first date recorded in the survey. This will ignore nested date in the survey such as date in a table.
+     * BioCollect forms usually have a single date field in the survey form.
+     * @return
+     */
+    Date getSurveyDateForActivity (Map activity) {
+        Date date
+        String activityId = activity.activityId
+        // get form associated with the activity
+        ActivityForm activityForm = activityFormService.findActivityForm (activity.type, activity.formVersion)
+        List outputs = outputService.findAllForActivityId (activityId)
+        outputs?.each { Map output ->
+            // only one date is needed
+            if (date != null)
+                return
+
+            FormSection model = activityForm?.sections?.find{it.name == output.name}
+            OutputMetadata metadata = new OutputMetadata(model?.template)
+            // filter data model by date data type
+            Map dateDataModelItems = metadata.getNamesForDataType('date', null)
+            dateDataModelItems?.each { String key, def value ->
+                if (value == true && date == null) {
+                    Map dataNode = metadata.findDataModelItemByName(key)
+                    OutputDateGetter dateGetter = new OutputDateGetter(key, dataNode, null, TimeZone.getTimeZone("UTC"))
+                    // parse date from output data
+                    date = dateGetter.getFormattedValue(output.data)
+                }
+            }
+        }
+
+        date
+    }
+
     private Map prepareActivityForIndexing(Map activity, version = null) {
         activity["className"] = Activity.class.getName()
 
@@ -1316,7 +1369,8 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
-                values.commonName = it.commonName
+                values.scientificName = it.scientificName
+                values.commonName = it.commonName ?: it.vernacularName
 
                 // This check is required as elasticsearch JSON validation will fail for
                 // NaN & Infinity and the whole batch will not index.
@@ -1357,6 +1411,11 @@ class ElasticSearchService {
             }
 
             addYearAndMonthToEntity(activity, activity)
+            // Attempt to get survey date from outputs. The above code does not capture date if no species occurrence
+            // is created from a survey.
+            if (eventDate == null) {
+                eventDate = getSurveyDateForActivity(activity)
+            }
 
             if(eventDate){
                 activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)

@@ -743,7 +743,19 @@ facets.data = [
                 name    : "recordNameFacet",
                 title   : 'Species name',
                 dataType: 'text',
+                helpText: 'Sighting\'s display name'
+        ],
+        [
+                name    : "scientificNameFacet",
+                title   : 'Species scientific name',
+                dataType: 'text',
                 helpText: 'Sighting\'s scientific name'
+        ],
+        [
+                name    : "commonNameFacet",
+                title   : 'Species common name',
+                dataType: 'text',
+                helpText: 'Sighting\'s common name'
         ],
         [
                 name    : "userId",
@@ -1064,6 +1076,11 @@ facets.project = [
                 name    : "bushfireCategoriesFacet",
                 title   : "Bushfire Categories",
                 helpText: "The bushfire categories relevant to the project"
+        ],
+        [
+                name    : "nationwideFacet",
+                title   : "National Project",
+                helpText: "Is the project a nation wide project?",
         ]
 ]
 

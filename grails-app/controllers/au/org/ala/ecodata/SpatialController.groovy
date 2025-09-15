@@ -90,7 +90,7 @@ class SpatialController {
             }
             else {
                 if (geoJson.getCoordinates().flatten().size() > grailsApplication.config.getProperty("shapefile.simplify.threshhold", Integer,  50_000)) {
-                    geoJson = GeometryUtils.simplify(geoJson, grailsApplication.config.getProperty("shapefile.simplify.tolerance", Double, 0.0001))
+                    geoJson = GeometryUtils.simplifyGeometry(geoJson, grailsApplication.config.getProperty("shapefile.simplify.tolerance", Double, 0.0001))
                 }
 
                 retMap.put("geoJson", GeometryUtils.geometryToGeoJsonMap(geoJson, grailsApplication.config.getProperty("shapefile.geojson.decimal", Integer, 20)))

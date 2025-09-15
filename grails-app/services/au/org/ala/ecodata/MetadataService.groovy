@@ -6,10 +6,9 @@ import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import grails.web.databinding.DataBinder
-import grails.gorm.transactions.Transactional
 import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
+import grails.web.databinding.DataBinder
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -828,6 +827,10 @@ class MetadataService implements DataBinder {
         return false
     }
 
+    boolean areDataEmpty(Map data) {
+        data?.every { it.value == null || it.value == "" }
+    }
+
     def rollUpDataIntoSingleElement (List rows, List models, Map firstRow = null) {
         firstRow = firstRow ?: rows.first()
         rows?.eachWithIndex { Map row, int index->
@@ -835,7 +838,10 @@ class MetadataService implements DataBinder {
             listData?.each { key, value ->
                 Map model = models?.find { it.name == key }
                 if ((row == firstRow) && !(firstRow[key] instanceof List)) {
-                    firstRow[key] = [firstRow[key]]
+                    if (!areDataEmpty(firstRow[key]))
+                        firstRow[key] = [firstRow[key]]
+                    else
+                        firstRow[key] = []
                 }
 
                 switch (model.dataType) {
@@ -845,12 +851,14 @@ class MetadataService implements DataBinder {
                                 firstRow[key].add(value)
                         }
 
-                        rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        if (firstRow[key])
+                            rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
                         break
                     case DataTypes.IMAGE:
                     case DataTypes.PHOTOPOINTS:
-                        if (!firstRow[key].contains(value))
-                            firstRow[key].add(value)
+                        if (!areDataEmpty(value) && !firstRow[key].contains(value)) {
+                                firstRow[key].add(value)
+                        }
                         break
                 }
             }
@@ -903,10 +911,6 @@ class MetadataService implements DataBinder {
         String searchName = (data?.scientificName)?.trim()
         if (!data?.guid && (searchName)) {
             Map bestMatch = speciesReMatchService.searchByName(searchName)
-            if(!bestMatch && data.commonName) {
-                String commonName = data.commonName
-                bestMatch = speciesReMatchService.searchByName(commonName, false, true)
-            }
 
             if (bestMatch) {
                 data.guid = bestMatch?.guid
@@ -1218,7 +1222,7 @@ class MetadataService implements DataBinder {
         // Make a copy of the services as we are going to augment them with target information.
         List results = projectServices.collect { service ->
             [
-                    name:service.name,
+                    name:service.getNameForProgramId(project.programId),
                     id: service.id,
                     scores: service.scores()?.collect { score ->
                         [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
