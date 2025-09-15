@@ -1014,7 +1014,6 @@ class ElasticSearchService {
                 projects.each { project ->
                     try {
                         Map projectMap = prepareProjectForHomePageIndex(project)
-                        log.info("Indexing project " + project.projectId + " to index " + newIndexes[HOMEPAGE_INDEX])
                         indexDoc(projectMap, newIndexes[HOMEPAGE_INDEX], bulkProcessor)
                     }
                     catch (Exception e) {
