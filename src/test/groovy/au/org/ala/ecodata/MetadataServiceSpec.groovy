@@ -470,14 +470,14 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
     def "findInvestmentPrioritiesByCategory should investment priorities filtered by category"() {
 
         when: "findInvestmentPrioritiesByCategory is called with a category"
-        List<Term> result = service.findInvestmentPrioritiesByCategory(["testCategory"])
+        List<Term> result = service.findInvestmentPriorities([categories:"testCategory"])
 
         then: "Only investment priorities matching the category are returned, excluding deleted ones"
         result.size() == 2
         result*.name.containsAll(["testInvestmentPriority1", "testInvestmentPriority2"])
 
         when: "findInvestmentPrioritiesByCategory is called with a multiple categories"
-        result = service.findInvestmentPrioritiesByCategory(["testCategory", "otherCategory"])
+        result = service.findInvestmentPriorities([categories:["testCategory", "otherCategory"]])
 
         then: "Investment priorities matching either category are returned, excluding deleted ones"
         result.size() == 3

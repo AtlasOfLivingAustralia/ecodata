@@ -403,8 +403,13 @@ class MetadataController {
     }
 
     def investmentPriorities() {
-        List categories = params.getList('category')
-        respond metadataService.findInvestmentPrioritiesByCategory(categories)
+        def searchCriteria = request.JSON
+        Integer max = searchCriteria.remove('max') as Integer ?: 1000
+        Integer offset = searchCriteria.remove('offset') as Integer ?: 0
+        String sort = searchCriteria.remove('sort') ?: 'name'
+        String order = searchCriteria.remove('order') ?: 'asc'
+
+        respond metadataService.findInvestmentPriorities(searchCriteria, max, offset, sort, order)
     }
 
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
