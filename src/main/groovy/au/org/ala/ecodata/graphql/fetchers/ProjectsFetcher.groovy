@@ -38,13 +38,13 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
                              hubFq:"isMERIT:false", facets: null]
 
     @Override
-    Map<Integer, List<Project>> get(DataFetchingEnvironment environment) throws Exception {
+    Map<String, Object> get(DataFetchingEnvironment environment) throws Exception {
 
         String query = environment.arguments.term ?:"*:*"
         return queryElasticSearch(environment, query, [include:'projectId'])
     }
 
-    Map<Integer, List<Project>> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
+    Map<String, Object> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
         EcodataGraphQLContextBuilder.EcodataGraphQLContext context = ecodataGraphQLContextBuilder.buildContext(null)
 
