@@ -54,7 +54,7 @@ class ProjectQueryController implements DataBinder {
 
 
     @QueryMapping
-    Map<Integer, List<Project>> searchMeritProjects(DataFetchingEnvironment env) {
+    Map<String, Object> searchMeritProjects(DataFetchingEnvironment env) {
         Map hub = (Map)env.graphQlContext.get("hub")
         if (hub.urlPath != "merit") {
             throw new IllegalArgumentException("The searchMeritProjects query is only available via the MERIT hub path")
