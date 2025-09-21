@@ -139,11 +139,13 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         def investmentPriorities = [[name: "investment priority 1"], [name: "investment priority 2"]]
 
         when:
-        params.category = category
+        request.method = "POST"
+        request.JSON = [categories: category]
+
         controller.investmentPriorities()
 
         then:
-        1 *  metadataService.findInvestmentPrioritiesByCategory([category]) >> investmentPriorities
+        1 *  metadataService.findInvestmentPriorities([categories:category], 1000, 0 , 'name', 'asc') >> investmentPriorities
         response.status == HttpStatus.SC_OK
         response.json == investmentPriorities
     }
