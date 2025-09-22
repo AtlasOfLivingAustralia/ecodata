@@ -6,6 +6,7 @@ import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
 import grails.web.databinding.DataBinder
@@ -1166,18 +1167,25 @@ class MetadataService implements DataBinder {
      * services.json should be identical with fieldcapture
      * @return
      */
+    @Cacheable("serviceList")
     List<Service> getServiceList() {
 
+        long start = System.currentTimeMillis()
         List services = Service.findAllByStatusNotEqual(Status.DELETED)
 
+        long end = System.currentTimeMillis()
+        log.info("getServiceList took ${end - start} ms to retrieve ${services.size()} services")
+        
+        
         Map scoresByFormSection = [:].withDefault { String formSectionName ->
             Score.createCriteria().list {
                 or {
                     eq('configuration.filter.filterValue', formSectionName)
-                    eq('configuration.childAggregations.filter.filterValue', formSectionName)
+                        eq('configuration.childAggregations.filter.filterValue', formSectionName)
                 }
             }
         }
+        start = end
         services.each { service ->
             service.outputs?.each { ServiceForm serviceFormConfig ->
 
@@ -1185,6 +1193,9 @@ class MetadataService implements DataBinder {
                 serviceFormConfig.relatedScores = scores
             }
         }
+        end = System.currentTimeMillis()
+        log.info("getServiceList took ${end - start} ms to retrieve scores")
+        
         services
     }
 
@@ -1247,6 +1258,13 @@ class MetadataService implements DataBinder {
         }
 
         return results
+    }
+
+    @Cacheable("serviceForScore")
+    Service serviceForScore(String scoreId) {
+        getServiceList().find{ Service service ->
+            service.scores().find { it.scoreId == scoreId }
+        }
     }
 
     /** Returns a value from the gradle git plugin generated git.properties */

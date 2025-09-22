@@ -1,18 +1,14 @@
 package au.org.ala.ecodata
 
 import grails.testing.mixin.integration.Integration
-import groovy.json.JsonSlurper
-import org.grails.gorm.graphql.plugin.GraphqlController
-import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import pages.AdminTools
 
 @Integration
 class GraphqlIntegrationSpec extends GraphqlSpecHelper{
 
     @Autowired
     HubService hubService
-    GraphqlController graphqlController
+    //GraphqlQueryController graphqlController
     String controllerName = "graphql"
 //
 //    @BeforeClass

@@ -44,7 +44,7 @@ class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
         then:
         def savedReport = Report.findByReportId('aReportId')
         savedReport.submittedBy == '1234'
-        savedReport.publicationStatus == Report.REPORT_SUBMITTED
+        savedReport.publicationStatus == PublicationStatus.SUBMITTED_FOR_REVIEW
         savedReport.dateSubmitted != null
         savedReport.statusChangeHistory.size() == 1
     }
@@ -59,7 +59,7 @@ class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
         then:
         def savedReport = Report.findByReportId('aReportId')
         savedReport.approvedBy == '1234'
-        savedReport.publicationStatus == Report.REPORT_APPROVED
+        savedReport.publicationStatus == PublicationStatus.PUBLISHED
         savedReport.dateApproved != null
         savedReport.statusChangeHistory.size() == 2
     }
@@ -73,7 +73,7 @@ class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
         then:
         def savedReport = Report.findByReportId('aReportId')
         savedReport.returnedBy == '1234'
-        savedReport.publicationStatus == Report.REPORT_NOT_APPROVED
+        savedReport.publicationStatus == PublicationStatus.DRAFT
         savedReport.dateReturned != null
         savedReport.statusChangeHistory.size() == 1
     }
@@ -88,7 +88,7 @@ class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
         then:
         def savedReport = Report.findByReportId('aReportId')
         savedReport.cancelledBy == '1234'
-        savedReport.publicationStatus == Report.REPORT_CANCELLED
+        savedReport.publicationStatus == PublicationStatus.CANCELLED
         savedReport.dateCancelled != null
         savedReport.statusChangeHistory.size() == 1
     }

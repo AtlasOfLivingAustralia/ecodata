@@ -1,12 +1,10 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.FormSectionGraphQLMapper
+
 import au.org.ala.ecodata.graphql.models.SectionTemplate
 import au.org.ala.ecodata.metadata.OutputMetadata
 
 class FormSection {
-
-    static graphql = FormSectionGraphQLMapper.graphqlMapping()
 
     static constraints = {
         title nullable: true

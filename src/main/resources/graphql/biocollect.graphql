@@ -1,0 +1,317 @@
+
+type Query {
+    query: Query
+
+    searchBioCollectProject(
+        projectId: String
+        hub: String!
+        isWorldWide: Boolean
+        projectStartFromDate: String
+        projectStartToDate: String
+        scienceType: [String]
+        tags: [String]
+        countries: [String]
+        ecoScienceType: [String]
+        status: [Status]
+        difficulty: [String]
+        organisation: [String]
+        origin: [String]
+        isBushfire: [Boolean]
+        associatedProgram: [String]
+        typeOfProject: [String]
+        lga: [String]
+        page: Int
+        max: Int
+        myProjects: Boolean
+        ): [BioCollectProject]
+}
+
+type ActivityForm {
+
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    name: String
+    formVersion: Int
+    type: String
+    status: String
+    category: String
+    external: Boolean
+    publicationStatus: PublicationStatus
+    createdUserId: String
+    lastUpdatedUserId: String
+    minOptionalSectionsCompleted: Int
+    supportsSites: Boolean
+    tags: [String]
+    supportsPhotoPoints: Boolean
+    formSections: [FormSection]
+}
+
+type FormSection{
+    title: String
+    modelName: String
+    optionalQuestionText: String
+    collapsedByDefault: Boolean
+    templateName: String
+    optional: Boolean
+    name: String
+    formTemplate: JSON
+    errors: [Error]
+}
+
+type ProjectActivity{
+
+    endDate: Date
+    methodType: String
+    spatialAccuracy: String
+    speciesIdentification: String
+    temporalAccuracy: String
+    nonTaxonomicAccuracy: String
+    dataQualityAssuranceMethods: [String]
+    dataAccessMethods: [String]
+    pActivityFormName: String
+    alerts: JSON
+    restrictRecordToSites: Boolean
+    allowAdditionalSurveySites: Boolean
+    baseLayersName: String
+    publicAccess: Boolean
+    visibility: VisibilityConstraintEmbedded
+    submissionRecords: [SubmissionRecord]
+    legalCustodianOrganisation: String
+    dataAccessExternalURL: String
+    dataQualityAssuranceDescription: String
+    dataManagementPolicyDescription: String
+    dataManagementPolicyURL: String
+    dataManagementPolicyDocument: String
+    excludeProjectSite: String
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    surveySiteOption: String
+    canEditAdminSelectedSites: Boolean
+    dateCreated: Date
+    lastUpdated: Date
+    dataSharingLicense: String
+    commentsAllowed: Boolean
+    methodName: String
+    startDate: Date
+    projectActivityId: String
+    name: String
+    status: String
+    projectId: String
+    description: String
+    isDataManagementPolicyDocumented: Boolean
+    sites: [String]
+    surveyForms: [ActivityForm]
+    errors: [Error]
+}
+
+type VisibilityConstraintEmbedded{
+    embargoForDays: Int
+    embargoOption: EmbargoOption
+    embargoUntil: Date
+    alaAdminEnforcedEmbargo: Boolean}
+
+enum EmbargoOption{
+    NONE
+    DAYS
+    DATE
+}
+
+type  SubmissionRecord{
+    submissionPublicationDate: Date
+    submissionDoi: String
+    datasetSubmitter: String
+    datasetVersion: String
+    submissionRecordId: String
+    submissionPackage: SubmissionPackage
+    projectActivityId: String
+    submissionId: String
+    errors: [Error]}
+
+type SubmissionPackage{
+
+    acknowledgement: String
+    associatedMaterialNane: String
+    associatedMaterialIdentifier: String
+    collectionStartDate: String
+    collectionEndDate: String
+    curationStatus: String
+    curationActivitiesOther: String
+    datasetContact: DatasetContactEmbedded
+    datasetAuthors: DatasetAuthorEmbedded
+    geographicalExtentDescription: String
+    methodDriftDescription: String
+    otherMaterials: String
+    selectedAnimalGroups: [String]
+    selectedAnthropogenic: [String]
+    selectedConservativeMgmt: [String]
+    selectedEconomicResearch: [String]
+    selectedEnvironmentFeatures: [String]
+    selectedFieldsOfResearch: [String]
+    selectedIdentificationMethod: [String]
+    selectedMaterialIdentifier: String
+    selectedMaterialType: String
+    selectedObservedAttributes: [String]
+    selectedObservationMeasurements: [String]
+    selectedPlantGroups: [String]
+    selectedSamplingDesign: [String]
+    selectedSocioEconomic: [String]
+    submissionRecordId: String
+    errors: [Error]}
+
+type DatasetContactEmbedded{
+
+    title: String
+    name: String
+    role: String
+    address: String
+    email: String
+    phone: String
+    organizationName: String}
+
+type DatasetAuthorEmbedded{
+    authorInitials: String
+    authorSurnameOrOrgName: String
+    authorAffiliation: String}
+
+type MapLayersConfigurationEmbedded{
+    baseLayers: BaseLayerEmbedded
+    overlays: OverlayEmbedded}
+
+type BaseLayerEmbedded{
+    code: String
+    displayText: String
+    isSelected: Boolean}
+
+type  OverlayEmbedded{
+    userAccessRestriction: String
+    layerName: String
+    title: String
+    defaultSelected: Boolean
+    boundaryColour: String
+    showPropertyName: Boolean
+    fillColour: String
+    textColour: String
+    inLayerShapeList: Boolean
+    opacity: Float
+    changeLayerColour: Boolean
+    alaId: String
+    alaName: String}
+
+type BioCollectProject implements Project {
+    externalId: String
+    description: String
+    workOrderId: String
+    internalOrderId: String
+    contractStartDate: Date
+    contractEndDate: Date
+    manager: String
+    organisationName: String
+    serviceProviderName: String
+    plannedStartDate: Date
+    plannedEndDate: Date
+    serviceProviderAgreementDate: Date
+    actualStartDate: Date
+    actualEndDate: Date
+    grantId: String
+    risks: Risks
+    promoteOnHomepage: String
+    organisationId: String
+    projectType: String
+    dataProviderId: String
+    dataResourceId: String
+    aim: String
+    keywords: String
+    urlAndroid: String
+    urlITunes: String
+    urlWeb: String
+    getInvolved: String
+    scienceType: [String]
+    ecoScienceType: [String]
+    orgIdGrantee: String
+    orgIdSponsor: String
+    orgIdSvcProvider: String
+    projectSiteId: UUID
+    difficulty: String
+    gear: String
+    task: String
+    userCreated: String
+    userLastModified: String
+    origin: String
+    uNRegions: [String]
+    countries: [String]
+    tags: [String]
+    alaHarvest: Boolean
+    industries: [String]
+    programId: String
+    baseLayer: String
+    isBushfire: Boolean
+    bushfireCategories: [String]
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    managementUnitId: String
+    mapDisplays: JSON
+    terminationReason: String
+    fundingType: String
+    electionCommitmentYear: String
+    hubId: UUID
+    dateCreated: DateTime
+    associatedOrgs: AssociatedOrg
+    name: String
+    funding: Float
+    isCitizenScience: Boolean
+    lastUpdated: DateTime
+    fundings: FundingEmbedded
+    hub: Hub
+    isMERIT: Boolean
+    status: Status
+    isSciStarter: Boolean
+    isExternal: Boolean
+    projectId: UUID
+    activities: [Activity]
+    documents: [Document]
+    meriPlan: MeriPlan
+    reports: [Report]
+    sites: [Site]
+    surveys: [ProjectActivity]
+    errors: [Error]
+}
+
+type Hub{
+    urlPath: String
+    skin: String
+    title: String
+    homePagePath: String
+    defaultProgram: String
+    templateConfiguration: JSON
+    content: JSON
+    customBreadCrumbs: JSON
+    pages: JSON
+    dataColumns: JSON
+    mapLayersConfig: MapLayersConfigurationEmbedded
+    mapDisplays: JSON
+    timeSeriesOnIndex: String
+    emailFromAddress: String
+    emailReplyToAddress: String
+    downloadUrlPrefix: String
+    accessManagementOptions: AccessManagementOptionsEmbedded
+    dateCreated: Date
+    hubId: UUID
+    lastUpdated: Date
+    availableMapFacets: JSON
+    defaultFacetQuery: JSON
+    supportedPrograms: JSON
+    availableFacets: JSON
+    status: String
+    quickLinks: JSON
+    adminFacets: JSON
+}
+
+type AccessManagementOptionsEmbedded{
+    expireUsersAfterPeriodInactive: String
+    warnUsersAfterPeriodInactive: String
+}
+
+type FundingEmbedded{
+    fundingSourceAmount: Float
+    fundingSource: String
+    fundingType: String
+}
+

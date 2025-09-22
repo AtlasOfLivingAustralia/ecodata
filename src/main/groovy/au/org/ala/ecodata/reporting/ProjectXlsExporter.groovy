@@ -102,7 +102,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectAssetProperties = commonProjectProperties + ["description", "category"]
 
     List<String> approvalsHeaders = commonProjectHeaders + ['Date / Time Approved', 'Change Order Numbers','Comment','Approved by']
-    List<String> approvalsProperties = commonProjectProperties + ['approvalDate', 'changeOrderNumber', 'comment','approvedBy']
+    List<String> approvalsProperties = commonProjectProperties + ['dateChanged', 'reference', 'comment','changedBy']
 
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
@@ -579,10 +579,10 @@ class ProjectXlsExporter extends ProjectExporter {
         ]
         //Add extra info about approval status if any MERI plan information is to be exported.
         if (shouldExport(meriPlanTabs)){
-            Map approval  = projectService.getMostRecentMeriPlanApproval(project.projectId)
+            StatusChange approval  = projectService.getMostRecentMeriPlanApproval(project.projectId)
             if (approval) {
-                project['approvalDate'] = approval.approvalDate
-                project['approvedBy'] =  approval.approvedBy
+                project['approvalDate'] = approval.dateChanged
+                project['approvedBy'] =  approval.changedBy
             }
         }
 
@@ -778,7 +778,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
             List approvals  = projectService.getMeriPlanApprovalHistory(project.projectId)
              if (approvals && approvals.size()>0) {
-                List data = approvals.collect { it + project }
+                List data = approvals.collect {it.toMap()  + project }
                 sheet.add(data, approvalsProperties, row + 1)
             }
 

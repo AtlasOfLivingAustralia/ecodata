@@ -1,0 +1,556 @@
+"Directs the executor to include this field or fragment only when the `if` argument is true"
+directive @include(
+    "Included when true."
+    if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Directs the executor to skip this field or fragment when the `if`'argument is true."
+directive @skip(
+    "Skipped when true."
+    if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Marks the field or enum value as deprecated"
+directive @deprecated(
+    "The reason for the deprecation"
+    reason: String! = "No longer supported"
+) on FIELD_DEFINITION | ENUM_VALUE
+
+
+type Query {
+    meritProject(projectId: String!): MeritProject
+
+    searchMeritProjects(
+
+        projectId: [UUID],
+        meritProjectID: [String]
+        programId: [UUID]
+        program:[String]
+        subProgram: [String]
+        managementUnitId: [UUID]
+        managementUnit: [String]
+        organisationId: [UUID]
+        organisation: [String]
+        status: [Status]
+
+        startDate: DateRange
+        endDate: DateRange
+        lastUpdated: DateRange
+
+        query: String
+        facetFilters: [String]
+
+        page: Int,
+        max: Int,
+        sort: String,
+        order: String
+
+    ): MeritProjects
+
+}
+
+type MeritProjects {
+    results: [MeritProject]
+    totalCount: Int
+}
+
+type Organisation {
+    hubId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    organisationId: UUID
+    name: String
+    description: String
+    acronym: String
+    abn: String
+    url: String
+    entityName: String
+    entityType: String
+    businessNames: [String]
+    state: String
+    postcode: Int
+    externalIds: [ExternalId]
+    indigenousOrganisationRegistration: [String]
+    associatedOrgs: [AssociatedOrg]
+    contractNames: [String]
+
+}
+
+type AssociatedOrg {
+    name: String
+    description: String
+    fromDate: Date
+    toDate: Date
+    organisation: Organisation
+}
+
+"Validation Errors"
+type Error {
+    field: String!
+    message: String
+}
+
+type ExternalId {
+    "The id used in the external system"
+    externalId: String
+    "Identifies the system this externaId is used in"
+    idType: IdType
+}
+
+type ManagementUnit {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    managementUnitId: UUID
+    name: String
+    description: String
+    startDate: Date
+    endDate: Date
+    managementUnitSiteId: UUID
+    hubId: UUID
+
+}
+
+type MeriPlan {
+    lastUpdated: Date
+    publicationStatus: PublicationStatus
+
+    statusChangeHistory: [StatusChangeHistory]
+
+    firstNationsPeopleInvolvement: String
+
+    supportedPriorityPlaces: [String]
+    "Environmental assets the Project is investing in protected"
+    investmentPriorities: [String]
+    "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
+    midTermOutcomes: [ProjectOutcome]
+    "Measurable targets the Project plans to achieve"
+    outputTargets: [OutputTarget]
+    "The Program outcome that is the primary outcome the Project plans to achieve"
+    primaryOutcome: ProjectOutcome
+    "Other Program outcomes that the Project plans to achieve"
+    secondaryOutcomes: [ProjectOutcome]
+    "Project specific outcomes that are planned to be achieved in the short term (1-3 years)"
+    shortTermOutcomes: [ProjectOutcome]
+
+    keyThreats: [KeyThreat]
+
+    implementationOrDeliveryAssumptions: String
+    evaluationApproach: String
+
+    partnerships: [Partnership]
+
+    baselines: [Baseline]
+    monitoringMethodology: [MonitoringMethodology]
+    approach: String
+
+    conservationAndManagementPlans:[ManagementPlan]
+
+
+}
+
+type ManagementPlan {
+    documentName: String
+    documentSection: String
+    strategicAlignment: String
+    documentUrl: String
+}
+
+type Baseline {
+    code: String
+    description: String
+    existsOrToBeEstablished: String
+    targetMeasures: [TargetMeasure]
+    emsaModules: [String]
+    method: String
+    evidence: String
+    relatedOutcomes: [String]
+}
+
+type MonitoringMethodology {
+    relatedBaseline: String
+    description: String
+    targetMeasures: [TargetMeasure]
+    emsaModules: [String]
+    method: String
+    evidence: String
+}
+
+type Partnership {
+    partnerName: String
+    description: String
+    partnerOrganisationType: String
+}
+
+type KeyThreat {
+    "The code for the key threat"
+    relatedOutcomes: [String]
+    "A description of the key threat"
+    description: String
+    threatCode: String
+    intervention: String
+    targetMeasures: [TargetMeasure]
+    evidence: String
+
+}
+
+type Service {
+    id: Int
+    name: String
+}
+
+type Activity {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    activityId: UUID
+    status: Status
+    type: String
+    formVersion: Int
+    description: String
+    progress: String
+    startDate: Date
+    endDate: Date
+    plannedStartDate: Date
+    plannedEndDate: Date
+    outputs: [Output]
+}
+
+type Output {
+    outputId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    name: String
+    service: Service
+    data: JSON
+}
+
+type OutcomeTarget {
+    relatedOutcomes: [String]
+    target: Float
+}
+
+type PeriodTarget {
+    period: String
+    target: Float
+}
+
+type OutputTarget {
+    "Description"
+    outcomeTargets: [OutcomeTarget]
+    "Description"
+    periodTargets: [PeriodTarget]
+    "Description"
+    target: Float
+    "Description"
+    targetDate: Date
+    "A target measure"
+    targetMeasure: TargetMeasure
+}
+
+type Program {
+    "The acronym the Program is known by"
+    acronym: String
+    "The name of the Program"
+    name: String
+    "If this Program is a sub-program, this field identifies the parent Program"
+    parent: Program
+    "The unique identifier for the Program"
+    programId: UUID
+}
+
+interface Project {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    name: String
+    description: String
+    projectId: UUID
+    hubId: UUID
+    sites: [Site]
+    documents: [Document]
+}
+
+type MeritProject implements Project {
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    meritProjectID: String
+    "A list of organisations that have a relationship with this Project.  "
+    associatedOrgs: [AssociatedOrg]
+    "A longer description of the Project"
+    description: String
+    "Used by older MERIT projects that share a grant id from a devolved grant.  "
+    externalId: String
+    "A list of identifiers by which this Project may be known in external systems"
+    externalIds: [ExternalId]
+    "Mostly unique human readable identifier used for the Project.  Projects before 2018 sometimes share a grantId when run under a devolved grant.  When projects share a grantId, they are futher distinguished  via the externalId field.  The combination of grantId and externalId must be unique"
+    grantId: String
+    "The identifier of the Hub that was responsible for creating the Project"
+    hubId: UUID
+    "The managed natural resource region in which the activities of this Project are taking place"
+    managementUnit: ManagementUnit
+    "Has a meriPlan"
+    meriPlan: MeriPlan
+    "A short description of the Project"
+    name: String
+    "The program or sub-program that is funding this Project"
+    program: Program
+    "Unique identifier of a MERIT project"
+    projectId: UUID
+    "Has reports"
+    reports: [Report]
+
+    sites: [Site]
+
+    documents: [Document]
+    dataSetSummaries: [DataSetSummary]
+    deliveredAgainstTargets: [DeliveredAgainstTarget]
+
+    funding: Float
+    fundingType: String
+    portfolio: String
+    manager: String
+    risks: Risks
+
+    statesAndElectorates: StatesAndElectorates
+}
+
+type DataSetSummary {
+    dataSetId: UUID
+    reportId: UUID
+    siteId: UUID
+    name: String
+    status: Status
+    publicationStatus: PublicationStatus
+    progress: Progress
+    startDate: DateTime
+    endDate: DateTime
+    methods: [String]
+    type: String
+    collectorType: String
+    qa: String
+    measurementTypes: [String]
+    term: String
+    programOutcome: String
+    projectOutcomes: [String]
+    baselines: [String]
+    service: Service
+    addition: String
+    owner: String
+    methodDescription: String
+    custodian: String
+    dataCollectionOngoing: Boolean
+    format: String
+    published: String
+    sensitivities: [String]
+    investmentPriorities: [String]
+    storageType: String
+    publicationUrl: String
+    threatenedSpeciesIndex: String
+    threatenedSpeciesIndexUploadDate: Date
+    sizeUnknown: Boolean
+    protocol: String
+    collectionApp: String
+    orgMintedIdentifier: String
+}
+
+type StatesAndElectorates {
+    primaryState: String
+    primaryElectorate: String
+    otherStates: [String]
+    otherElectorates: [String]
+    manualOverrideUsed: Boolean
+}
+
+enum SitePurpose {
+    PLANNING,
+    REPORTING,
+    EMSA
+}
+
+type Site {
+    siteId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    name: String
+    purposeCode: SitePurpose
+    geoJson: GeoJson
+
+    areaM2: Float
+    centroid: [Float]
+    states : [IntersectionArea]
+    electorates: [IntersectionArea]
+}
+
+type IntersectionArea {
+    name: String
+    overlapPercent: Float
+    overlapM2: Float
+}
+
+type ProjectOutcome {
+    "Description"
+    assets: [String]
+    "Description"
+    code: String
+    "Description"
+    description: String
+    "Description"
+    relatedOutcome: String
+}
+
+
+type Report {
+    publicationStatus: PublicationStatus
+    reportId: UUID
+    "category"
+    category: String
+    "name"
+    name: String
+    "The Project target measures as calculated from the data in this report"
+    deliveredAgainstTargets: [DeliveredAgainstTarget]
+    fromDate: Date
+    toDate: Date
+    submissionDate: Date
+    dateSubmitted: DateTime
+    dateApproved: DateTime
+    dateReturned: DateTime
+    dateCancelled: DateTime
+
+    statusChangeHistory: [StatusChangeHistory]
+
+    activity: Activity
+}
+
+type StatusChangeHistory {
+    dateChanged: DateTime
+    changedBy: String
+    status: String
+    comment: String
+    categories: [String]
+}
+
+type DeliveredAgainstTarget {
+    targetMeasure: TargetMeasure
+    amountDelivered: Float
+    target: Float
+}
+
+type TargetMeasure {
+    targetMeasureId: String
+    service: Service
+    label: String
+}
+
+type Document {
+    documentId: UUID
+    dateCreated: DateTime
+    lastUpdated: DateTime
+    status: Status
+    name: String
+    attribution: String
+    license: String
+    type: String
+    role: String
+    citation: String
+    doiLink: String
+    url: String
+    hosted: String
+    identifier: String
+    dateTaken: DateTime
+    thirdPartyConsentDeclarationMade: Boolean
+    thirdPartyConsentDeclarationText: String
+
+}
+
+
+type Risks {
+    lastUpdated: DateTime
+    overallRisk: String
+    risks: [Risk]
+}
+
+type Risk {
+    currentControl: String
+    consequence: String
+    threat: String
+    residualRisk: String
+    riskRating: String
+    description: String
+    likelihood: String
+}
+
+enum Status {
+    APPLICATION
+    ACTIVE
+    COMPLETED
+    DELETED
+    TERMINATED
+}
+
+enum PublicationStatus {
+    APPROVED
+    SUBMITTED
+    DRAFT
+    CANCELLED
+}
+
+enum Progress {
+    PLANNED
+    STARTED
+    FINISHED
+    CANCELLED
+    DEFERRED
+}
+
+enum IdType {
+    ARDC_RAID
+    GRANT_AWARD
+    GRANT_OPPORTUNITY
+    INTERNAL_ORDER_NUMBER
+    MONITOR_MINTED_COLLECTION_ID
+    MONITOR_PLOT_GUID
+    MONITOR_PLOT_SELECTION_GUID
+    MONITOR_PROTOCOL_GUID
+    MONITOR_PROTOCOL_INTERNAL_ID
+    RELATED_PROJECT
+    TECH_ONE_CODE
+    TECH_ONE_CONTRACT_NUMBER
+    TECH_ONE_PARTY_ID
+    UNSPECIFIED
+    WORK_ORDER
+}
+
+enum YesNo {
+    no
+    yes
+}
+
+enum AscDesc {
+    asc
+    desc
+}
+
+input ReportQuery {
+    "yyyy-mm-dd"
+    fromDate: String
+    publicationStatus: [String]
+    dateSubmitted: DateRange
+    dateApproved: DateRange
+    "yyyy-mm-dd"
+    toDate: DateRange
+}
+
+input DateRange {
+    from: Date
+    to: Date
+}
+
+
+scalar Date @specifiedBy(url:"https://tools.ietf.org/html/rfc3339")
+scalar DateTime @specifiedBy(url:"https://tools.ietf.org/html/rfc3339")
+scalar JSON @specifiedBy(url:"https://json-schema.org/")
+scalar UUID @specifiedBy(url:"https://tools.ietf.org/html/rfc4122")
+scalar GeoJson

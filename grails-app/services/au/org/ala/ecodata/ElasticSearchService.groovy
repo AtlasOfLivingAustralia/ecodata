@@ -1004,7 +1004,9 @@ class ElasticSearchService {
                     client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-indexing"
         ).build()
 
+        int count = 0
         Project.withNewSession {
+
             def batchParams = [offset: 0, max: 50, sort: 'projectId']
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
@@ -1017,10 +1019,11 @@ class ElasticSearchService {
                     catch (Exception e) {
                         log.error("Unable to index project:  " + project?.projectId, e)
                     }
+                    count++
                 }
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
-                log.info("Processed " + batchParams.offset + " projects")
+                log.info("Processed " + count + " projects")
             }
         }
 
@@ -1032,7 +1035,7 @@ class ElasticSearchService {
         log.info "Homepage indexing complete"
 
         log.info "Indexing all sites"
-        int count = 0
+        count = 0
         Site.withNewSession { session ->
             siteService.doWithAllSites { def siteMap ->
                 siteMap["className"] = Site.class.name

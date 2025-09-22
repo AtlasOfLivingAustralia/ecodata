@@ -20,9 +20,10 @@ import java.time.format.DateTimeFormatter
 class DateUtil {
     private static String dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
     private static String dateFormatWithMillis = "yyyy-MM-dd'T'hh:mm:ss.SSSZ"
+    private static String displayDateFormat = "yyyy-MM-dd"
 
     static DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(displayDateFormat)
     static DateTimeFormatter DISPLAY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")
     static Date parse(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat)
@@ -47,6 +48,11 @@ class DateUtil {
         }
 
         date
+    }
+
+    static Date parseDisplayDate(String dateStr) {
+        SimpleDateFormat format = new SimpleDateFormat(displayDateFormat)
+        return format.parse(dateStr)
     }
 
     static String format(Date date) {

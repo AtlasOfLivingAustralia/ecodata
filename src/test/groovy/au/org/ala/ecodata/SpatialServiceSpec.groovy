@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
-import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.locationtech.jts.geom.Geometry
@@ -11,7 +10,6 @@ import spock.lang.Specification
 
 class SpatialServiceSpec extends Specification implements ServiceUnitTest<SpatialService> {
     WebService webService = Mock(WebService)
-    ObjectMapper mapper = new ObjectMapper()
 
     def setup () {
         grailsApplication.config.spatial.intersectionThreshold = 0.05
@@ -41,7 +39,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
 
     def "isValidGeometryIntersection should correctly identify overlapping objects" () {
         setup:
-        def shape3 = GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +
+        def shape3 = GeometryUtils.geoJsonMapToGeometry(JSON.parse('{' +
                 '        "type": "Polygon",' +
                 '        "coordinates": [[' +
                 '          [0.000, 0.000],' +
@@ -50,8 +48,8 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '          [0.02, 0.000],' +
                 '          [0.000, 0.000]' +
                 '        ]]' +
-                '      }', Map.class ))
-        def shape4 = GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +
+                '      }'))
+        def shape4 = GeometryUtils.geoJsonMapToGeometry(JSON.parse('{' +
                 '        "type": "Polygon",' +
                 '        "coordinates": [[' +
                 '          [-0.01, -0.01],' +
@@ -60,7 +58,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '          [0.01, -0.01],' +
                 '          [-0.01, -0.01]' +
                 '        ]]' +
-                '      }', Map.class))
+                '      }'))
         def shape1 = GeometryUtils.geoJsonMapToGeometry(getShape1())
         def shape2 = getShape2()
 
@@ -132,7 +130,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
     }
 
     private Geometry getBoundaryShape() {
-        return GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +
+        return GeometryUtils.geoJsonMapToGeometry(JSON.parse('{' +
                 '        "coordinates": [' +
                 '          [' +
                 '            [' +
@@ -158,11 +156,11 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '          ]' +
                 '        ],' +
                 '        "type": "Polygon"' +
-                '      }', Map.class))
+                '      }'))
     }
 
     private Map getShape1() {
-        return mapper.readValue('{' +
+        return JSON.parse('{' +
                 '        "type": "Polygon",' +
                 '        "coordinates": [' +
                 '          [' +
@@ -188,11 +186,11 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '            ]' +
                 '          ]' +
                 '        ]' +
-                '      }', Map.class)
+                '      }')
     }
 
     private Geometry getShape2() {
-        GeometryUtils.geoJsonMapToGeometry(mapper.readValue('{' +
+        GeometryUtils.geoJsonMapToGeometry(JSON.parse('{' +
                 '        "coordinates": [' +
                 '          [' +
                 '            [' +
@@ -218,7 +216,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
                 '          ]' +
                 '        ],' +
                 '        "type": "Polygon"' +
-                '      }', Map.class))
+                '      }'))
     }
 
     private Geometry getComplexMultiLineString() {
