@@ -86,8 +86,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> outcomesProperties = commonProjectProperties + ['outcomes'] + assetsAddressed
     List<String> monitoringHeaders = commonProjectHeaders + ['Monitoring Indicators', 'Monitoring Approach']
     List<String> monitoringProperties = commonProjectProperties + ['indicator', 'approach']
-    List<String> projectPartnershipHeaders = commonProjectHeaders + ['Partner name', 'Nature of partnership', 'Type of organisation']
-    List<String> projectPartnershipProperties = commonProjectProperties + ['data1', 'data2', 'data3']
+    List<String> projectPartnershipHeaders = commonProjectHeaders + ['Partner name', 'Nature of partnership', 'Type of organisation', 'Type of organisation (if Other)']
+    List<String> projectPartnershipProperties = commonProjectProperties + ['data1', 'data2', 'data3', 'otherOrganisationType']
     List<String> projectImplementationHeaders = commonProjectHeaders + ['Project implementation / delivery mechanism']
     List<String> projectImplementationProperties = commonProjectProperties + ['implementation']
     List<String> projectDeliveryAssumptionsHeaders = commonProjectHeaders + ['Project delivery assumptions']
