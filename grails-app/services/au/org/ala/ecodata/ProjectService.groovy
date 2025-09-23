@@ -4,6 +4,7 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
+import org.apache.http.HttpStatus
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -110,6 +111,12 @@ class ProjectService {
             return metadataService.getProjectServicesWithTargets(project)
         else
             return null
+    }
+
+    List<Score> getProjectTargetMeasures(String projectId) {
+        Map project = get(projectId, [ProjectService.FLAT])
+        List<String> scoreIds = project.outputTargets.collect {it.scoreId}
+        Score.findAllByScoreIdInListAndStatusNotEqual(scoreIds, Status.DELETED)
     }
 
     def getByDataResourceId(String id, String status = "active", levelOfDetail = []) {
@@ -590,19 +597,12 @@ class ProjectService {
      * @return a Map containing the aggregated results.
      *
      */
-    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null, boolean includeTargets = true) {
+    def projectMetrics(String id, boolean targetsOnly = false, boolean approvedOnly = false, List scoreIds = null, Map aggregationConfig = null, boolean includeTargets = true, boolean includeRelatedScores = false) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
 
-            List toAggregate
-            if (scoreIds && targetsOnly) {
-                toAggregate = Score.findAllByScoreIdInListAndIsOutputTarget(scoreIds, true)
-            } else if (scoreIds) {
-                toAggregate = Score.findAllByScoreIdInList(scoreIds)
-            } else {
-                toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
-            }
+            List toAggregate = getScoresForMetrics(scoreIds, targetsOnly, includeRelatedScores)
 
             List outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
 
@@ -641,6 +641,37 @@ class ProjectService {
             log.error error
             return [status: 'error', error: error]
         }
+    }
+
+    /**
+     * Returns the List of Score objects to be used for project metrics based
+     */
+    private static List getScoresForMetrics(List scoreIds, boolean targetsOnly, boolean includeRelatedScores) {
+        List toAggregate
+        if (scoreIds && targetsOnly) {
+            toAggregate = Score.findAllByScoreIdInListAndIsOutputTarget(scoreIds, true)
+        } else if (scoreIds) {
+            toAggregate = Score.findAllByScoreIdInList(scoreIds)
+        } else {
+            toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
+        }
+
+        if (scoreIds && includeRelatedScores) {
+            // Include any related scores to the requested scores.
+            List relatedScoreIds = []
+            toAggregate.each { Score score ->
+                score.relatedScores?.each { RelatedScore relatedScore ->
+                    if (!relatedScoreIds.contains(relatedScore.scoreId) && !scoreIds.contains(relatedScore.scoreId)) {
+                        relatedScoreIds << relatedScore.scoreId
+                    }
+                }
+            }
+            if (relatedScoreIds) {
+                List relatedScores = Score.findAllByScoreIdInList(relatedScoreIds)
+                toAggregate.addAll(relatedScores)
+            }
+        }
+        toAggregate
     }
 
     /**
@@ -1076,24 +1107,41 @@ class ProjectService {
      * @param projectId the project to get the approval history for.
      * @return a List of Maps with keys approvalDate, approvedBy.
      */
-    List getMeriPlanApprovalHistory(String projectId){
+    List<StatusChange> getMeriPlanApprovalHistory(String projectId, boolean lookupUserDetails = true) {
         Map results = documentService.search([projectId:projectId, role:'approval', labels:'MERI'])
-        List<Map> histories = []
-        results?.documents.collect{
+        List<StatusChange> histories = []
+        results?.documents?.collect{
             def data = documentService.readJsonDocument(it)
+            StatusChange doc
+            if (!data.error) {
+                String approvedBy = data.approvedBy
+                if (lookupUserDetails) {
+                    approvedBy = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
+                }
 
-            if (!data.error){
-                String displayName = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
-                def doc = [
-                        approvalDate:data.dateApproved,
-                        approvedBy:displayName,
-                        comment:data.reason,
-                        changeOrderNumber:data.referenceDocument
-                ]
-                histories.push(doc)
+                doc = new StatusChange(
+                        dateChanged:data.dateApproved,
+                        changedBy:approvedBy,
+                        status:StatusChange.APPROVED,
+                        reference:data.referenceDocument,
+                        documentId: it.documentId,
+                        comment: data.reason
+                )
+
             }
+            else {
+                doc = new StatusChange(
+                        documentId:it.documentId,
+                        dateChanged: it.lastUpdated,
+                        reference: it.filename,
+                        comment: "Error: "+it.name +" document is missing or damaged!"
+                )
+            }
+            histories.push(doc)
         }
-        histories
+        histories.sort({it.dateChanged})
+        histories.reverse()
+
     }
 
     /**
@@ -1101,9 +1149,9 @@ class ProjectService {
      * @param projectId the project.
      * @return Map with keys approvalDate and approvedBy.  Null if the plan has not been approved.
      */
-    Map getMostRecentMeriPlanApproval(String projectId) {
-        List<Map> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
-        meriApprovalHistory.max{it.approvalDate}
+    StatusChange getMostRecentMeriPlanApproval(String projectId) {
+        List<StatusChange> meriApprovalHistory = getMeriPlanApprovalHistory(projectId)
+        meriApprovalHistory.max{it.dateChanged}
     }
 
     /**

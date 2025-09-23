@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.ActivityFormGraphQLMapper
+
 import org.bson.types.ObjectId
 
 /**
@@ -11,8 +11,6 @@ class ActivityForm {
     static String SURVEY_TAG = "survey"
     static String INTERVENTION_TAG = "intervention"
     static String SITE_TAG = "site"
-
-    static graphql = ActivityFormGraphQLMapper.graphqlMapping()
 
     /** The list of properties to be used when binding request data to an ActivityForm */
     static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections', 'description']

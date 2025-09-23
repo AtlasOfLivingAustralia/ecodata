@@ -1004,7 +1004,9 @@ class ElasticSearchService {
                     client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener) } as BiConsumer, listener, "ecodata-indexing"
         ).build()
 
+        int count = 0
         Project.withNewSession {
+
             def batchParams = [offset: 0, max: 50, sort: 'projectId']
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
 
@@ -1017,10 +1019,11 @@ class ElasticSearchService {
                     catch (Exception e) {
                         log.error("Unable to index project:  " + project?.projectId, e)
                     }
+                    count++
                 }
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
-                log.info("Processed " + batchParams.offset + " projects")
+                log.info("Processed " + count + " projects")
             }
         }
 
@@ -1032,7 +1035,7 @@ class ElasticSearchService {
         log.info "Homepage indexing complete"
 
         log.info "Indexing all sites"
-        int count = 0
+        count = 0
         Site.withNewSession { session ->
             siteService.doWithAllSites { def siteMap ->
                 siteMap["className"] = Site.class.name
@@ -1187,7 +1190,7 @@ class ElasticSearchService {
             // todo: Check if BioCollect requires all sites in `sites` property. If no, merge `projectArea` with `sites`.
             projectMap.projectArea = siteService.getSimpleProjectArea(projectMap.projectSiteId)
             projectMap.containsActivity = activityService.searchAndListActivityDomainObjects([projectId: projectMap.projectId], null, null, null, [max: 1, offset: 0])?.totalCount > 0
-            projectMap.projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
+            List<Map> projectActivities = projectActivityService.getAllByProject(project.projectId).collect({
                 [
                         id: it.id,
                         projectId: it.projectId,
@@ -1199,7 +1202,13 @@ class ElasticSearchService {
                         publicAccess: it.publicAccess
                 ]
             })
+
+            projectMap.projectActivities = projectActivities
+            projectMap.numberOfRecords = activityService.countOfProjectActivities(projectMap.projectId)
+            boolean hasPublicPublished = projectActivities.any { it.publicAccess && it.published }
+            projectMap.publicParticipation = hasPublicPublished
         }
+
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
             // data causing the indexing to fail.

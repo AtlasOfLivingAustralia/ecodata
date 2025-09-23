@@ -562,22 +562,27 @@ class PermissionService {
         switch (accessLevel) {
             case AccessLevel.admin.name():
                 if(!checkUserPermission(userId, entityId, entityType, AccessLevel.admin.code)){
-                    result.error = "Access denied, user does not have admin permission for the project."
+                    result.error = "Access denied, user does not have admin permission for $entityId ($entityType)."
                 }
                 break
             case AccessLevel.caseManager.name():
                 if(!checkUserPermission(userId, entityId, entityType, AccessLevel.caseManager.code)) {
-                    result.error = "Access denied, user does not have caseManager permission for the project."
+                    result.error = "Access denied, user does not have caseManager permission for $entityId ($entityType)."
                 }
                 break
             case AccessLevel.editor.name():
                 if(!checkUserPermission(userId, entityId, entityType, AccessLevel.editor.code)) {
-                    result.error = "Access denied, user does not have editor permission for the project."
+                    result.error = "Access denied, user does not have editor permission for $entityId ($entityType)."
                 }
                 break
             case AccessLevel.projectParticipant.name():
                 if(!checkUserPermission(userId, entityId, entityType, AccessLevel.projectParticipant.code)){
-                    result.error = "Access denied, user does not have projectParticipant permission for the project."
+                    result.error = "Access denied, user does not have projectParticipant permission for $entityId ($entityType)."
+                }
+                break
+            case AccessLevel.readOnly.name():
+                if(!checkUserPermission(userId, entityId, entityType, AccessLevel.readOnly.code)){
+                    result.error = "Access denied, user does not have readOnly permission for $entityId ($entityType)."
                 }
                 break
 

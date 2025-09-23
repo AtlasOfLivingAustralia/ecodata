@@ -1,22 +1,17 @@
 package au.org.ala.ecodata.graphql
 
-import au.org.ala.ecodata.AccessLevel
-import au.org.ala.ecodata.IdentifierHelper
-import au.org.ala.ecodata.PermissionService
-import au.org.ala.ecodata.Status
-import au.org.ala.ecodata.UserPermission
-import au.org.ala.ecodata.UserService
+import au.org.ala.ecodata.*
 import grails.core.GrailsApplication
-import org.grails.gorm.graphql.plugin.GraphQLContextBuilder
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
-class EcodataGraphQLContextBuilder implements GraphQLContextBuilder {
+@Component
+class EcodataGraphQLContextBuilder  {
 
     @Autowired
     GrailsApplication grailsApplication
 
-    @Override
     EcodataGraphQLContext buildContext(GrailsWebRequest request) {
 
         EcodataGraphQLContext context = new EcodataGraphQLContext()

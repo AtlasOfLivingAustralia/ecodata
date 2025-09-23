@@ -26,7 +26,8 @@ class DocumentService {
     static  final MOBILE_APP_ROLE = [ "android",
                                      "blackberry",
                                      "iTunes",
-                                     "windowsPhone"]
+                                     "windowsPhone",
+                                     "pwa" ]
 
     CommonService commonService
     GrailsApplication grailsApplication

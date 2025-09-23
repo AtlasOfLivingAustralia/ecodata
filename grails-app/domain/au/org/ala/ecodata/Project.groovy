@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.ProjectGraphQLMapper
-import au.org.ala.ecodata.graphql.models.MeriPlan
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
@@ -13,8 +11,6 @@ import static au.org.ala.ecodata.Status.COMPLETED
 
 @JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class Project {
-
-    static graphql = ProjectGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -84,6 +80,11 @@ class Project {
     String projLifecycleStatus
 
     CustomMetadata customMetadata
+    /**
+     * The status of the project / MERI plan, eg. DRAFT, PUBLISHED, SUBMITTED_FOR_REVIEW.
+     * Only applicable to projects with a plan such as MERIT projects or BioCollect works projects
+     */
+    String planStatus
 
     /** The system in which this project was created, eg. MERIT / SciStarter / BioCollect / Grants Hub / etc */
     String origin = 'atlasoflivingaustralia'
@@ -255,6 +256,7 @@ class Project {
         comment nullable: true
         projLifecycleStatus nullable: true, inList: [PublicationStatus.PUBLISHED, PublicationStatus.DRAFT]
         customMetadata nullable: true
+        planStatus nullable: true
         hubId nullable: true, validator: { String hubId, Project project, Errors errors ->
             GormMongoUtil.validateWriteOnceProperty(project, 'projectId', 'hubId', errors)
         }
@@ -271,9 +273,7 @@ class Project {
             return null
         }
 
-        MeriPlan meriPlan = new MeriPlan()
-        meriPlan.details = custom.get("details")
-        meriPlan.outputTargets = this.outputTargets
+        MeriPlan meriPlan = new MeriPlan(this)
         return meriPlan
     }
 

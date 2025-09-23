@@ -66,9 +66,9 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
         setup:
         def reportId = "1"
         def params = [comment: 'Testing', categories: ['Other']]
-        def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.REPORT_APPROVED, category: "Core Service", activityId: "12",
+        def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.TYPE_ACTIVITY, category: "Core Service", activityId: "12",
                       activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "finished", submittedBy: "1",
-                      publicationStatus: "approved", status: "active", dateCreated: new Date(), lastUpdated:  new Date(), dateApproved: new Date(), approvedBy: "1", dateReturned: new Date()]
+                      publicationStatus: PublicationStatus.PUBLISHED, status: "active", dateCreated: new Date(), lastUpdated:  new Date(), dateApproved: new Date(), approvedBy: "1", dateReturned: new Date()]
 
         when:
         request.json = params
@@ -91,7 +91,7 @@ class ReportingControllerSpec extends Specification implements ControllerUnitTes
         setup:
         def reportId = "1"
         def params = [comment: null, categories: null]
-        def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: Report.REPORT_NOT_APPROVED, category: "Core Service", activityId: "12",
+        def report = [reportId: reportId, managementUnit: "test_mu", name: "My Report", description: "Report Description", type: PublicationStatus.DRAFT, category: "Core Service", activityId: "12",
                       activityType: "RLP", fromDate: new Date(), toDate: new Date(), dueDate: new Date(), submissionDate: new Date(), dateSubmitted: new Date(), progress: "planned", submittedBy: "1",
                       publicationStatus: "approved", status: "active", dateCreated: new Date(), lastUpdated:  new Date(), cancelledBy: "1", dateCancelled: new Date()]
 

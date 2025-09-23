@@ -109,7 +109,7 @@ class ParatooController {
             summary = "Gets all projects for an authenticated user",
             description = "Gets all projects that a user is assigned to",
             responses = [
-                    @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Project.class)))),
+                    @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ParatooProject.class)))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
                     @ApiResponse(responseCode = "404", description = "Not found")
             ],

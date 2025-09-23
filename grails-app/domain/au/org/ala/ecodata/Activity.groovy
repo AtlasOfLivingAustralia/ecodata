@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.ActivityGraphQLMapper
+
 import org.bson.types.ObjectId
+
 /**
  * Currently this holds both activities and assessments.
  */
@@ -24,8 +25,6 @@ class Activity {
         activities must belong to 1 Site or 1 project - this is mapped by the siteId or projectId in this domain
         activities may have 0..n Outputs - these are mapped from the Output side
     */
-
-    static graphql = ActivityGraphQLMapper.graphqlMapping()
 
     static mapping = {
         activityId index: true

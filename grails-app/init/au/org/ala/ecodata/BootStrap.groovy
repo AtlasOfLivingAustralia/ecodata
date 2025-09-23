@@ -10,6 +10,7 @@ import au.org.ala.ecodata.ManagementUnit
 import au.org.ala.ecodata.customcodec.AccessLevelCodec
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
+import grails.util.Environment
 import groovy.json.JsonSlurper
 import static grails.async.Promises.task
 //import net.sf.json.JSONNull
@@ -40,7 +41,11 @@ class BootStrap {
     MongoDatastore mongoDatastore
 
     def init = { servletContext ->
-        initializeSpatialIntersection()
+        // Don't pre-scache spatial layers during development due to frequent restarts
+        if (Environment.DEVELOPMENT != Environment.current) {
+            initializeSpatialIntersection()
+        }
+
         messageSource.setBasenames(
                 "file:///var/opt/atlas/i18n/ecodata/messages",
                 "file:///opt/atlas/i18n/ecodata/messages",

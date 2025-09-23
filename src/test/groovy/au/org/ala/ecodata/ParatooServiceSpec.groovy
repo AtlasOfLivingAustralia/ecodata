@@ -8,7 +8,6 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
-import org.codehaus.jackson.map.ObjectMapper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
@@ -817,8 +816,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 '            }\n' +
                 '          }\n' +
                 '        }'
-        ObjectMapper mapper = new ObjectMapper()
-        relationship = mapper.readValue(relationship, Map.class)
+
+        relationship = JSON.parse(relationship)
 
         def output = """
 {
@@ -847,7 +846,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 }
 """
 
-        output = mapper.readValue(output, Map.class)
+        output = JSON.parse(output)
 
         when:
         output = service.rearrangePropertiesAccordingToModelRelationship(output, relationship.apiOutput, relationship.ecodata)
@@ -939,8 +938,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 '  },\n' +
                 '  "required" : [ "transect_number", "date_time" ]\n' +
                 '}'
-        ObjectMapper mapper = new ObjectMapper()
-        def input = mapper.readValue(output, Map.class)
+        def input = JSON.parse(output)
 
         when:
         def result = service.buildChildParentRelationship(input)
@@ -982,8 +980,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 '  },\n' +
                 '  "required" : [ "transect_number", "date_time" ]\n' +
                 '}'
-        ObjectMapper mapper = new ObjectMapper()
-        def input = mapper.readValue(output, Map.class)
+        def input = JSON.parse(output)
 
         when:
         def result = service.buildParentChildRelationship(input)
@@ -996,13 +993,13 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     void "rearrangeSurveyData should reorder api output according to provided relationship"() {
         setup:
-        def mapper = new ObjectMapper()
+
         def output = '{"a": {}, "f": 4, "b": {"c": 1, "d": {}}, "e": {"g": 3}}'
-        output = mapper.readValue(output, Map.class)
+        output = JSON.parse(output)
         def relationship = '{"d": {"b": {"e": {"a": {} } }}, "c": {} }'
-        relationship = mapper.readValue(relationship, Map.class)
+        relationship = JSON.parse(relationship)
         def apiOutputRelationship = '{ "e": {"e": {} }, "a": "a", "b.c": {"c": {}}, "b.d": {"d": {}} }'
-        apiOutputRelationship = mapper.readValue(apiOutputRelationship, Map.class)
+        apiOutputRelationship = JSON.parse(apiOutputRelationship)
         when:
         def result = service.rearrangeSurveyData(output, output, relationship, apiOutputRelationship)
         then:
@@ -1738,14 +1735,9 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     }
 }
 """
-        Map inputObject = getGroovyObject(input)
+        Map inputObject = JSON.parse(input)
         Map output = ["plot_points": [type: "object", properties: ["lat": [type: "number", format: "float"], "lng": [type: "number", format: "float"], "name": [type: "string", format: "string"]], "x-paratoo-component": "location.plot-location-point"]]
         [input: inputObject, output: output]
-    }
-
-    private getGroovyObject(String input, Class clazz = Map.class){
-        ObjectMapper mapper = new ObjectMapper()
-        mapper.readValue(input, clazz)
     }
 
 }

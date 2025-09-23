@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.ManagementUnitGraphQLMapper
 import org.bson.types.ObjectId
 import org.springframework.validation.Errors
 
@@ -8,8 +7,6 @@ import org.springframework.validation.Errors
  * A mu acts as a container for projects, more or less.
  */
 class ManagementUnit {
-
-    static graphql = ManagementUnitGraphQLMapper.graphqlMapping()
 
     static bindingProperties = ['managementUnitSiteId', 'name', 'description', 'url', 'outcomes', 'priorities',
                                 'startDate', 'endDate', 'associatedOrganisations', 'config', 'shortName', 'geographicInfo']
