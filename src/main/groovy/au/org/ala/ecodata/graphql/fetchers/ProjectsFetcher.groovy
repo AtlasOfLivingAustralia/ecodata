@@ -3,60 +3,51 @@ package au.org.ala.ecodata.graphql.fetchers
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
-import au.org.ala.ecodata.graphql.models.KeyValue
-import au.org.ala.ecodata.graphql.models.OutputData
-import com.mongodb.client.FindIterable
-import com.mongodb.client.model.Filters
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-import org.elasticsearch.search.aggregations.Aggregation
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
-import static au.org.ala.ecodata.Status.DELETED
 
-class ProjectsFetcher implements DataFetcher<List<Project>> {
+@Component
+class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
-    ProjectsFetcher(ProjectService projectService, ElasticSearchService elasticSearchService, PermissionService permissionService,
-                           ReportService reportService, CacheService cacheService, HubService hubService) {
-        this.projectService = projectService
-        this.elasticSearchService = elasticSearchService
-        this.permissionService = permissionService
-        this.reportService  = reportService
-        this.cacheService = cacheService
-        this.hubService = hubService
-    }
-
-
+    @Autowired
     PermissionService permissionService
+    @Autowired
     ElasticSearchService elasticSearchService
+    @Autowired
     ReportService reportService
+    @Autowired
     ProjectService projectService
+    @Autowired
     CacheService cacheService
+    @Autowired
     HubService hubService
+    @Autowired
+    EcodataGraphQLContextBuilder ecodataGraphQLContextBuilder
 
-    static String meritFacets = "status,organisationFacet,associatedProgramFacet,associatedSubProgramFacet,mainThemeFacet,stateFacet,nrmFacet,lgaFacet,mvgFacet,ibraFacet,imcra4_pbFacet,otherFacet,electFacet,meriPlanAssetFacet," +
-            "cmzFacet,partnerOrganisationTypeFacet,promoteOnHomepage,custom.details.caseStudy,primaryOutcomeFacet,secondaryOutcomesFacet,muFacet,tags,fundingSourceFacet"
-    static Map meritParams = [hubFq:"isMERIT:true", flimit:1500, fsort:"term", query:"docType:project", facets:meritFacets, format:null, max:20]
-
-    static  Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
-                             hubFq:null, facets: null]
+    static Map paramList = [flimit:1500, fsort:"term", query:"docType: project", format:null, offset:0, max:20, skipDefaultFilters:false,
+                             hubFq:"isMERIT:false", facets: null]
 
     @Override
-    List<Project> get(DataFetchingEnvironment environment) throws Exception {
+    Map<String, Object> get(DataFetchingEnvironment environment) throws Exception {
 
         String query = environment.arguments.term ?:"*:*"
         return queryElasticSearch(environment, query, [include:'projectId'])
     }
 
-    private List<Project> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
+    Map<String, Object> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {
         // Retrieve projectIds only from elasticsearch.
-        EcodataGraphQLContextBuilder.EcodataGraphQLContext context = (EcodataGraphQLContextBuilder.EcodataGraphQLContext)environment.context
+        EcodataGraphQLContextBuilder.EcodataGraphQLContext context = ecodataGraphQLContextBuilder.buildContext(null)
+
         String query = queryString ?:"*:*"
         SearchResponse searchResponse
 
@@ -88,80 +79,10 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
             results << (fullAccessProjects.find{it.projectId == projectId} ?: restrictedAccessProjects.find{it.projectId == projectId})
         }
 
-        results
+        [totalCount: searchResponse.hits?.totalHits?.value ?: 0, results: results]
     }
 
-    List<Project> searchMeritProject (DataFetchingEnvironment environment) {
-
-        def fqList = mapFq(environment)
-
-        //validate the query
-        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
-
-        Map params = meritParams
-        params["fq"] = fqList
-
-        //offset for elastic search
-        if(environment.arguments.get("page")) {
-            params["offset"] = 20*(Integer.parseInt(environment.arguments.get("page") as String)-1)
-        }
-        else{
-            params["offset"] = 0
-        }
-
-        if(environment.arguments.get("max")) {
-            params["max"] = environment.arguments.get("max")
-        }
-        else{
-            params["max"] = 20
-        }
-
-        if(environment.arguments.get("fromDate")) {
-            params["fromDate"] = environment.arguments.get("fromDate").toString()
-        }
-
-        if(environment.arguments.get("toDate")) {
-            params["toDate"] = environment.arguments.get("toDate").toString()
-        }
-
-        if(environment.arguments.get("dateRange")) {
-
-            params["fromDate"] = environment.arguments.get("dateRange").from
-            params["toDate"] = environment.arguments.get("dateRange").to
-        }
-
-        String query = "docType: project" + (environment.arguments.get("projectId") ? " AND projectId:" + environment.arguments.get("projectId") : "")
-        List<Project> projects =  queryElasticSearch(environment, query, params)
-
-        if(environment.arguments.get("activities")) {
-            List projectIdList = projects.projectId
-
-            List activities = new ActivityFetcher(Holders.applicationContext.elasticSearchService, Holders.applicationContext.permissionService, Holders.applicationContext.metadataService,
-                    Holders.applicationContext.messageSource, Holders.grailsApplication).getFilteredActivities(environment.arguments.get("activities") as List)
-
-            //get projects with requested activity output types
-            List projectIds = activities.findAll { it.projectId in projectIdList }.projectId.unique()
-
-            projects =  projects.findAll{ it.projectId in projectIds}
-        }
-
-        return projects
-    }
-
-    void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
-
-        def searchDetails = elasticSearchService.search(query, params, HOMEPAGE_INDEX)
-
-        fqList.each {
-            List fq = it.toString().split(":")
-            if(!enumList.contains(fq.first())) {
-                Aggregation aggregation = searchDetails.aggregations?.get(fq.first())
-                List<String> lookUps = aggregation?.buckets?.collect{it.keyAsString}
-                if (!lookUps.contains(fq.last())) {
-                    throw new GraphQLException('Invalid ' + fq.first() + ' : suggested values are : ' + lookUps)
-                }
-            }
-        }
+    static void validateSearchQuery (DataFetchingEnvironment environment, List fqList, Map params, String query, List enumList) {
 
         def datePattern = /\d{4}\-\d{2}\-\d{2}/
 
@@ -190,121 +111,28 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
             }
         }
 
-        //validate activity types and output types
-        if(environment.arguments.get("activities")){
-            List args = []
-            args.add(["activities":environment.arguments.get("activities")])
-
-            new Helper(Holders.applicationContext.metadataService).validateActivityData(args)
-        }
-
-    }
-
-    def searchActivityOutput (DataFetchingEnvironment environment) {
-
-        if(environment.arguments.get("activityOutputs")) {
-            validateActivityOutputInput(environment)
-        }
-
-        def fqList = mapFq(environment)
-
-        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
-
-        List<Score> scores = Score.findAll()
-        def results = getActivityOutputs(fqList, scores)
-
-        List outputs = results.outputData
-        //filter the output based on the filtering values
-        if(environment.arguments.get("activityOutputs")) {
-            def filteredOutputs = []
-            results.outputData.each {
-                if (it.category in environment.arguments.get("activityOutputs").getAt("category")) {
-                    filteredOutputs.add(it)
-                }
-            }
-            environment.arguments.get("activityOutputs").each { activityOutput ->
-                if(activityOutput.outputs) {
-                    def unWanted = []
-                    filteredOutputs.each {
-                        if(activityOutput.category == it.category) {
-                            if (!(it.outputType in activityOutput.outputs.outputType)) {
-                                unWanted.add(it)
-                            }
-
-                            if (activityOutput.outputs.labels[0] && activityOutput.outputs.labels[0].size() != 0 && !activityOutput.outputs.labels.contains(null)) {
-                                if (it.outputType in activityOutput.outputs.outputType && !(it.label in activityOutput.outputs.labels[0])) {
-                                    unWanted.add(it)
-                                }
-                            }
-                        }
-                    }
-                    filteredOutputs = filteredOutputs.minus(unWanted)
-                }
-            }
-            outputs = filteredOutputs
-        }
-
-        outputs.each {
-            if(it["result"]["result"] != null && !it["result"]["result"].toString().isNumber()){
-                OutputData outputData = new OutputData(dataList: new ArrayList<KeyValue>())
-                it["result"]["result"].each{ list ->
-                    outputData.dataList.add(new KeyValue(key: list.key, value: list.value))
-                }
-                it["result"]["resultList"] = outputData
-                it["result"]["result"] = null
-            }
-        }
-        return  [outputData : outputs ]
-    }
-
-    def searchOutputTargetsByProgram (DataFetchingEnvironment environment) {
-
-        def fqList = mapFq(environment)
-
-        validateSearchQuery(environment, fqList, meritParams, "docType: project", ["dateRange", "grantManagerNominatedProject"])
-
-        Map params = [hubFq:"isMERIT:true", controller:"search", showOrganisations:true, report:"outputTargets", action:"targetsReport", fq:fqList, format:null]
-
-        def targets = reportService.outputTargetsBySubProgram(params)
-        //def scores = reportService.outputTargetReport(fqList, "*:*")
-
-        def targetList = []
-
-        targets.each {
-            def target = [:]
-            //remove null values
-            if(it.value != null && it.value.entrySet().key.contains(null)) {
-                it.value = it.value.remove(it.value.get(null))
-            }
-
-            if(!environment.arguments.get("programs") || environment.arguments.get("programs").contains(it.key)) {
-                target["program"] = it.key
-                target["outputTargetMeasure"] = []
-                it.value.each { x ->
-                    if(!environment.arguments.get("outputTargetMeasures") || environment.arguments.get("outputTargetMeasures").contains(x.key)) {
-                        def targetMeasure = [:]
-                        targetMeasure["outputTarget"] = x.key
-                        targetMeasure["count"] = x.value.count
-                        targetMeasure["total"] = x.value.total
-                        target["outputTargetMeasure"] << targetMeasure
-                    }
-                }
-                targetList.add(target)
-            }
-        }
-
-        return [targets:targetList]
     }
 
     def mapFq(DataFetchingEnvironment environment) {
 
         def fqList = []
-        def facetMappings = ["managementArea": "nrmFacet:", "majorVegetationGroup": "mvgFacet:", "biogeographicRegion": "ibraFacet:", "marineRegion": "imcra4_pbFacet:", "otherRegion": "otherFacet:", "grantManagerNominatedProject":"promoteOnHomepage:",
-                             "federalElectorate": "electFacet:", "assetsAddressed": "meriPlanAssetFacet:", "userNominatedProject": "custom.details.caseStudy:", "managementUnit": "muFacet:"]
+        def facetMappings = [
+                "managementArea": "nrmFacet:",
+                "majorVegetationGroup": "mvgFacet:",
+                "biogeographicRegion": "ibraFacet:",
+                "marineRegion": "imcra4_pbFacet:",
+                "otherRegion": "otherFacet:",
+                "grantManagerNominatedProject":"promoteOnHomepage:",
+                "federalElectorate": "electFacet:",
+                "assetsAddressed": "meriPlanAssetFacet:",
+                "userNominatedProject": "custom.details.caseStudy:",
+                "managementUnit": "muFacet:",
+                "meritProjectID": "grantId.keyword:"
+        ]
 
         environment.arguments.each {
-            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs",
-                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max", "myProjects", "hub"]) {
+            if(it.key in ["fromDate", "toDate", "dateRange", "activities", "projectId", "activityOutputs", "programs", "reports",
+                          "outputTargetMeasures", "projectStartFromDate", "projectStartToDate", "isWorldWide", "page", "max", "myProjects", "hub", "updatedAfter"]) {
                 return
             }
 
@@ -333,6 +161,7 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
                     case "assetsAddressed" :
                     case "userNominatedProject" :
                     case "managementUnit" :
+                    case "meritProjectID"  :
                         key = facetMappings.get(it.key)
                         break;
                     default:
@@ -344,49 +173,6 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
         }
 
         return fqList
-    }
-
-    def getActivityOutputs(List fqList, List scores) {
-        return cacheService.get("dashboard-activityOutput-"+fqList, {
-            reportService.aggregate(fqList, "docType:project", scores)
-        })
-    }
-
-    void validateActivityOutputInput (DataFetchingEnvironment environment) {
-
-        def categories = []
-        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
-
-        scores.each { score ->
-            def cat = score.category?.trim()
-            if (cat && !categories.contains(cat)) {
-                categories << cat
-            }
-        }
-
-        environment.arguments.get("activityOutputs").each {
-            if(!(it.category in categories)) {
-                throw new GraphQLException('Invalid category ' +  it.category +' : suggested values are : ' + categories)
-            }
-            if(it.outputs) {
-                it.outputs.each{ outputs ->
-                    def outputTypes = scores.findAll { score -> score.category == it.category}.outputType.unique()
-                    if(outputs.outputType && !(outputs.outputType in  outputTypes)){
-                        throw new GraphQLException('Invalid outputType ' +  outputs.outputType +' : suggested values are : ' + outputTypes)
-                    }
-                }
-
-                if (it.outputs.labels[0] && it.outputs.labels[0].size() != 0 && !it.outputs.labels.contains(null)) {
-                    def labels = scores.findAll { score -> score.category == it.category && it.outputs.outputType.contains(score.outputType)}?.label.unique()
-
-                    it.outputs.labels[0].each { label ->
-                        if (!(label in labels)) {
-                            throw new GraphQLException('Invalid label ' + label + ' : suggested values are : ' + labels)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     List<Project> searchBioCollectProject (DataFetchingEnvironment environment) {
@@ -404,7 +190,7 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
         paramList.hub = environment.arguments.get("hub").toString()
 
         //validate the query
-        validateSearchQuery(environment, fqList, paramList, "docType: project", ["status"])
+        validateSearchQuery(environment, fqList, paramList, "isMERIT: false", ["status"])
 
         Map queryParams =  buildBioCollectProjectSearchQuery(environment.arguments, fqList)
         List<Project> projects =  queryElasticSearch(environment, queryParams["query"] as String, queryParams)
@@ -467,8 +253,7 @@ class ProjectsFetcher implements DataFetcher<List<Project>> {
         else if(hubFq.contains("isEcoScience:true")) {
             projectType.push('(projectType:ecoScience)')}
         else if(hubFq.contains("isMERIT:true")) {
-            projectType.push('isMERIT:true')
-            isMerit = true
+            throw new GraphQLException('The searchBioCollectProject query is not available for MERIT projects')
         }
 
         if(trimmedParams.difficulty){

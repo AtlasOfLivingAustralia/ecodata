@@ -1,13 +1,13 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.paratoo.ParatooCollection
-import au.org.ala.ecodata.paratoo.ParatooProject
+
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import org.apache.http.HttpStatus
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
+
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 
@@ -468,6 +468,16 @@ class ProjectController {
     def scoreDataForActivityAndProject(String id) {
         def result = projectService.scoreDataForActivityAndProject(id)
         render result as JSON
+    }
+
+    def meriPlanHistory(String id) {
+        def project = Project.findByProjectId(id)
+        if (!project) {
+            render status: HttpStatus.SC_NOT_FOUND, text: 'No such id'
+            return
+        }
+        List<Map> meriPlanHistory = projectService.getMeriPlanApprovalHistory(id)
+        render meriPlanHistory as JSON
     }
 
 }

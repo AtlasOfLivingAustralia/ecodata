@@ -53,7 +53,7 @@ class ReportServiceSpec extends MongoSpec implements ServiceUnitTest<ReportServi
         Map dataModel = [dataModel:[[type:'string', name:'test'], [type:'list', name:'nested', columns:[]]]]
 
         // By default we mostly only deal with published activities.
-        activities = activities.collect {it+[publicationStatus:Report.REPORT_APPROVED]}
+        activities = activities.collect {it+[publicationStatus:PublicationStatus.PUBLISHED]}
 
         metadataService.activitiesModel() >> model
         metadataService.getOutputDataModel(_) >> dataModel

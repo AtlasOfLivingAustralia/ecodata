@@ -7,6 +7,7 @@ class ECTagLib {
     static namespace = "ec"
 
     def userService, metadataService, authService
+    SettingService settingService
 
     /**
      * @attr active
@@ -212,6 +213,12 @@ class ECTagLib {
 
     def gitProperty = { attrs ->
         out << metadataService.getGitProperty(attrs.name)
+    }
+
+    def sanitisedMarkdown = { attrs, body ->
+        if (attrs.key) {
+            out << settingService.getSanitizedMarkdownForKey(attrs.key)
+        }
     }
 
 }

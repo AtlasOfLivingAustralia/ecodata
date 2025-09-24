@@ -1,17 +1,10 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.graphql.mappers.OutputGraphQLMapper
-import au.org.ala.ecodata.graphql.models.OutputData
 import au.org.ala.ecodata.graphql.models.KeyValue
-import grails.util.Holders
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
+import au.org.ala.ecodata.graphql.models.OutputData
 import org.bson.types.ObjectId
-import org.grails.gorm.graphql.entity.dsl.GraphQLMapping
 
 class Output {
-
-    static graphql = OutputGraphQLMapper.graphqlMapping()
 
     /*
     Associations:
@@ -35,6 +28,7 @@ class Output {
     Date dateCreated
     Date lastUpdated
     List tempArgs = []
+    Map data
 
     static constraints = {
         assessmentDate nullable: true
@@ -42,6 +36,10 @@ class Output {
     }
 
     static transients = ['tempArgs']
+
+    Map getData() {
+       this.data
+    }
 
     OutputData getData(List fields) {
         OutputData outputData = new OutputData(dataList: new ArrayList<KeyValue>())

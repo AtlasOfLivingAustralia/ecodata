@@ -9,6 +9,9 @@ import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.StatusChange.*
+
 /**
  * Basic support for exporting data based on a selection of content.
  */
@@ -94,16 +97,16 @@ class TabbedExporter {
 
         String translated
         switch (status) {
-            case Report.REPORT_APPROVED:
+            case PublicationStatus.PUBLISHED:
                 translated = 'Approved'
                 break
-            case Report.REPORT_NOT_APPROVED:
+            case PublicationStatus.DRAFT:
                 translated = 'Returned'
                 break
-            case Report.REPORT_SUBMITTED:
+            case PublicationStatus.SUBMITTED_FOR_REVIEW:
                 translated = 'Submitted'
                 break
-            case Report.REPORT_CANCELLED:
+            case PublicationStatus.CANCELLED:
                 translated = 'Not required (exempt)'
                 break
             default:

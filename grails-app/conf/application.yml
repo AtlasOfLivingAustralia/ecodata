@@ -61,6 +61,8 @@ spring:
         multipart:
             max-file-size: 1024MB
             max-request-size: 1024MB
+    graphql:
+        path: /graphql-spring
     devtools:
         restart:
             additional-exclude:
@@ -117,17 +119,12 @@ grails:
             geojson:
               - application/json
               - application/vnd.geo+json
- #   urlmapping:
- #       cache:
-  #          maxsize: 1000
+
     controllers:
         defaultScope: singleton
         upload:
             maxFileSize: 65536000 #64Mb, matches nginx config
             maxRequestSize: 65536000 #64Mb, matches nginx config
- #       upload:
- #         maxFileSize: 5368709120
- #         maxRequestSize: 5368709120
     converters:
         encoding: UTF-8
     resources:
@@ -231,41 +228,6 @@ grails:
                 allowedOrigins:
                         - '*'
 
-graphql:
-    servlet:
-        mapping: /graphql
-        enabled: true
-        corsEnabled: true
-        # if you want to @ExceptionHandler annotation for custom GraphQLErrors
-        exception-handlers-enabled: true
-        contextSetting: PER_REQUEST_WITH_INSTRUMENTATION
-
-graphiql:
-    mapping: /graphiql
-    endpoint:
-        graphql: /graphql
-        subscriptions: /subscriptions
-    subscriptions:
-        timeout: 30
-        reconnect: false
-    static:
-        basePath: /assets
-    enabled: true
-    pageTitle: GraphiQL
-    cdn:
-        enabled: true
-        version: 0.13.0
-    props:
-        resources:
-            # query: query.graphql
-            # defaultQuery: defaultQuery.graphql
-            # variables: variables.graphql
-        variables:
-            editorTheme: "solarized light"
-    headers:
-        Authorization: "Bearer <your-token>"
-
-
 casUrl: https://auth-test.ala.org.au/cas/logout
 appUrl: http://localhost:8080/admin
 
@@ -285,3 +247,4 @@ openapi:
 ---
 userProfile:
     userIdAttribute: "username"
+

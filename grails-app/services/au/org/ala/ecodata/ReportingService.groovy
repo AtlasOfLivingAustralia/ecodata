@@ -305,7 +305,7 @@ class ReportingService {
      *
      * @return a list of the projects that match the supplied criteria
      */
-    public search(Map searchCriteria, levelOfDetail = []) {
+    public search(Map searchCriteria, paginationParams = [:]) {
 
         def startDate = null, endDate = null, planned = null
         def dateProperty = searchCriteria.remove('dateProperty')
@@ -319,7 +319,7 @@ class ReportingService {
         }
 
         def criteria = Report.createCriteria()
-        def reports = criteria.list {
+        def reports = criteria.list(paginationParams) {
             ne("status", "deleted")
             searchCriteria.each { prop,value ->
 

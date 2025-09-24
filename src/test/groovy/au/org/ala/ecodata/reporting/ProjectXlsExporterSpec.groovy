@@ -292,12 +292,12 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
     void "RLP Merit approvals exported to XSLS"() {
         setup:
         String sheet = 'MERI_Approvals'
-        Map recentApproval = [
-                approvalDate     : "2018-10-23T23:47:28.263Z",
-                approvedBy       : "Test User",
+        StatusChange recentApproval = new StatusChange(
+                dateChanged     :  DateUtil.parseDateWithAndWithoutMilliSeconds("2018-10-23T23:47:28.263Z"),
+                changedBy       : "Test User",
                 comment          : "Test purpose",
-                changeOrderNumber: "Test 2"
-        ]
+                reference: "Test 2"
+        )
         List approvals = [recentApproval]
 
         Map project = project()

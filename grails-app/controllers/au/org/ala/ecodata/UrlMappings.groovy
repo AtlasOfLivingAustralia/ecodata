@@ -220,6 +220,16 @@ class UrlMappings {
         "/ws/$controller/list"() { action = [GET:'list'] }
         "/ws/geoServer/wms"(controller: "geoServer", action: "wms")
 
+        "/ws/igraphql/$id" {
+            controller = 'admin'
+            action = [ GET: 'igraphql', POST: 'graphqlApi' ]
+        }
+
+        "/ws/graphql/$id" {
+            controller = 'admin'
+            action = [POST: 'graphql']
+        }
+
         "/ws/document/download/$path/$filename" {
             controller = 'document'
             action = 'download'
@@ -228,10 +238,6 @@ class UrlMappings {
         "/ws/document/download/$filename" {
             controller = 'document'
             action = 'download'
-        }
-
-        "/ws/graphql" {
-            controller = 'graphqlWs'
         }
 
         "/ws/paratoo/user-projects" {

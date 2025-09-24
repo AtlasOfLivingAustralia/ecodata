@@ -5,11 +5,11 @@ import graphql.schema.Coercing
 import graphql.schema.CoercingParseValueException
 import graphql.schema.CoercingSerializeException
 
-class OutputDataConverter implements Coercing<OutputData, OutputData> {
+class OutputDataConverter implements Coercing<Map, Map> {
 
-    protected Optional<OutputData> convert(Object input) {
-        if (input instanceof OutputData) {
-            Optional.of((OutputData) input)
+    protected Optional<Map> convert(Object input) {
+        if (input instanceof Map) {
+            Optional.of((Map) input)
         }
         else {
             Optional.empty()
@@ -17,21 +17,21 @@ class OutputDataConverter implements Coercing<OutputData, OutputData> {
     }
 
     @Override
-    OutputData serialize(Object input) {
+    Map serialize(Object input) {
         convert(input).orElseThrow( {
             throw new CoercingSerializeException("Could not convert ${input.class.name} to a OutputData")
         })
     }
 
     @Override
-    OutputData parseValue(Object input) {
+    Map parseValue(Object input) {
         convert(input).orElseThrow( {
             throw new CoercingParseValueException("Could not convert ${input.class.name} to a OutputData")
         })
     }
 
     @Override
-    OutputData parseLiteral(Object input) {
+    Map parseLiteral(Object input) {
         null
     }
 }
