@@ -546,8 +546,7 @@
                     "rows1": {
                       "properties": {
                         "assets": {
-                          "type":"keyword",
-                          "copy_to":"meriPlanAssetFacet"
+                          "type":"text"
                         },
                         "description": {
                           "type": "text"
