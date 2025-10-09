@@ -5,7 +5,6 @@
   "main": "grails-app/assets/javascripts",
   "directories": {},
   "private": true,
-  "dependencies": {},
   "devDependencies": {
     "@metahub/karma-jasmine-jquery": "^2.0.1",
     "chromedriver": "119.0.1",
@@ -37,7 +36,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "bootstrap": "^5.1.3",
+    "bootstrap": "^5.3.8",
     "bootstrap-datepicker": "1.9.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.6.0",
