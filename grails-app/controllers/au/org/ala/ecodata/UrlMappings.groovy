@@ -186,6 +186,7 @@ class UrlMappings {
             action = 'getManagementUnits'
         }
 
+        "/ws/managementUnit/list"(controller:"managementUnit"){ action = "list" }
         "/ws/managementUnit/$id"(controller: "managementUnit"){ action = [GET:"get", POST: "post"] }
         "/ws/managementUnit/managementUnitSiteMap"(controller: "managementUnit", action:"managementUnitSiteMap")
         "/ws/managementUnit/findByName"(controller:"managementUnit"){ action = [GET:"findByName"] }
