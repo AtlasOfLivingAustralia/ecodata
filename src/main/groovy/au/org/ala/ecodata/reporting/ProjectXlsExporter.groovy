@@ -1121,6 +1121,9 @@ class ProjectXlsExporter extends ProjectExporter {
                 outcome.put('outcome',oc.description)
                 String assets = oc.assets?.join(",")
                 outcome.put('priority',assets)
+                outcome.put('investmentPriorityIds', assets)
+                List investmentPriorities = investmentPriorityNames(oc.assets)
+                outcome.put('investmentPriorities', investmentPriorities.join(', '))
                 outcome.put('relatedOutcome',oc.relatedOutcome)
                 data.add(project+outcome)
             }
