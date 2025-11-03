@@ -250,6 +250,28 @@ class ProjectQueryController implements DataBinder {
         dataLoader.load(outputTarget.scoreId)
     }
 
+    @SchemaMapping(typeName = "ProjectOutcome", field = "assets")
+    CompletableFuture<List<InvestmentPriority>> assets(ProjectOutcome projectOutcome, DataLoader<String, InvestmentPriority> assets) {
+
+        List<CompletableFuture<InvestmentPriority>> futures = projectOutcome.assets.collect { String asset ->
+            assets.load(asset)
+        }
+
+        (CompletableFuture<List<InvestmentPriority>>)CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply{futures.collect{it.join()}}
+    }
+
+    @SchemaMapping(typeName = "MeriPlan", field = "investmentPriorities")
+    CompletableFuture<List<InvestmentPriority>> investmentPriorities(MeriPlan meriPlan, DataLoader<String, InvestmentPriority> assets) {
+
+        List<CompletableFuture<InvestmentPriority>> futures = meriPlan.investmentPriorities.collect { String asset ->
+            assets.load(asset)
+        }
+
+        (CompletableFuture<List<InvestmentPriority>>)CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply{futures.collect{it.join()}}
+    }
+
     @SchemaMapping(typeName = "DeliveredAgainstTarget", field = "targetMeasure")
     CompletableFuture<TargetMeasure> targetMeasure(DeliveredAgainstTarget deliveredAgainstTarget, DataLoader<String, TargetMeasure> dataLoader) {
         dataLoader.load(deliveredAgainstTarget.scoreId)
@@ -320,5 +342,6 @@ class ProjectQueryController implements DataBinder {
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .thenApply{futures.collect{it.join()}}
     }
+
 
 }

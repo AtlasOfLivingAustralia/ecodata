@@ -183,6 +183,10 @@ class GraphQLConfig {
                 [(service.legacyId): service]
             })
         })
+
+        registry.forTypePair(String, InvestmentPriority).withName("assets").registerMappedBatchLoader((investmentPriorityIds, env) -> {
+            Mono.just(InvestmentPriority.findAllByInvestmentPriorityIdInListAndStatusNotEqual(new ArrayList(investmentPriorityIds), Status.DELETED).collectEntries {[(it.investmentPriorityId):it] })
+        })
     }
 
     /** Here we transform the schema to add descriptions from the DataDescription collection. */

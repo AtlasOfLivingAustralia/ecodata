@@ -122,7 +122,7 @@ type MeriPlan {
 
     supportedPriorityPlaces: [String]
     "Environmental assets the Project is investing in protected"
-    investmentPriorities: [String]
+    investmentPriorities: [InvestmentPriority]
     "Project specific outcomes that are planned to be achieved in the medium term (3-5 years)"
     midTermOutcomes: [ProjectOutcome]
     "Measurable targets the Project plans to achieve"
@@ -390,9 +390,16 @@ type IntersectionArea {
     overlapM2: Float
 }
 
+type InvestmentPriority {
+    name: String
+    investmentPriorityId: String
+    categories: [String]
+    type: String
+}
+
 type ProjectOutcome {
     "Description"
-    assets: [String]
+    assets: [InvestmentPriority]
     "Description"
     code: String
     "Description"
