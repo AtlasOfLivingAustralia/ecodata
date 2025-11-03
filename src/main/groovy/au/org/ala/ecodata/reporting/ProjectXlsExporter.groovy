@@ -121,8 +121,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> baselineProperties = commonProjectProperties + ['relatedOutcomes', 'method', 'baseline', 'code', 'evidence', 'monitoringDataStatus', 'protocols', 'relatedTargetMeasures']
 
     //Different data model   RLP outcomes show data on rows not cols
-    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority', 'Related Program Outcome']
-    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority','relatedOutcome']
+    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority/ies', 'Related Program Outcome']
+    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','investmentPriorities','relatedOutcome']
 
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projectMethodology", "projectREI", "relatedProjects"]
@@ -1099,6 +1099,9 @@ class ProjectXlsExporter extends ProjectExporter {
             outcome.put('outcome',po.description)
             String assets = po.assets?.join(", ")
             outcome.put('priority',assets)
+            outcome.put('investmentPriorityIds', assets)
+            List investmentPriorities = investmentPriorityNames(po.assets)
+            outcome.put('investmentPriorities', investmentPriorities.join(', '))
             data.add(project+outcome)
         }
         if (project?.custom?.details?.outcomes?.otherOutcomes){
@@ -1213,5 +1216,9 @@ class ProjectXlsExporter extends ProjectExporter {
             labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId)?.label)
         }
         return labels
+    }
+
+    private List<String> investmentPriorityNames(List<String> investmentPriorityIds) {
+        InvestmentPriority.findAllByInvestmentPriorityIdInList(investmentPriorityIds).collect{it.name}
     }
 }
