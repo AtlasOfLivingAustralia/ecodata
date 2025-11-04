@@ -43,7 +43,8 @@ class InvestmentPriority {
 
     static mapping = {
         index (['name':1, 'status':1, 'categories':1], [unique: true])
-
+        investmentPriorityId index:true
+        categories index: true
     }
 
     static constraints = {
