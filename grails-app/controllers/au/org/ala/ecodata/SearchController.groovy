@@ -520,7 +520,7 @@ class SearchController {
             }
         }
 
-        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService,  organisationService, programService, dataDescriptionLookup, formSectionPerTab)
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates, managementUnitService,  organisationService, programService, metadataService, dataDescriptionLookup, formSectionPerTab)
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
