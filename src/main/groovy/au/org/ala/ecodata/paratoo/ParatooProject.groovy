@@ -18,6 +18,7 @@ class ParatooProject {
     static String EDITOR = 'authenticated'
     static String ADMIN = 'project_admin'
     static String PUBLIC = 'public'
+    static String DETERMINER = 'determiner'
 
     String id
     String name
@@ -77,6 +78,9 @@ class ParatooProject {
             case AccessLevel.projectParticipant:
             case AccessLevel.editor:
                 paratooRole = EDITOR
+                break
+            case AccessLevel.moderator:
+                paratooRole = DETERMINER
                 break
             default:
                 paratooRole = PUBLIC

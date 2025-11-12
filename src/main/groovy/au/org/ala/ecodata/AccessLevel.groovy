@@ -27,6 +27,10 @@ enum AccessLevel {
     caseManager(60),
     moderator(50),
     editor(40),
+    // A determiner can only perform species identifications/determinations.  It's distinct from moderator as
+    // the moderator implies editor (due to the code) and the determinations for MERIT/Monitor are a separate process
+    // that doesn't confer project editing rights.
+    determiner(35),
     projectParticipant(30),
     readOnly(25),
     starred(20)
