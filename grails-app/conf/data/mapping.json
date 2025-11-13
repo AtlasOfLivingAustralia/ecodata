@@ -534,6 +534,9 @@
         "meriPlanAssetFacet": {
           "type": "keyword"
         },
+        "meriPlanAssetTypeFacet": {
+          "type": "keyword"
+        },
         "partnerOrganisationTypeFacet": {
           "type":"keyword"
         },
@@ -546,7 +549,8 @@
                     "rows1": {
                       "properties": {
                         "assets": {
-                          "type":"text"
+                          "type":"keyword",
+                          "copy_to":"meriPlanAssetTypeFacet"
                         },
                         "description": {
                           "type": "text"

@@ -1187,7 +1187,9 @@ class ElasticSearchService {
             // Convert investment priority ids into names for indexing.
             List<String> investmentPriorityIds = project.getMeriPlan()?.getInvestmentPriorities()
             if (investmentPriorityIds) {
-                projectMap.meriPlanAssetFacet = metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds]).collect{it.name}
+                List investmentPriorities = metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds])
+                projectMap.meriPlanAssetFacet = investmentPriorities.collect{it.name}
+                projectMap.meriPlanAssetTypeFacet = investmentPriorities.collect{it.type}
             }
 
         } else {
