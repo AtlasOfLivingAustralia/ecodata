@@ -1398,4 +1398,44 @@ class MetadataService implements DataBinder {
         investmentPriority
     }
 
+    Map bulkUpdateInvestmentPriorityCategory(String category, List<String> investmentPriorityIds) {
+        Map result = [status: 'ok', updated: 0, errors: []]
+        // Now remove the category from any investment priorities that were not in the supplied list
+        InvestmentPriority.createCriteria().list {
+            if (investmentPriorityIds) {
+                not {
+                    inList('investmentPriorityId', investmentPriorityIds)
+                }
+            }
+
+            ne('status', Status.DELETED)
+            eq('categories', category)
+
+        }.each { InvestmentPriority ip ->
+            ip.categories.remove(category)
+            ip.save(flush: true)
+        }
+        investmentPriorityIds.each { String id ->
+            try {
+                InvestmentPriority ip = InvestmentPriority.findByInvestmentPriorityIdAndStatus(id, Status.ACTIVE)
+                if (ip) {
+                    if (!ip.categories) {
+                        ip.categories = []
+                    }
+                    if (!ip.categories.contains(category)) {
+                        ip.categories << category
+                        ip.save(flush: true)
+                        result.updated++
+                    }
+                } else {
+                    result.errors << "No active investment priority found for id ${id}"
+                }
+            } catch (Exception e) {
+                log.error("Error updating investment priority ${id} to add category ${category}", e)
+                result.errors << "Error updating investment priority ${id}: ${e.message}"
+            }
+        }
+
+        result
+    }
 }

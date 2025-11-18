@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
+import org.apache.http.HttpStatus
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -10,7 +11,7 @@ import static au.org.ala.ecodata.Status.DELETED
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
-    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE']
+    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE', 'updateInvestmentPriorityCategory':'POST']
 
     def metadataService, activityService, commonService, projectService, webService
     ActivityFormService activityFormService
@@ -429,6 +430,19 @@ class MetadataController {
         Map investmentPriorityProperties = request.JSON
         InvestmentPriority investmentPriority = metadataService.updateInvestmentPriority(investmentPriorityProperties)
         respond investmentPriority
+    }
+
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def updateInvestmentPriorityCategory() {
+        Map investmentPriorityProperties = request.JSON
+        if (!investmentPriorityProperties?.category) {
+            response.status = HttpStatus.SC_BAD_REQUEST
+            Map result = [status:HttpStatus.SC_BAD_REQUEST, error:'The category is required']
+            render result as JSON
+            return
+        }
+        Map result = metadataService.bulkUpdateInvestmentPriorityCategory(investmentPriorityProperties.category, investmentPriorityProperties.investmentPriorityIds ?: [])
+        render result as JSON
     }
 
 }
