@@ -240,58 +240,58 @@ class UrlMappings {
             action = 'download'
         }
 
-        "/ws/paratoo/user-projects" {
+        "/ws/paratoo/$apiVersion?/user-projects" {
             controller = 'paratoo'
             action = 'userProjects'
         }
 
-        "/ws/paratoo/pdp/$projectId/$protocolId/read" {
+        "/ws/paratoo/$apiVersion?/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
             action = 'hasReadAccess'
         }
 
-        "/ws/paratoo/pdp/$projectId/$protocolId/write" {
+        "/ws/paratoo/$apiVersion?/pdp/$projectId/$protocolId/write" {
             controller = 'paratoo'
             action = 'hasWriteAccess'
         }
 
-        "/ws/paratoo/get-all-collections" {
+        "/ws/paratoo/$apiVersion?/get-all-collections" {
             controller = 'paratoo'
             action = [GET:'userCollections', OPTIONS:'options']
         }
 
 
-        "/ws/paratoo/validate-token" {
+        "/ws/paratoo/$apiVersion?/validate-token" {
             controller = 'paratoo'
             action = [POST:'validateToken', OPTIONS:'options']
         }
 
-        "/ws/paratoo/mint-identifier" {
+        "/ws/paratoo/$apiVersion?/mint-identifier" {
             controller = 'paratoo'
             action = [POST:'mintCollectionId', OPTIONS:'options']
         }
 
-        "/ws/paratoo/collection" {
+        "/ws/paratoo/$apiVersion?/collection" {
             controller = 'paratoo'
             action = [POST:'submitCollection', OPTIONS:'options']
         }
 
-        "/ws/paratoo/status/$id" {
+        "/ws/paratoo/$apiVersion?/status/$id" {
             controller = 'paratoo'
             action = 'collectionIdStatus'
         }
 
-        "/ws/paratoo/plot-selections" {
+        "/ws/paratoo/$apiVersion?/plot-selections" {
             controller = 'paratoo'
             action = [POST: 'addPlotSelection', OPTIONS:'options', PUT: 'updatePlotSelection', GET:'getPlotSelections']
         }
 
-        "/ws/paratoo/user-role" {
+        "/ws/paratoo/$apiVersion?/user-role" {
             controller = 'paratoo'
             action = [GET: 'userRoles', OPTIONS: 'options']
         }
 
-        "/ws/paratoo/projects/$id" {
+        "/ws/paratoo/$apiVersion?/projects/$id" {
             controller = 'paratoo'
             action = [POST: 'updateProjectSites', PUT: 'updateProjectSites', OPTIONS:'options']
         }

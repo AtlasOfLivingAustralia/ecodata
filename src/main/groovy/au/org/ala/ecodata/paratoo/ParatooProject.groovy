@@ -15,22 +15,18 @@ class ParatooProject {
     static final String PARATOO_DEFAULT_MODULES = 'paratooDefaultModules'
     static final List DEFAULT_MODULES =
             ['Plot Selection and Layout', 'Plot Description', 'Opportune']
-    static String EDITOR = 'authenticated'
-    static String ADMIN = 'project_admin'
-    static String PUBLIC = 'public'
-    static String DETERMINER = 'determiner'
 
     String id
     String name
     // Used when creating voucher labels
     String grantID
-    AccessLevel accessLevel
     Project project
     List<ActivityForm> protocols
     Map projectArea = null
     Site projectAreaSite = null
     List<Site> plots = null
     Program program
+    List<String> roles = []
 
     private Map getConfig() {
         Map config = program?.getInheritedConfig() ?: [:]
@@ -53,7 +49,7 @@ class ParatooProject {
     boolean isParatooEnabled() {
         // The Monitor/Paratoo app is "write only" (i.e. there is no view mode for the data), so we don't support
         // the read only role
-        getConfig()?.get(PROGRAM_CONFIG_PARATOO_ITEM) && accessLevel && accessLevel != AccessLevel.readOnly
+        getConfig()?.get(PROGRAM_CONFIG_PARATOO_ITEM) && roles
     }
 
     List<Map> getDataSets() {
@@ -66,30 +62,6 @@ class ParatooProject {
 
     List<String> getMonitoringProtocolCategories() {
         project.getMonitoringProtocolCategories()
-    }
-
-    String getParatooRole() {
-        String paratooRole
-        switch (accessLevel) {
-            case AccessLevel.admin:
-            case AccessLevel.caseManager:
-                paratooRole = ADMIN
-                break
-            case AccessLevel.projectParticipant:
-            case AccessLevel.editor:
-                paratooRole = EDITOR
-                break
-            case AccessLevel.moderator:
-                paratooRole = DETERMINER
-                break
-            default:
-                paratooRole = PUBLIC
-        }
-        paratooRole
-    }
-
-    boolean isParaooAdmin() {
-        getParatooRole() == ADMIN
     }
 
 }
