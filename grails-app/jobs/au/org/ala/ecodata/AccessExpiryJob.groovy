@@ -158,11 +158,16 @@ class AccessExpiryJob {
                 // Filter out users who have already been sent a warning
                 if (!userHub.sentAccessRemovalDueToInactivityWarning()) {
 
-                    log.info("Sending inactivity warning to user ${user.userId} in hub ${hub.urlPath}")
-                    sendEmail(hub, user.userId, WARNING_EMAIL_KEY)
-                    emailsSent++
-                    userHub.inactiveAccessWarningSentDate = processingTime
-                    user.save()
+                    if (permissionService.countUserPermissionsByHub(user.userId, hub.hubId) > 0) {
+                        log.info("Sending inactivity warning to user ${user.userId} in hub ${hub.urlPath}")
+                        sendEmail(hub, user.userId, WARNING_EMAIL_KEY)
+                        emailsSent++
+                        userHub.inactiveAccessWarningSentDate = processingTime
+                        user.save()
+                    }
+                    else {
+                        log.info("Not sending inactivity warning to user ${user.userId} in hub ${hub.urlPath} as they have no permissions")
+                    }
                 }
                 if (emailsSent >= maxEmailsToSend) {
                     break
