@@ -627,6 +627,21 @@ class PermissionService {
 
     }
 
+    /** Returns the number of permissions a user has for entities owned by the specified hub */
+    int countUserPermissionsByHub(String userId, String hubId) {
+        int count = 0
+        List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
+        if (permissions.size() > 0) {
+            permissions.each {
+                boolean isInHub = isEntityOwnedByHub(it.entityId, it.entityType, hubId)
+                if (isInHub){
+                    count++
+                }
+            }
+        }
+        return count
+    }
+
     /**
      * Returns a list of permissions that have an expiry date less than or equal to the
      * supplied date

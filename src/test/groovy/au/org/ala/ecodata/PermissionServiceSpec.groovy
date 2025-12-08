@@ -194,6 +194,18 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         !results.error
     }
 
+    void "The countUserPermissionsByHub method returns the number of permissions a user has for a hub"(){
+
+        setup:
+        String userId = "1"
+        String hubId = "h1"
+        new UserPermission(entityId:'org1', entityType:Organisation.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new Organisation(organisationId: "org1", hubId:hubId, name:"test organisation").save(flush: true, failOnError: true)
+
+        expect:
+        service.countUserPermissionsByHub(userId, hubId) == 1
+    }
+
     def "Organisation permissions need to be removed if the organisation is running any MERIT projects"() {
         setup: "A biocollect organisation with 2 merit projects and 1 biocollect project"
         String userId = "1"

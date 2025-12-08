@@ -92,7 +92,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 100) >> []
         1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 100) >> [user]
         0 * permissionService.deleteUserPermissionByUserId(_, _)
-
+        1 * permissionService.countUserPermissionsByHub(user.userId, merit.hubId) >> 1
         1 * userService.lookupUserDetails(user.userId) >> [email:'test@test.com']
         1 * emailService.sendTemplatedEmail(
                 'merit',
@@ -105,6 +105,27 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 merit.emailFromAddress)
         user.getUserHub(merit.hubId).inactiveAccessWarningSentDate == Date.from(processTime.toInstant())
         user.getUserHub(merit.hubId).sentAccessRemovalDueToInactivityWarning()
+    }
+
+    def "The access expiry job will not send warning emails to users who no longer have MERIT permissions"() {
+        setup:
+        ZonedDateTime processTime = ZonedDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
+        User user = new User(userId:'u1', userHubs: [new UserHub(hubId:merit.hubId)])
+        user.loginToHub(merit.hubId, DateUtil.parse("2019-01-31T00:00:00Z"))
+        user.save()
+
+        when:
+        job.processInactiveUsers(processTime, 10)
+
+        then:
+        1 * hubService.findHubsEligibleForAccessExpiry() >> [merit]
+        1 * userService.findUsersNotLoggedInToHubSince("h1", DateUtil.parse("2019-01-01T00:00:00Z"), 0, 100) >> []
+        1 * userService.findUsersWhoLastLoggedInToHubBetween("h1", DateUtil.parse("2019-01-01T00:00:00Z"), DateUtil.parse("2019-02-01T00:00:00Z"), 0, 100) >> [user]
+        0 * permissionService.deleteUserPermissionByUserId(_, _)
+        1 * permissionService.countUserPermissionsByHub(user.userId, merit.hubId) >> 0
+        0 * userService.lookupUserDetails(user.userId) >> [email:'test@test.com']
+        0 * emailService.sendTemplatedEmail(_,_,_,_,_,_,_,_)
+
     }
 
     def "The access expiry job will expire UserPermission entries that have passed their expiry date"() {
