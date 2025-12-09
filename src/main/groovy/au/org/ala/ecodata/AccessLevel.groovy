@@ -25,8 +25,13 @@ package au.org.ala.ecodata
 enum AccessLevel {
     admin(100),
     caseManager(60),
+    // The moderator role is used by BioCollect to represent a user that can manage project data.
+    // In the MERIT / Monitor integration it also represents the combined roles of admin and determiner.
     moderator(50),
     editor(40),
+    // A determinerParticipant combines the roles of determiner and project participant, which for the MERIT
+    // Monitor integration gives them write access to all protocols except for plot selection.
+    determinerParticipant(37),
     // A determiner can only perform species identifications/determinations.  It's distinct from moderator as
     // the moderator implies editor (due to the code) and the determinations for MERIT/Monitor are a separate process
     // that doesn't confer project editing rights.

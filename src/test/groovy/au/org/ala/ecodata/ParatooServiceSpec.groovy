@@ -1638,6 +1638,9 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         'determinations' | AccessLevel.moderator     | true    | true
         'plot-selection-guid' | AccessLevel.moderator | true   | true
         'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
+        'plot-selection-guid' | AccessLevel.determinerParticipant | true   | false
+        'determinations' | AccessLevel.determinerParticipant | true    | true
+        'guid-2'  | AccessLevel.determinerParticipant | true    | true
     }
 
     def "buildTemplateForProtocol must switch record generation on or off" (createSpeciesRecord, expected) {

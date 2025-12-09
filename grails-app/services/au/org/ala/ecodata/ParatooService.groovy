@@ -928,6 +928,9 @@ class ParatooService {
             case AccessLevel.determiner:
                 paratooRoles = [DETERMINER]
                 break
+            case AccessLevel.determinerParticipant:
+                paratooRoles = [EDITOR, DETERMINER]
+                break
             default:
                 paratooRoles = []
                 break
