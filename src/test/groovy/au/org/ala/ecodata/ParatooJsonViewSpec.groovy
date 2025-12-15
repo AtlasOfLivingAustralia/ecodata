@@ -1,13 +1,17 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooProject
+import grails.plugin.json.view.test.JsonRenderResult
 import grails.plugin.json.view.test.JsonViewTest
+import grails.plugin.json.view.test.TestRequestConfigurer
+import grails.testing.web.GrailsWebUnitTest
+import org.bouncycastle.util.test.TestRandomBigInteger
 import spock.lang.Specification
 
 class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
     static List DUMMY_POLYGON = [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]
-    def "The /user-projects response is rendered correctly"() {
+    def "The /user-projects v2 response is rendered correctly"() {
         setup:
         int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
         Map expectedResult = [
@@ -20,23 +24,26 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                     plot_selections:[
                        [uuid:'s1', name:"Site 1"]
                     ],
-                    role:"project_admin"
+                    roles:["project_admin"]
                    ],[
                     id:"p2", name:"Project 2", grantID:"g2", protocols:[], plot_selections:[],
                     project_area:[type:"Polygon", coordinates: DUMMY_POLYGON[0].collect{[lat:it[1], lng:it[0]]}],
-                    role:"authenticated"
+                    roles:["authenticated"]
                   ],[
                      id:"p3", name:"Project 3", grantID:"g3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area:null, plot_selections:[], role:'authenticated'
+                     ], project_area:null, plot_selections:[], roles:['authenticated']
                   ]
                 ]]
 
-        when: "The results of /paratoo/user-projects is rendered"
+        when: "The results of /paratoo/user-projects is rendered from an apiVersion v2 request"
+
         List projects = buildProjectsForRendering(projectSpec)
-        projects[1].accessLevel = AccessLevel.editor
-        projects[2].accessLevel = AccessLevel.projectParticipant
-        def result = render(view: "/paratoo/userProjects", model:[projects:projects])
+        projects[1].roles = [ParatooService.EDITOR]
+        projects[2].roles = [ParatooService.EDITOR]
+        def result = render([view: "/paratoo/userProjects", model:[projects:projects]], {
+            params(apiVersion:"v2")
+        })
 
         then:"The json is correct"
         result.json.projects.size() == expectedResult.projects.size()
@@ -44,6 +51,29 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[1] == expectedResult.projects[1]
         result.json.projects[2] == expectedResult.projects[2]
 
+        when: "The results of /paratoo/user-projects is rendered from an apiVersion v1 request"
+        expectedResult.projects.each{ Map project ->
+            List roles = project.remove('roles')
+            project.role = roles[0]
+        }
+        result = render([view: "/paratoo/userProjects", model:[projects:projects]], {
+            params(apiVersion:"v1")
+        })
+
+        then:"The json is correct"
+        result.json.projects.size() == expectedResult.projects.size()
+        result.json.projects[0] == expectedResult.projects[0]
+        result.json.projects[1] == expectedResult.projects[1]
+        result.json.projects[2] == expectedResult.projects[2]
+
+        when: "The results of /paratoo/user-projects is rendered from a request with no apiVersion"
+        result = render([view: "/paratoo/userProjects", model:[projects:projects]])
+
+        then:"The view defaults to v1 of the API"
+        result.json.projects.size() == expectedResult.projects.size()
+        result.json.projects[0] == expectedResult.projects[0]
+        result.json.projects[1] == expectedResult.projects[1]
+        result.json.projects[2] == expectedResult.projects[2]
 
     }
 
@@ -70,7 +100,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
             Site tmp = buildSite(numberOfPlots+2)
             projectArea = [type:tmp.extent.geometry.type, coordinates:tmp.extent.geometry.coordinates]
         }
-        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", grantID:"g$projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, accessLevel: AccessLevel.admin)
+        new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", grantID:"g$projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, roles: [ParatooService.ADMIN])
     }
 
     private ActivityForm buildActivityForm(int i) {
