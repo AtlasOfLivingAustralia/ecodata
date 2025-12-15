@@ -116,7 +116,15 @@ class ParatooController {
             tags = "Org Interface"
     )
     def userProjects() {
-        respond projects: paratooService.userProjects(userService.currentUserDetails.userId)
+        List projects = paratooService.userProjects(userService.currentUserDetails.userId)
+        if (!params.apiVersion || params.apiVersion == "v1") {
+            // For api version v1 we don't support the determiner role
+            projects.each {
+                it.roles.remove(ParatooService.DETERMINER)
+            }
+            projects = projects.findAll{it.roles}
+        }
+        respond projects:projects
     }
 
     @GET

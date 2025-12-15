@@ -61,6 +61,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
+
+        String roleMappingSetting = new File('src/test/resources/paratoo/roleMapping.json').text
+        settingService.getSetting(ParatooService.PARATOO_ROLE_MAPPING_KEY) >> roleMappingSetting
+
     }
 
     private Map readSurveyData(String name) {
@@ -99,7 +103,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects.size() == 1
         projects[0].id == "p1"
         projects[0].name == "Project 1"
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
@@ -143,7 +147,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         projects.size() == 1
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
 
     }
 
@@ -159,7 +163,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects.size() == 1
         projects[0].id == "p1"
         projects[0].name == "Project 1"
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
@@ -576,6 +580,29 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
                 ]
         )
         activityForm.externalIds = [new ExternalId(externalId: "guid-4", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        activityForm.save(failOnError: true, flush: true)
+
+        activityForm = new ActivityForm(name: "Determinations", type: 'EMSA', category: 'protocol category 1', external: true,
+                sections: [
+                        new FormSection(name: "section 1", type: "section", template: [
+                                dataModel    : [
+                                        [
+                                                dataType: "list",
+                                                name    : "species-determination",
+                                                columns : [
+                                                        [
+                                                                dataType: "text",
+                                                                name    : "scientificName"
+                                                        ]
+                                                ]
+                                        ]
+                                ],
+                                viewModel    : []
+                        ]
+                        )
+                ]
+        )
+        activityForm.externalIds = [new ExternalId(externalId: "determinations", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError: true, flush: true)
 
         def activity = new Activity(
@@ -1599,15 +1626,21 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         where:
         protocolId | accessLevel                     | canRead | canWrite
-        'plot-selection-guid' | AccessLevel.editor   | false   | false
+        'plot-selection-guid' | AccessLevel.editor   | true    | false
         'plot-selection-guid' | AccessLevel.admin    | true    | true
+        'determinations'      | AccessLevel.admin    | false   | false
         'guid-2'   | AccessLevel.admin               | true    | true
         'guid-2'   | AccessLevel.caseManager         | true    | true
         'guid-2'   | AccessLevel.editor              | true    | true
         'guid-2'   | AccessLevel.projectParticipant  | true    | true
         'guid-2'   | AccessLevel.readOnly            | false   | false
-
+        'determinations' | AccessLevel.determiner    | true    | true
+        'determinations' | AccessLevel.moderator     | true    | true
+        'plot-selection-guid' | AccessLevel.moderator | true   | true
         'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
+        'plot-selection-guid' | AccessLevel.determinerParticipant | true   | false
+        'determinations' | AccessLevel.determinerParticipant | true    | true
+        'guid-2'  | AccessLevel.determinerParticipant | true    | true
     }
 
     def "buildTemplateForProtocol must switch record generation on or off" (createSpeciesRecord, expected) {
