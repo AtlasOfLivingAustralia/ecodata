@@ -10,19 +10,17 @@ import grails.util.Environment
 import groovy.json.JsonSlurper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityRequirements
-import io.swagger.v3.oas.annotations.enums.ParameterIn
 import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.grails.plugin.cache.GrailsCacheManager
-import org.grails.web.json.JSONArray
-import org.grails.web.json.JSONObject
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
@@ -993,93 +991,4 @@ class AdminController {
     def graphql() {
         forward(uri:'/graphql-spring')
     }
-
-    def namesMatchInvestmentPriorities() {
-
-        List results = new JSONArray()
-        InvestmentPriority.findAllByType("Species", [max:params.max?:10, offset:params.offset?:0]).each {
-            String name = it.name
-            def regexp = /(.*)\s+\((.*)\)/
-            def matcher = name =~ regexp
-            String name1 = name
-            String name2 = null
-            if (matcher.matches()) {
-                name1 = matcher.group(1)
-                name2 = matcher.group(2)
-            }
-
-            JSONObject result = new JSONObject([originalName: name, categories: it.categories, namePart1: name1, namePart2: name2])
-
-            String url = "https://api.ala.org.au/namematching/api/autocomplete?q=${URLEncoder.encode(name1, "UTF-8")}&max=3"
-            def resp = webService.getJson(url)
-            if (resp) {
-                result.name1Match = [score: resp[0]?.score, name: resp[0]?.name, rank: resp[0]?.rank, match: resp[0]?.match, commonNames: resp[0]?.commonnames]
-            }
-            else {
-                url = "https://bie-ws.ala.org.au/ws/search?q=${URLEncoder.encode(name1, "UTF-8")}"
-                resp = webService.getJson(url)
-                if (resp?.searchResults?.results) {
-                    result.name1Match = [score: resp.searchResults.results[0]?.score, name: resp.searchResults.results[0]?.name, rank: resp.searchResults.results[0]?.rank, match: resp.searchResults.results[0]?.match, commonNames: resp.searchResults.results[0]?.commonName]
-                }
-            }
-
-            if (name2) {
-                url = "https://api.ala.org.au/namematching/api/autocomplete?q=${URLEncoder.encode(name2, "UTF-8")}&max=3"
-                resp = webService.getJson(url)
-                if (resp) {
-                    result.name2Match = [score: resp[0]?.score, name: resp[0]?.name, rank: resp[0]?.rank, match: resp[0]?.match, commonNames: resp[0]?.commonnames]
-                }
-                else {
-                    url = "https://bie-ws.ala.org.au/ws/search?q=${URLEncoder.encode(name2, "UTF-8")}"
-                    resp = webService.getJson(url)
-                    if (resp?.searchResults) {
-                        result.name2Match = [score: resp.searchResults.results[0]?.score, name: resp.searchResults.results[0]?.name, rank: resp.searchResults.results[0]?.rank, match: resp.searchResults.results[0]?.match, commonNames: resp.searchResults.results[0]?.commonName]
-                    }
-                }
-            }
-
-            // scientific name match is the best match
-            if (result.name1Match?.match == 'scientificName') {
-                result.scientificNameMatch = result.name1Match.name
-                result.commonNameMatch = result.name1Match.commonNames
-                result.rankMatch = result.name1Match.rank
-            }
-            else if (result.name2Match?.match == 'scientificName') {
-                result.scientificNameMatch = result.name2Match.name
-                result.commonNameMatch = result.name2Match.commonNames
-                result.rankMatch = result.name2Match.rank
-            }
-            else if (result.name1Match?.match == 'commonName') {
-                result.scientificNameMatch = result.name1Match.name
-                result.commonNameMatch = result.name1Match.commonNames
-                result.rankMatch = result.name1Match.rank
-            }
-            else if (result.name2Match?.match == 'commonName') {
-                result.scientificNameMatch = result.name2Match.name
-                result.commonNameMatch = result.name2Match.commonNames
-                result.rankMatch = result.name2Match.rank
-            }
-            else if (result.name1Match?.name == result.name2Match?.name) {
-                result.scientificNameMatch = result.name1Match.name
-                result.commonNameMatch = result.name1Match.commonNames
-                result.rankMatch = result.name1Match.rank
-            }
-
-
-            results << result
-
-        }
-
-        results.sort { a,b -> a.scientificNameMatch <=> b.scientificNameMatch ?: a.originalName <=> b.originalName }
-
-        File f = new File("./investmentPriorities.csv")
-        f.withPrintWriter {
-            it.print("Original Name,Category,Matched Scientific Name,Matched Common Names,Matched Rank,Name Part 1,Name1 Match Score,Name1 Match,Name1 Rank,Name1 Common Names,Name Part 2,Name2 Match Score,Name2 Match,Name2 Rank,Name2 Common Names")
-            results.each { r ->
-                it.print("\n\"${r.originalName}\",\"${r.categories?.join(', ')}\",\"${r.scientificNameMatch ?: ''}\",\"${(r.commonNameMatch instanceof List) ? r.commonNameMatch.iterator().join(', ') : r.commonNameMatch ?: ''}\",\"${r.rankMatch ?: ''}\",\"${r.namePart1}\",\"${r.name1Match?.score ?: ''}\",\"${r.name1Match?.name ?: ''}\",\"${r.name1Match?.rank ?: ''}\",\"${(r.name1Match?.commonNames instanceof List) ? r.name1Match.commonNames.iterator().join(', ') : r.name1Match?.commonNames ?: ''}\",\"${r.namePart2 ?: ''}\",\"${r.name2Match?.score ?: ''}\",\"${r.name2Match?.name ?: ''}\",\"${r.name2Match?.rank ?: ''}\",\"${(r.name2Match?.commonNames instanceof List) ? r.name2Match.commonNames.iterator().join(', ') : r.name2Match?.commonNames ?: ''}\"")
-            }
-        }
-        render results as JSON
-    }
-
 }
