@@ -1,9 +1,10 @@
 package au.org.ala.ecodata
 
+
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import org.apache.commons.io.FilenameUtils
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.apache.commons.io.FilenameUtils
 import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -12,12 +13,14 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
+
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DocumentController {
 
     DocumentService documentService
     ElasticSearchService elasticSearchService
     GrailsApplication grailsApplication
+    StorageService storageService
 
     static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST", listImages: "POST", download: "GET"]
 
@@ -58,16 +61,12 @@ class DocumentController {
     def getFile() {
         if (params.id) {
             Map document = documentService.get(params.id)
-
             if (!document) {
                 response.status = 404
                 render status:404, text: 'No such id'
             } else {
-                String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${document.filepath}${File.separator}${document.filename}"
-
-                File file = new File(path)
-
-                if (!file.exists()) {
+                InputStream inputStream = storageService.getFile(document.filepath, document.filename)
+                if (inputStream == null) {
                     response.status = 404
                     return null
                 }
@@ -78,7 +77,7 @@ class DocumentController {
                 } else {
                     response.setContentType(document.contentType ?: 'application/octet-stream')
                 }
-                response.outputStream << new FileInputStream(file)
+                response.outputStream << inputStream
                 response.outputStream.flush()
 
                 return null
@@ -162,6 +161,7 @@ class DocumentController {
     def update(String id) {
         def props = null
         def stream = null
+        long contentLength = 0
         if (request instanceof MultipartHttpServletRequest) {
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request
             Iterator<String> names = multipartRequest.getFileNames()
@@ -173,6 +173,7 @@ class DocumentController {
                     props.contentType = file.contentType
                 }
                 stream = file?.inputStream
+                contentLength = file?.getSize()
 
                 if (names.hasNext()) {
                     render status:400, text: 'Only one file can be attached'
@@ -191,10 +192,10 @@ class DocumentController {
         def message
 
         if (id) {
-            result = documentService.update(props,id, stream)
+            result = documentService.update(props,id, stream, contentLength)
             message = [message: 'updated', documentId: result.documentId, url:result.url]
         } else {
-            result = documentService.create(props, stream)
+            result = documentService.create(props, stream, contentLength)
             message = [message: 'created', documentId: result.documentId, url:result.url]
         }
         if (result.status == 'ok') {
@@ -212,27 +213,23 @@ class DocumentController {
      * as the files will be served by Apache in prod.
      */
     def download(String path, String filename) {
-
         if (!filename || !documentService.validateDocumentFilePath(path, filename)) {
             response.status = HttpStatus.SC_BAD_REQUEST
             return null
         }
 
-        String fullPath = documentService.fullPath(path, filename)
-        File file = new File(fullPath)
-
-        if (!file.exists()) {
+        InputStream inputStream = storageService.getFile(path, filename)
+        if (inputStream == null) {
             response.status = HttpStatus.SC_NOT_FOUND
             return null
         }
 
         // Probably should store the mime type in the document, however in prod the files will be served up by
         // Apache so this doesn't have to be perfect.
-        def contentType = URLConnection.guessContentTypeFromName(file.name)
+        def contentType = URLConnection.guessContentTypeFromName(filename)
         response.setContentType(contentType?:'application/octet-stream')
-        response.outputStream << new FileInputStream(file)
+        response.outputStream << inputStream
         response.outputStream.flush()
-
         return null
     }
 
@@ -350,6 +347,27 @@ class DocumentController {
 
         documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits.value]
         documentResult
+    }
+
+    def scanDocument () {
+        MultipartFile file = null
+        if (request.respondsTo('getFile'))
+            file = request.getFile('fileToScan')
+        if (file) {
+            InputStream input = file.getInputStream()
+            boolean isInfected = documentService.isDocumentInfected(input)
+            if (!isInfected) {
+                render text: [message: "File is clean"] as JSON, status: HttpStatus.SC_OK
+                return
+            }
+            else {
+                render text: [message: "File is infected"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+                return
+            }
+        } else {
+            render text: [message: "No file provided"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+            return
+        }
     }
 
 }

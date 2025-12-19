@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
+import org.springframework.mock.web.MockMultipartFile
 import spock.lang.Specification
 
 class DocumentControllerSpec extends Specification implements ControllerUnitTest<DocumentController> {
@@ -70,5 +71,42 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
 
         and:
         response.status == HttpStatus.SC_NOT_FOUND
+    }
+
+    def "scanDocument should return OK when the file is clean"() {
+        given:
+        def mockFile = new MockMultipartFile("fileToScan", "test.txt", "text/plain", "clean content".bytes)
+        request.addFile(mockFile)
+        documentService.isDocumentInfected(_) >> false
+
+        when:
+        controller.scanDocument()
+
+        then:
+        response.status == HttpStatus.SC_OK
+        response.json.message == "File is clean"
+    }
+
+    def "scanDocument should return BAD_REQUEST when the file is infected"() {
+        given:
+        def mockFile = new MockMultipartFile("fileToScan", "test.txt", "text/plain", "infected content".bytes)
+        request.addFile(mockFile)
+        documentService.isDocumentInfected(_) >> true
+
+        when:
+        controller.scanDocument()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.message == "File is infected"
+    }
+
+    def "scanDocument should return BAD_REQUEST when no file is provided"() {
+        when:
+        controller.scanDocument()
+
+        then:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.message == "No file provided"
     }
 }

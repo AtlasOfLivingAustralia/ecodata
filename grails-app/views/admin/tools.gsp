@@ -273,7 +273,50 @@
                     Update all site location metadata to filter out boundary intersection items.
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <button id="btnUploadFileToScan" class="btn btn-small btn-info" title="Update file for scanning">Scan document</button>
+                </td>
+                <td>
+                    Add document to scan for viruses.
+                    <g:uploadForm class="uploadFileToScan" controller="admin" action="scanDocument" type="multipart/form-data">
+                        <div><input id="fileToScan" type="file" name="fileToScan"/></div>
+                    </g:uploadForm>
+                </td>
+            </tr>
             </tbody>
         </table>
+        <script>
+            $("#btnUploadFileToScan").on('click', function(e) {
+                e.preventDefault();
+                $("form.uploadFileToScan").submit();
+            });
+            $("#fileToScan").on('change', function() {
+                if($("#fileToScan").val()) {
+                    $("#btnUploadFileToScan").removeAttr("disabled");
+                }
+                else {
+                    $("#btnUploadFileToScan").attr("disabled", "disabled");
+                }
+            }).trigger('change');
+            $("form.uploadFileToScan").on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "/admin/scanDocument",
+                    type: 'POST',
+                    contentType: false,
+                    data: formData,
+                    success: function (data) {
+                        alert(JSON.stringify(data));
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseText);
+                    },
+                    cache: false,
+                    processData: false
+                });
+            });
+        </script>
     </body>
 </html>

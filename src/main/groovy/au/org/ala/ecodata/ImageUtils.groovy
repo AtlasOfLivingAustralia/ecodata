@@ -8,8 +8,6 @@ import com.drew.metadata.exif.ExifIFD0Directory
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FilenameUtils
 import org.imgscalr.Scalr
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -45,7 +43,7 @@ class ImageUtils {
      * @param rotated a placeholder for the output, must not exist already.
      * @return true if processing was performed.
      */
-    static boolean reorientImage(File original, File output) {
+    static boolean reorientImage(InputStream original, OutputStream output, String filename) {
         int orientation = getOrientation(original)
 
         List<Scalr.Rotation> transforms = []
@@ -85,7 +83,7 @@ class ImageUtils {
             transforms.each { transform ->
                 result = Scalr.rotate(result, transform, Scalr.OP_ANTIALIAS)
             }
-            processed = ImageIO.write(result, FilenameUtils.getExtension(original.name), output)
+            processed = ImageIO.write(result, FilenameUtils.getExtension(filename), output)
         }
         processed
     }
@@ -93,14 +91,14 @@ class ImageUtils {
     /**
      * Returns the orientation tag from the image EXIF data, if available.  If no EXIF data exists,
      * this method returns 0.
-     * @param file the image file to check.
+     * @param inputStream the image file to check.
      * @return the value of the EXIF orientation tag, or 0 if no EXIF data was found.
      */
-    private static int getOrientation(File file) {
+    private static int getOrientation(InputStream inputStream) {
         int orientation = 0
 
         try {
-            Metadata metadata = ImageMetadataReader.readMetadata(file)
+            Metadata metadata = ImageMetadataReader.readMetadata(inputStream)
             Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class)
 
             if (dir && dir.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
@@ -108,7 +106,7 @@ class ImageUtils {
             }
         }
         catch (ImageProcessingException e) {
-            log.info("Unsupported file type encountered when attempting to read image metadata: ${file.name}")
+            log.info("Unsupported file type encountered when attempting to read image metadata")
         }
 
         return orientation
