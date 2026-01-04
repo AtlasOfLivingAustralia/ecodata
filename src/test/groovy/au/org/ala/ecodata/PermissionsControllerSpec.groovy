@@ -1393,9 +1393,11 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         AccessLevel.caseManager.name()        | HttpStatus.SC_OK  |  2
         AccessLevel.moderator.name()          | HttpStatus.SC_OK  |  3
         AccessLevel.editor.name()             | HttpStatus.SC_OK  |  4
-        AccessLevel.projectParticipant.name() | HttpStatus.SC_OK  |  5
-        AccessLevel.readOnly.name()           | HttpStatus.SC_OK  |  6
-        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  7
+        AccessLevel.determinerParticipant.name() | HttpStatus.SC_OK  |  5
+        AccessLevel.determiner.name()         | HttpStatus.SC_OK  |  6
+        AccessLevel.projectParticipant.name() | HttpStatus.SC_OK  |  7
+        AccessLevel.readOnly.name()           | HttpStatus.SC_OK  |  8
+        AccessLevel.starred.name()            | HttpStatus.SC_OK  |  9
         //if baseLevel is not set or invalid then returns accesslevel above editor
         "test"                                | HttpStatus.SC_OK  |  4
 

@@ -10,12 +10,12 @@ import grails.util.Environment
 import groovy.json.JsonSlurper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityRequirements
-import io.swagger.v3.oas.annotations.enums.ParameterIn
 import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -49,6 +49,7 @@ class AdminController {
     ProjectActivityService projectActivityService
     ParatooService paratooService
     GrailsCacheManager grailsCacheManager
+    WebService webService
 
     @AlaSecured(["ROLE_ADMIN"])
     def index() {}

@@ -565,7 +565,7 @@ if (!ecodata.use.uuids) {
 
 ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 // Used by ParatooService to sync available protocols
-paratoo.core.baseUrl = 'https://dev.core-api.monitor.tern.org.au/api'
+paratoo.core.baseUrl = 'https://test.core-api.monitor.tern.org.au/api'
 paratoo.excludeInterventionProtocols = true
 paratoo.core.documentationUrl = '/documentation/swagger.json'
 
