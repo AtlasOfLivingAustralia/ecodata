@@ -287,24 +287,33 @@ class DownloadService {
         new ZipOutputStream(outputStream).withStream { zip ->
             try{
 
-                addShapeFilesToZip(zip, activitiesByProject.keySet())
-                log.debug("Shape files added")
+                if (params.includeShapefiles) {
+                    addShapeFilesToZip(zip, activitiesByProject.keySet())
+                    log.debug("Shape files added")
+                }
 
-                addImagesToZip(zip, activitiesByProject, documentMap)
-                log.debug("Images added")
+                if (params.includeImages) {
+                    addImagesToZip(zip, activitiesByProject, documentMap)
+                    log.debug("Images added")
+                }
 
-                XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
-                zip.putNextEntry(new ZipEntry("data.xlsx"))
-                ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
-                xlsExporter.save(xslFile)
-                xslFile.flush()
-                zip << xslFile.toByteArray()
-                xslFile.flush()
-                xslFile.close()
-                zip.closeEntry()
-                log.debug("XLS file added")
+                if (params.includeData) {
+                    XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
+                    zip.putNextEntry(new ZipEntry("data.xlsx"))
+                    ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
+                    xlsExporter.save(xslFile)
+                    xslFile.flush()
+                    zip << xslFile.toByteArray()
+                    xslFile.flush()
+                    xslFile.close()
+                    zip.closeEntry()
+                    log.debug("XLS file added")
+                }
 
-                addReadmeToZip(zip, timeZone)
+                if (params.includeData || params.includeImages || params.includeShapefiles) {
+                    addReadmeToZip(zip, timeZone)
+                }
+
             } catch (Exception e){
                 log.error("Error creating download archive", e)
             } finally {
