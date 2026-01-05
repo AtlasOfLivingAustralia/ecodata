@@ -437,8 +437,8 @@ class SearchController {
             params.userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
             params.includeData = params.includeData?.toBoolean() ?: true
-            params.includeImages = params.includeImages?.toBoolean() ?: true
-            params.includeShapefiles = params.includeShapefiles?.toBoolean() ?: true
+            params.includeImages = params.includeImages?.toBoolean() ?: false
+            params.includeShapefiles = params.includeShapefiles?.toBoolean() ?: false
 
             if (params.async?.toBoolean()) {
                 if (!params.email) {
