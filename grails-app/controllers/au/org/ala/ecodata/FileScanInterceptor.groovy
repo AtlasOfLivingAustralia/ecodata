@@ -8,7 +8,7 @@ class FileScanInterceptor {
     def dependsOn = [ApiKeyInterceptor, PreAuthoriseInterceptor]
 
     FileScanInterceptor() {
-        matchAll().excludes(controller: 'document', actionName: "scanDocument").excludes(controller:'admin', actionName: "scanDocument") // exclude requests that are specifically for scanning
+        matchAll().excludes(controller: 'document', action: "scanDocument").excludes(controller:'admin', action: "scanDocument") // exclude requests that are specifically for scanning
     }
 
     boolean before() {
