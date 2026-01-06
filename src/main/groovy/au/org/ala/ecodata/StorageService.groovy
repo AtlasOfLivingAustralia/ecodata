@@ -7,6 +7,7 @@ interface StorageService {
     boolean deleteFile(String path, String filename)
     boolean fileExists(String path, String filename)
     void archiveFile(String path, String filename)
+    boolean validateDocumentFilePath(String path, String filename)
 
     /**
      * We are preserving the file name so the URLs look nicer and the file extension isn't lost.

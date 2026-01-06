@@ -553,27 +553,12 @@ class DocumentService {
      */
     Map readJsonDocument(Map document) {
         Map documentData = null
-        if (storageService instanceof FileSystemService) {
-            boolean exists = storageService.fileExists(document.filepath as String, document.filename as String)
-            if (!exists) {
-                // In the current reporting server setup, documents are not locally stored and need to be
-                // retrieved from the primary server.
-                documentData = webService.getJson(document.url, null, null, true)
-            }
-            else {
-                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
-                    JsonSlurper jsonSlurper = new JsonSlurper()
-                    documentData = jsonSlurper.parse(inputStream)
-                }
-            }
+        try (InputStream fileIn = storageService.getFile(document.filepath as String, document.filename as String)) {
+            JsonSlurper jsonSlurper = new JsonSlurper()
+            documentData = jsonSlurper.parse(fileIn)
         }
-        else if (storageService instanceof S3Service) {
-            if (storageService.fileExists(document.filepath as String, document.filename as String)) {
-                try (InputStream fileIn = storageService.getFile(document.filepath as String, document.filename as String)) {
-                    JsonSlurper jsonSlurper = new JsonSlurper()
-                    documentData = jsonSlurper.parse(fileIn)
-                }
-            }
+        catch (Exception e) {
+            log.error("Error reading JSON document ${document.documentId} (${document.filepath}/${document.filename}): ${e.message}", e)
         }
 
         return documentData

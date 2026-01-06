@@ -80,4 +80,15 @@ class FileSystemService implements StorageService {
         return uploadPath + File.separator + path  + filename
     }
 
+
+    /**
+     * This method compares the canonical path to a document with the path potentially supplied by the
+     * user and returns false if they don't match.  This is to prevent attempts at file system traversal.
+     */
+    @Override
+    boolean validateDocumentFilePath(String path, String filename) {
+        String file = fullPath(path, filename, true)
+        return new File(file).getCanonicalPath() == file
+    }
+
 }

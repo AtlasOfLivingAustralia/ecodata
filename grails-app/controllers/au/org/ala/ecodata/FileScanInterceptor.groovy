@@ -5,6 +5,7 @@ import grails.converters.JSON
 class FileScanInterceptor {
     DocumentService documentService
     int order = HIGHEST_PRECEDENCE + 15 // Run before AclInterceptor
+    def dependsOn = [ApiKeyInterceptor, PreAuthoriseInterceptor]
 
     FileScanInterceptor() {
         matchAll().excludes(controller: 'document', actionName: "scanDocument").excludes(controller:'admin', actionName: "scanDocument") // exclude requests that are specifically for scanning

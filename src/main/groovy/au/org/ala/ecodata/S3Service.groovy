@@ -252,6 +252,12 @@ class S3Service implements StorageService {
         return newFilename
     }
 
+    @Override
+    boolean validateDocumentFilePath(String path, String filename) {
+        return true
+    }
+
+
     boolean fileExistsInPrefix(List files = [], String filename) {
             return files.any { it.endsWith("/${filename}") }
     }

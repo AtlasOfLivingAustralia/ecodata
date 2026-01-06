@@ -8,11 +8,13 @@ import spock.lang.Specification
 class DocumentControllerSpec extends Specification implements ControllerUnitTest<DocumentController> {
 
     DocumentService documentService = Mock(DocumentService)
+    StorageService storageService = new FileSystemService()
 
     File tmpFile
 
     def setup() {
         controller.documentService = documentService
+        controller.storageService = storageService
         File tempDir = File.createTempDir()
         File tmpUploadDir = new File(tempDir, "test")
         tmpUploadDir.mkdir()
@@ -20,16 +22,13 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
 
         grailsApplication.config.app = [file: [upload: [path: tempDir.getAbsolutePath()]]]
         controller.grailsApplication = grailsApplication
+        storageService.grailsApplication = grailsApplication
     }
 
     def "The document service can download a file"() {
 
         when:
         controller.download('test', 'test.pdf')
-
-        then:
-        1 * documentService.validateDocumentFilePath('test',  "test.pdf") >> true
-        1 * documentService.fullPath('test',  "test.pdf") >> tmpFile.getAbsolutePath()
 
         and:
         response.contentType == "application/pdf"
@@ -41,10 +40,6 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         params.filename = "test/test.pdf"
         controller.download()
 
-        then:
-        1 * documentService.validateDocumentFilePath(null,  "test/test.pdf") >> true
-        1 * documentService.fullPath(null,  "test/test.pdf") >> tmpFile.getAbsolutePath()
-
         and:
         response.contentType == "application/pdf"
     }
@@ -54,7 +49,6 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         controller.download('../../test', 'test.pdf')
 
         then:
-        1 * documentService.validateDocumentFilePath('../../test',  "test.pdf") >> false
         0 * documentService._
 
         and:
@@ -64,10 +58,6 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
     def "The download will return an error if the file doesn't exist"() {
         when:
         controller.download('test', 'test.pdf')
-
-        then:
-        1 * documentService.validateDocumentFilePath('test',  "test.pdf") >> true
-        1 * documentService.fullPath('test',  "test.pdf") >> "/doesnotexist.txt"
 
         and:
         response.status == HttpStatus.SC_NOT_FOUND

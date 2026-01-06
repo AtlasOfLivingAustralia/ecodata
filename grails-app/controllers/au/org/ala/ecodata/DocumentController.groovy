@@ -213,7 +213,7 @@ class DocumentController {
      * as the files will be served by Apache in prod.
      */
     def download(String path, String filename) {
-        if (!filename || !documentService.validateDocumentFilePath(path, filename)) {
+        if (!filename || !storageService.validateDocumentFilePath(path, filename)) {
             response.status = HttpStatus.SC_BAD_REQUEST
             return null
         }
