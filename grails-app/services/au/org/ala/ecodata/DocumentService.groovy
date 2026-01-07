@@ -314,34 +314,42 @@ class DocumentService {
     private String saveFile(String filepath, String filename, InputStream fileIn, boolean overwrite, String type = null, long contentLength = 0) {
         if (fileIn) {
             synchronized (FILE_LOCK) {
+                // save file temporarily as we may need to read it multiple times i.e. during save and processing image
+                File tempFile = File.createTempFile("temp_upload_", filename)
+                try (OutputStream tempFileOut = tempFile.newOutputStream()) {
+                    tempFileOut << fileIn
+                }
+
                 if (!overwrite) {
                     filename = storageService.nextUniqueFileName(filepath, filename)
                 }
 
-                storageService.saveFile(filepath, filename, fileIn, contentLength)
-                if (type == Document.DOCUMENT_TYPE_IMAGE) {
-                    filename = processImage(filepath, filename, fileIn, overwrite)
+                try(InputStream tempFileIn = tempFile.newInputStream()) {
+                    storageService.saveFile(filepath, filename, tempFileIn, contentLength)
                 }
+
+                if (type == Document.DOCUMENT_TYPE_IMAGE) {
+                    filename = processImage(filepath, filename, tempFile, overwrite)
+                }
+
+                tempFile.delete()
             }
         }
         return filename
     }
 
-    private String processImage(String filepath, String filename, InputStream fileIn, boolean overwrite) {
-        File processed = File.createTempFile("processed_", filename)
-        try (FileOutputStream processedOut = new FileOutputStream(processed)) {
-            boolean result = ImageUtils.reorientImage(fileIn, processedOut, filename)
-            if (result) {
-                // since processed file will be used from now on, delete the original uploaded file
-                storageService.deleteFile(filepath, filename)
-                // If the image was processed, used the processed image when making the thumbnail.
-                filename = Document.PROCESSED_PREFIX + filename
-                storageService.saveFile(filepath, filename, new FileInputStream(processed), processed.size())
-            }
-
-            makeThumbnail(filepath, filename, overwrite)
+    private String processImage(String filepath, String filename, File file, boolean overwrite) {
+        File processed = File.createTempFile("temp_processed_", filename)
+        boolean result = ImageUtils.reorientImage(file, processed)
+        if (result) {
+            // since processed file will be used from now on, delete the original uploaded file
+            storageService.deleteFile(filepath, filename)
+            // If the image was processed, used the processed image when making the thumbnail.
+            filename = Document.PROCESSED_PREFIX + filename
+            storageService.saveFile(filepath, filename, processed.newInputStream(), processed.size())
         }
 
+        makeThumbnail(filepath, filename, overwrite)
         processed.delete()
         filename
     }
@@ -590,6 +598,10 @@ class DocumentService {
      * Scan document for viruses using clamav daemon.
      */
     boolean isDocumentInfected(InputStream fileIn) {
+        if(!grailsApplication.config.getProperty('fileScan.enabled', Boolean, true)) {
+            return false
+        }
+
         ClamavClient client = clamavClient()
         ScanResult result = client.scan(fileIn)
         if (result instanceof ScanResult.OK) {

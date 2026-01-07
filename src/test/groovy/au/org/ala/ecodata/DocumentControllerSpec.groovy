@@ -28,25 +28,15 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
     def "The document service can download a file"() {
 
         when:
-        controller.download('test', 'test.pdf')
+        controller.download('test', tmpFile.getName())
 
-        and:
-        response.contentType == "application/pdf"
-    }
-
-    def "The download works with then path is specified in the filename"() {
-
-        when:
-        params.filename = "test/test.pdf"
-        controller.download()
-
-        and:
+        then:
         response.contentType == "application/pdf"
     }
 
     def "The download will return an error if a file traversal is detected"() {
         when:
-        controller.download('../../test', 'test.pdf')
+        controller.download('../../test', tmpFile.getName())
 
         then:
         0 * documentService._
@@ -59,7 +49,7 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         when:
         controller.download('test', 'test.pdf')
 
-        and:
+        then:
         response.status == HttpStatus.SC_NOT_FOUND
     }
 

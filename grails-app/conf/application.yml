@@ -263,3 +263,6 @@ aws:
         profile: default
     s3:
         bucket: ala-ecodata-test
+
+scanFile:
+    enabled: true

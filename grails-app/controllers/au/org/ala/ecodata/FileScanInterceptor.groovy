@@ -12,6 +12,10 @@ class FileScanInterceptor {
     }
 
     boolean before() {
+        if (!grailsApplication.config.getProperty('fileScan.enabled', Boolean, true)) {
+            return true
+        }
+
         if (request.respondsTo('getFile')) {
             boolean infected = false
             def files = request.getFileNames()

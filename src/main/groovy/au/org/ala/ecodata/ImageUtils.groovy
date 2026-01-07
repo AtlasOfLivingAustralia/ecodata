@@ -43,7 +43,7 @@ class ImageUtils {
      * @param rotated a placeholder for the output, must not exist already.
      * @return true if processing was performed.
      */
-    static boolean reorientImage(InputStream original, OutputStream output, String filename) {
+    static boolean reorientImage(File original, File output) {
         int orientation = getOrientation(original)
 
         List<Scalr.Rotation> transforms = []
@@ -83,7 +83,7 @@ class ImageUtils {
             transforms.each { transform ->
                 result = Scalr.rotate(result, transform, Scalr.OP_ANTIALIAS)
             }
-            processed = ImageIO.write(result, FilenameUtils.getExtension(filename), output)
+            processed = ImageIO.write(result, FilenameUtils.getExtension(original.name), output)
         }
         processed
     }
@@ -94,11 +94,11 @@ class ImageUtils {
      * @param inputStream the image file to check.
      * @return the value of the EXIF orientation tag, or 0 if no EXIF data was found.
      */
-    private static int getOrientation(InputStream inputStream) {
+    private static int getOrientation(File file) {
         int orientation = 0
 
         try {
-            Metadata metadata = ImageMetadataReader.readMetadata(inputStream)
+            Metadata metadata = ImageMetadataReader.readMetadata(file)
             Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class)
 
             if (dir && dir.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
@@ -106,7 +106,7 @@ class ImageUtils {
             }
         }
         catch (ImageProcessingException e) {
-            log.info("Unsupported file type encountered when attempting to read image metadata")
+            log.info("Unsupported file type encountered when attempting to read image metadata: ${file.name}")
         }
 
         return orientation
