@@ -13,7 +13,6 @@
     <title><g:layoutTitle/></title>
 
     <asset:stylesheet src="ecodata.css"/>
-    <asset:javascript src="jquery/jquery.js"/>
     <g:layoutHead/>
 
 </head>

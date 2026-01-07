@@ -143,6 +143,36 @@
                     });
                 });
             });
+            $("#btnUploadFileToScan").on('click', function(e) {
+                e.preventDefault();
+                $("form.uploadFileToScan").submit();
+            });
+            $("#fileToScan").on('change', function() {
+                if($("#fileToScan").val()) {
+                    $("#btnUploadFileToScan").removeAttr("disabled");
+                }
+                else {
+                    $("#btnUploadFileToScan").attr("disabled", "disabled");
+                }
+            }).trigger('change');
+            $("form.uploadFileToScan").on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "/admin/scanDocument",
+                    type: 'POST',
+                    contentType: false,
+                    data: formData,
+                    success: function (data) {
+                        alert(JSON.stringify(data));
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseText);
+                    },
+                    cache: false,
+                    processData: false
+                });
+            });
         </asset:script>
         <content tag="pageTitle">Tools</content>
 
@@ -286,37 +316,5 @@
             </tr>
             </tbody>
         </table>
-        <script>
-            $("#btnUploadFileToScan").on('click', function(e) {
-                e.preventDefault();
-                $("form.uploadFileToScan").submit();
-            });
-            $("#fileToScan").on('change', function() {
-                if($("#fileToScan").val()) {
-                    $("#btnUploadFileToScan").removeAttr("disabled");
-                }
-                else {
-                    $("#btnUploadFileToScan").attr("disabled", "disabled");
-                }
-            }).trigger('change');
-            $("form.uploadFileToScan").on('submit', function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-                $.ajax({
-                    url: "/admin/scanDocument",
-                    type: 'POST',
-                    contentType: false,
-                    data: formData,
-                    success: function (data) {
-                        alert(JSON.stringify(data));
-                    },
-                    error: function (xhr, status, error) {
-                        alert(xhr.responseText);
-                    },
-                    cache: false,
-                    processData: false
-                });
-            });
-        </script>
     </body>
 </html>
