@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.sync.RequestBody
