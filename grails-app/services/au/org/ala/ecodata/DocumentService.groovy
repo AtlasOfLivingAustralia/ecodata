@@ -318,6 +318,7 @@ class DocumentService {
                 File tempFile = File.createTempFile("temp_upload_", filename)
                 try (OutputStream tempFileOut = tempFile.newOutputStream()) {
                     tempFileOut << fileIn
+                    fileIn.close()
                 }
 
                 if (!overwrite) {

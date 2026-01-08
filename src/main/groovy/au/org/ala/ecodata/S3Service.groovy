@@ -21,16 +21,23 @@ class S3Service implements StorageService {
     S3Client client
     String bucketName
     String baseUrl
+    String profileName
+    String region
+    boolean containerCredentials
+
+    @javax.annotation.PostConstruct
+    void init() {
+        // initialize the config values
+        def config = grailsApplication.config
+        region = config.getProperty('aws.region', String)
+        containerCredentials = config.getProperty('aws.credentials.container', Boolean, false)
+        profileName = config.getProperty('aws.credentials.profile', String)
+        bucketName = config.getProperty('aws.s3.bucket', String)
+        baseUrl = config.getProperty('aws.s3.baseUrl', String)
+    }
 
     S3Client getS3Client() {
-        if (!client) {
-            def config = grailsApplication.config
-            String region = config.getProperty('aws.region', String)
-            boolean containerCredentials = config.getProperty('aws.credentials.container', Boolean, false)
-            String profileName = config.getProperty('aws.credentials.profile', String)
-
-            bucketName = config.getProperty('aws.s3.bucket', String)
-            baseUrl = config.getProperty('aws.s3.baseUrl', String)
+        if (!client && !!profileName && !!region) {
             S3ClientBuilder clientBuilder = S3Client.builder()
                     .region(Region.of(region))
             if (containerCredentials) {
@@ -38,7 +45,7 @@ class S3Service implements StorageService {
                 clientBuilder.credentialsProvider(DefaultCredentialsProvider.create())
             } else if (profileName) {
                 // when developing locally, use the profile credentials provider
-                clientBuilder.credentialsProvider(ProfileCredentialsProvider.create('test-ala-developer'))
+                clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName))
             }
             else {
                 throw new RuntimeException("Profile name must be provided for S3 client")
@@ -48,6 +55,12 @@ class S3Service implements StorageService {
         }
 
         client
+    }
+
+    void checkS3Client() {
+        if (!s3Client) {
+            throw new Exception("S3 client is not initialized")
+        }
     }
 
     /**
@@ -60,6 +73,7 @@ class S3Service implements StorageService {
             tempFile = File.createTempFile("s3upload", null)
             tempFile.withOutputStream { tempStream ->
                 inputStream.transferTo(tempStream)
+                inputStream.close()
             }
 
             contentLength = tempFile.length()
@@ -68,6 +82,7 @@ class S3Service implements StorageService {
 
 
         try {
+            checkS3Client()
             String contentType = 'application/octet-stream'
             PutObjectRequest putRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
@@ -95,6 +110,7 @@ class S3Service implements StorageService {
      */
     InputStream downloadFile(String key) {
         try {
+            checkS3Client()
             GetObjectRequest getRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -115,6 +131,7 @@ class S3Service implements StorageService {
      */
     boolean deleteFile(String key) {
         try {
+            checkS3Client()
             DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -133,6 +150,7 @@ class S3Service implements StorageService {
      */
     boolean fileExists(String key) {
         try {
+            checkS3Client()
             HeadObjectRequest headRequest = HeadObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -153,6 +171,7 @@ class S3Service implements StorageService {
      */
     List<String> listFiles(String prefix = "") {
         try {
+            checkS3Client()
             ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
                     .bucket(bucketName)
                     .prefix(prefix)
@@ -172,6 +191,7 @@ class S3Service implements StorageService {
      */
     boolean copyFile(String sourceKey, String destinationKey) {
         try {
+            checkS3Client()
             CopyObjectRequest copyRequest = CopyObjectRequest.builder()
                     .sourceBucket(bucketName)
                     .sourceKey(sourceKey)
@@ -192,6 +212,7 @@ class S3Service implements StorageService {
      */
     Map getFileMetadata(String key) {
         try {
+            checkS3Client()
             HeadObjectRequest headRequest = HeadObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
