@@ -12,7 +12,7 @@ class FileScanInterceptor {
     }
 
     boolean before() {
-        if (!grailsApplication.config.getProperty('fileScan.enabled', Boolean, true)) {
+        if (!grailsApplication.config.getProperty('scanFile.enabled', Boolean, true)) {
             return true
         }
 

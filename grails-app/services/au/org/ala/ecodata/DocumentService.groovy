@@ -598,7 +598,7 @@ class DocumentService {
      * Scan document for viruses using clamav daemon.
      */
     boolean isDocumentInfected(InputStream fileIn) {
-        if(!grailsApplication.config.getProperty('fileScan.enabled', Boolean, true)) {
+        if(!grailsApplication.config.getProperty('scanFile.enabled', Boolean, true)) {
             return false
         }
 
