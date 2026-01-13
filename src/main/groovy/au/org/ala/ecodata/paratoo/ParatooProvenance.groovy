@@ -1,5 +1,8 @@
 package au.org.ala.ecodata.paratoo
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooProvenance {
 
     String system_app

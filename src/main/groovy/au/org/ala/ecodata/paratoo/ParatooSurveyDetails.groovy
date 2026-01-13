@@ -1,5 +1,8 @@
 package au.org.ala.ecodata.paratoo
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ParatooSurveyDetails {
     String survey_model
     /** ISO time, stored as a String as we don't need to use it as a Date */

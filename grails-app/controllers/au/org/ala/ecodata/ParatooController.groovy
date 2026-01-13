@@ -129,6 +129,30 @@ class ParatooController {
 
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/user-projects")
+    @Operation(
+            method = "GET",
+            summary = "Gets all projects for an authenticated user for an api version",
+            description = "Gets all projects that a user is assigned to for an api version",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ParatooProject.class)))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def userProjectsWithVersion() {
+        forward action: 'userProjects', params: params
+    }
+
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/get-all-collections")
     @Operation(
             method = "GET",
@@ -145,6 +169,30 @@ class ParatooController {
         respond collections: paratooService.userCollections(userService.currentUserDetails.userId)
     }
 
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/get-all-collections")
+    @Operation(
+            method = "GET",
+            summary = "Gets the list of all org minted uuids submitted by an authenticated user for an api version.",
+            description = "Gets the list of all org minted uuids submitted by an authenticated user for an api version.",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns the list of all org minted uuids submitted by the user.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def userCollectionsWithVersion() {
+        forward action: 'userCollections', params: params
+    }
+
     @SkipApiKeyCheck
     @POST
     @Path("/validate-token")
@@ -157,7 +205,7 @@ class ParatooController {
             ],
             tags = "Org Interface"
     )
-    def validateToken(@RequestBody(description = "The JWT token", required = true, content = @Content(schema = @Schema(implementation = ParatooToken.class))) ParatooToken body) {
+    def validateToken(@RequestBody(description = "The JWT token", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooToken.class))) ParatooToken body) {
         // Possibly an implementation side-effect of the paratoo client but the token is passed in the body here
         // rather than the header.  We extract it and call a protected method to check the token....
         String token = body?.token
@@ -178,6 +226,28 @@ class ParatooController {
         } else {
             respond([valid: false], status: HttpStatus.SC_UNAUTHORIZED)
         }
+    }
+
+    @SkipApiKeyCheck
+    @POST
+    @Path("/{apiVersion}/validate-token")
+    @Operation(
+            method = "POST",
+            summary = "Validates JWT tokens issued by Org",
+            description = "Before Core makes a PDP request via the project membership enforcer, it must check that the JWT it was provided is valid. As Org issues these JWTs, Core must check with Org to ensure the validity.",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "The token is valid or invalid", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class)))
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def validateTokenWithVersion(@RequestBody(description = "The JWT token", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooToken.class))) ParatooToken body) {
+        forward action: 'validateToken', params: params
     }
 
     /**
@@ -214,6 +284,32 @@ class ParatooController {
 
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/pdp/{projectId}/{protocolId}/read")
+    @Operation(
+            method = "GET",
+            description = "Checks that a user has read permissions for the particular project and protocol for an api version",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    )),
+                    @Parameter(name = "projectId", description = "The project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning",
+            summary = "For authorizing with the PDP which checks read permissions for an api version"
+    )
+    def hasReadAccessWithVersion(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
+                      @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        forward action: 'hasReadAccess', params: params
+    }
+
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/pdp/{projectId}/{protocolId}/write")
     @Operation(
             method = "GET",
@@ -235,6 +331,33 @@ class ParatooController {
         protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
             paratooService.protocolWriteCheck(userId, prjId, proId)
         })
+    }
+
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/pdp/{projectId}/{protocolId}/write")
+    @Operation(
+            method = "GET",
+            description = "Checks that a user has write permissions for the particular project and protocol for an api version.",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    )),
+                    @Parameter(name = "projectId", description = "The project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning",
+            summary = "For authorizing with the PDP which checks write permissions  for an api version."
+    )
+    def hasWriteAccessWithVersion(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
+                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
+        forward action: 'hasWriteAccess', params: params
     }
 
     /**
@@ -288,6 +411,29 @@ class ParatooController {
 
     @POST
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/mint-identifier")
+    @Operation(
+            method = "POST",
+            description = "Creates an identifier that is stored in Org as a cross-reference to Core. Allows a particular survey to be derived from the data contained in the identifier. User's may not have connection to the server when they are performing a collection, so an identifier is created locally. When they are ready to submit the collection (i.e., have access to the server), they hit this endpoint to have the actual identifier minted. The identifier is encrypted using SJCL and is returned to the user as such.",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns the encrypted minted identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning")
+    def mintCollectionIdWithVersion(@RequestBody(description = "Note that the survey ID is created by the client application and is arbitrarily defined. It should simply uniquely identify a particular survey",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollectionId.class))) ParatooCollectionId collectionId) {
+        forward action: 'mintCollectionId', params: params
+    }
+
+    @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/collection")
     @Operation(
             method = "POST",
@@ -329,6 +475,29 @@ class ParatooController {
         }
     }
 
+    @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/collection")
+    @Operation(
+            method = "POST",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns true if Org successfully stored the supplied identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def submitCollectionWithVersion(@RequestBody(description = "The event time for this request is not the same as the one for minting identifiers. An identifier's event time denotes when the collection was made, this event time denotes when the collection was submitted to the server.",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollection.class))) ParatooCollection collection) {
+        forward action: 'submitCollection', params: params
+    }
+
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/status/{id}")
@@ -357,6 +526,28 @@ class ParatooController {
         respond([isSubmitted: (matchingDataSet.dataSet.progress == Activity.STARTED)])
     }
 
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/status/{id}")
+    @Operation(
+            method = "GET",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns true if Org has stored the supplied identifier", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def collectionIdStatusWithVersion(@Parameter(name = "id", description = "The value for mintedCollectionId", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")) String id) {
+        forward action: 'collectionIdStatus', params: params
+    }
+
     @POST
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/plot-selections")
@@ -376,6 +567,31 @@ class ParatooController {
         addOrUpdatePlotSelection(plotSelection)
     }
 
+    @POST
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/plot-selections")
+    @Operation(
+            method = "POST",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Plot selection added", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def addPlotSelectionWithVersion(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
+        forward action: 'addPlotSelection', params: params
+    }
+
     @PUT
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/plot-selections")
@@ -393,6 +609,31 @@ class ParatooController {
     def updatePlotSelection(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
             required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
         addOrUpdatePlotSelection(plotSelection)
+    }
+
+    @PUT
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/plot-selections")
+    @Operation(
+            method = "PUT",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Plot selection updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def updatePlotSelectionWithVersion(@RequestBody(description = "Plot selection data. Make sure all fields are provided.",
+            required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooPlotSelection.class))) ParatooPlotSelection plotSelection) {
+        forward action: 'updatePlotSelection', params: params
     }
 
     @GET
@@ -421,6 +662,30 @@ class ParatooController {
         }
         plotSelections = plotSelections.unique { it.siteId } ?: []
         respond plots: plotSelections
+    }
+
+    @GET
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/{apiVersion}/plot-selections")
+    @Operation(
+            method = "GET",
+            parameters = [
+                    @Parameter(name = "apiVersion", description = "The api version", required = true, in = ParameterIn.PATH, schema = @Schema(
+                            type = "string",
+                            allowableValues = ['v1', 'v2']
+                    ))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "All plots the user has permission for", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            ],
+            tags = "Org Interface - with API versioning"
+    )
+    def getPlotSelectionsWithVersion() {
+        forward action: 'getPlotSelections', params: params
     }
 
     private def addOrUpdatePlotSelection(ParatooPlotSelection plotSelection) {

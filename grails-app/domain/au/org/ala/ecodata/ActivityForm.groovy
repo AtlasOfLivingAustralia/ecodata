@@ -1,11 +1,12 @@
 package au.org.ala.ecodata
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 
 /**
  * Describes the data and layout for a form that can be rendered to collect activity data.
  */
+@JsonIgnoreProperties(['metaClass', 'errors', 'expandoMetaClass'])
 class ActivityForm {
 
     static String SURVEY_TAG = "survey"
