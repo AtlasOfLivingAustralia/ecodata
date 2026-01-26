@@ -18,7 +18,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-jquery": "^0.2.4",
     "knockout": "^3.5.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.23",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
     "css-loader": "^6.5.1",
@@ -46,6 +46,6 @@
     "knockout-mapping": "^2.6.0",
     "knockout-sortable": "^1.2.2",
     "select2": "4.0.13",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.23"
   }
 }
