@@ -1,31 +1,17 @@
 package au.org.ala.ecodata
 
-import au.org.ala.userdetails.UserDetailsClient
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Rfc3339DateJsonAdapter
+
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsApplicationPostProcessor
 import grails.boot.config.GrailsAutoConfiguration
 import grails.core.GrailsApplication
-import graphql.Scalars
-import graphql.schema.GraphQLObjectType
+import grails.util.Environment
 import graphql.schema.GraphQLSchema
 import graphql.schema.StaticDataFetcher
-import graphql.schema.idl.RuntimeWiring
-import graphql.schema.idl.SchemaGenerator
-import graphql.schema.idl.SchemaParser
-import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.idl.TypeRuntimeWiring
-import okhttp3.OkHttpClient
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import graphql.schema.idl.*
 import org.springframework.context.annotation.Bean
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS
-
 //import groovy.util.logging.Slf4j
-import org.springframework.context.annotation.ComponentScan
 
 //@ComponentScan(basePackageClasses = EnvironmentDumper)
 //@Slf4j
@@ -33,6 +19,7 @@ class Application extends GrailsAutoConfiguration {
 
     private static final String EHCACHE_DIRECTORY_CONFIG_ITEM = "ehcache.directory"
     private static final String DEFAULT_EHCACHE_DIRECTORY = "./ehcache"
+    public static final String MONITOR_EXTERNAL_DEVELOPER = 'external-developer'
 
     static void main(String[] args) {
         GrailsApp.run(Application, args)
@@ -65,6 +52,11 @@ class Application extends GrailsAutoConfiguration {
         return new GrailsApplicationPostProcessor( this, applicationContext, classes() as Class[]) {
             @Override
             protected void customizeGrailsApplication(GrailsApplication grailsApplication) {
+                if (Environment.current == Environment.DEVELOPMENT) {
+                    // monitor specific user agent
+                    System.setProperty('http.agent', MONITOR_EXTERNAL_DEVELOPER)
+                }
+
                 System.setProperty(EHCACHE_DIRECTORY_CONFIG_ITEM, grailsApplication.config.getProperty(EHCACHE_DIRECTORY_CONFIG_ITEM, DEFAULT_EHCACHE_DIRECTORY))
             }
 

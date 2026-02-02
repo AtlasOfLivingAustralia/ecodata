@@ -2213,11 +2213,17 @@ class ParatooService {
             return null
         }
 
+        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
+        // do not create record for special cases
+        if (specialCases.contains(name)) {
+            return null
+        }
+
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
         String commonName, scientificName, taxonRank
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
-        Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
+        Map result = [rawScientificName: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
             commonName = matcher.group(1)?.trim()
@@ -2229,9 +2235,10 @@ class ParatooService {
         }
 
         Map resp = speciesReMatchService.searchByName(result.scientificName)
-        if (resp) {
-            result.putAll(resp)
-        }
+        // remove null values
+        resp = resp?.findAll { k, v -> v != null }
+        result.putAll(resp ?: [:])
+
         // try again with common name
         if ((result.guid == null) && result.commonName) {
             resp = speciesReMatchService.searchByName(commonName, false, true)
@@ -2250,15 +2257,7 @@ class ParatooService {
             result.commonName = null
         }
 
-        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
-        // do not create record for special cases
-        if (specialCases.contains(name)) {
-            result.remove("guid")
-        }
-        else {
-            // record is only created if guid is present
-            result.guid = result.guid ?: Record.UNMATCHED_GUID
-        }
+        result.guid = result.guid ?: Record.UNMATCHED_GUID
         result
     }
 }
