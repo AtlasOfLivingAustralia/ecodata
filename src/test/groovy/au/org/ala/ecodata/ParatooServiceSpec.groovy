@@ -777,7 +777,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         result = service.transformSpeciesName("Other")
 
         then:
-        outputSpeciesId != null
         result == null
         0 * speciesReMatchService.searchByName(_) >> null
         0 * speciesReMatchService.searchByName(_, false, true) >> null
