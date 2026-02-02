@@ -2235,7 +2235,8 @@ class ParatooService {
         }
 
         Map resp = speciesReMatchService.searchByName(result.scientificName)
-        // remove null values
+        // Remove null values from the API response so they do not overwrite existing non-null
+        // values in the result map when we merge; this behavior is the core fix for issue #3681.
         resp = resp?.findAll { k, v -> v != null }
         result.putAll(resp ?: [:])
 
