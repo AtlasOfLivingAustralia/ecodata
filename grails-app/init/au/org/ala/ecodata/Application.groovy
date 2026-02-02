@@ -1,16 +1,13 @@
 package au.org.ala.ecodata
 
-
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsApplicationPostProcessor
 import grails.boot.config.GrailsAutoConfiguration
 import grails.core.GrailsApplication
-import grails.util.Environment
 import graphql.schema.GraphQLSchema
 import graphql.schema.StaticDataFetcher
 import graphql.schema.idl.*
 import org.springframework.context.annotation.Bean
-
 //import groovy.util.logging.Slf4j
 
 //@ComponentScan(basePackageClasses = EnvironmentDumper)
@@ -19,7 +16,6 @@ class Application extends GrailsAutoConfiguration {
 
     private static final String EHCACHE_DIRECTORY_CONFIG_ITEM = "ehcache.directory"
     private static final String DEFAULT_EHCACHE_DIRECTORY = "./ehcache"
-    public static final String MONITOR_EXTERNAL_DEVELOPER = 'external-developer'
 
     static void main(String[] args) {
         GrailsApp.run(Application, args)
@@ -52,11 +48,6 @@ class Application extends GrailsAutoConfiguration {
         return new GrailsApplicationPostProcessor( this, applicationContext, classes() as Class[]) {
             @Override
             protected void customizeGrailsApplication(GrailsApplication grailsApplication) {
-                if (Environment.current == Environment.DEVELOPMENT) {
-                    // monitor specific user agent
-                    System.setProperty('http.agent', MONITOR_EXTERNAL_DEVELOPER)
-                }
-
                 System.setProperty(EHCACHE_DIRECTORY_CONFIG_ITEM, grailsApplication.config.getProperty(EHCACHE_DIRECTORY_CONFIG_ITEM, DEFAULT_EHCACHE_DIRECTORY))
             }
 

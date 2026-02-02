@@ -2244,7 +2244,10 @@ class ParatooService {
         if ((result.guid == null) && result.commonName) {
             resp = speciesReMatchService.searchByName(commonName, false, true)
             if (resp) {
-                result.putAll(resp)
+                // Remove null values from the API response so they do not overwrite existing non-null
+                // values in the result map when we merge; this behavior is the core fix for issue #3681.
+                resp = resp?.findAll { k, v -> v != null }
+                result.putAll(resp ?: [:])
                 result.commonName = commonName
             }
         }
