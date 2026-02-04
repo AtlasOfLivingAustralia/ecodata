@@ -41,12 +41,20 @@ class OutputModelProcessor {
         def feature(node, T context)
     }
 
+    static boolean isMultiSelect(Map annotatedModelItem) {
+        annotatedModelItem.dataType == 'stringList' || annotatedModelItem.type == 'select2Many' || annotatedModelItem.type == 'selectMany'
+    }
+
     def processNode(processor, node, context) {
 
         def type = node.dataType
         if (type == null) {
             log.warn("Found node with null dataType: "+node)
             return
+        }
+        // Work around an issue with some forms where the data type is text but the view type is multi select.
+        if (isMultiSelect(node)) {
+            type = 'stringList'
         }
 
         if (context == null){

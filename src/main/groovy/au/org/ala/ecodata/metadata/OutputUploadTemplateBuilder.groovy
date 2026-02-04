@@ -20,6 +20,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     boolean autoSizeColumns = true
     boolean includeDataPathHeader = false
     def additionalFieldsForDataTypes
+    Map hints = [:]
+    static final int DEFAULT_NUMBER_OF_COLUMNS_FOR_MULTISELECT = 3
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
@@ -29,7 +31,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.autoSizeColumns = true
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeDataPathHeader) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeDataPathHeader, Map hints = [:]) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
@@ -38,23 +40,49 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.extraRowsEditable = extraRowsEditable
         this.autoSizeColumns = autoSizeColumns
         this.includeDataPathHeader = includeDataPathHeader
+        this.hints = hints
     }
-
 
     public void build() {
 
-        def headers = model.collect {
+        List headers = []
+
+        model.each {
+            if (OutputModelProcessor.isMultiSelect(it)) {
+                // If data has been supplied for the multi-select field, we need to create enough columns to cover the maximum number of selections
+                // across all rows.
+                int maxSelections = DEFAULT_NUMBER_OF_COLUMNS_FOR_MULTISELECT
+                if (data) {
+                    data.each { row ->
+                        def value = row[it.name]
+                        if (!value instanceof List) {
+                            return
+                        }
+                        maxSelections = Math.max(maxSelections, value.size())
+                    }
+                }
+                if (!hints[it.name]) {
+                    hints[it.name] = [:]
+                }
+                hints[it.name].numColumns = maxSelections
+            }
+        }
+
+        model.each {
             def label = it.label ?: it.name
             if (it.dataType == 'species') {
                 label += ' (Scientific Name Only)'
             }
-            label
+            int numColumns = hints[it.name]?.numColumns ?: 1
+            for (int i=0; i<numColumns; i++) {
+                headers << label
+            }
         }
         AdditionalSheet outputSheet = addSheet(outputName, headers)
 
-        new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+        new ValidationProcessor(getWorkbook(), outputSheet.sheet, model, hints).process()
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable, hints).process()
 
         finalise(outputSheet)
     }
@@ -239,6 +267,7 @@ class OutputDataProcessor {
     boolean editMode
     boolean extraRowsEditable
     CellStyle unlockedCellStyle
+    Map hints
 
     /**
      *
@@ -252,11 +281,12 @@ class OutputDataProcessor {
      * @param extraRowsEditable only used if editMode is true.  If so, extra rows will be able to be added to the data populated in the sheet.
      * Otherwise the cells in the extra rows will be locked.
      */
-    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle, boolean editMode = false, boolean extraRowsEditable = true){
+    public OutputDataProcessor(Workbook workbook, Sheet sheet, List<Map> model, List<Map> data, rowHeaderStyle, boolean editMode = false, boolean extraRowsEditable = true, Map hints = [:]) {
         this.workbook = workbook
         this.sheet = sheet
         this.model = model
         this.data = data
+        this.hints = hints
         this.rowHeaderStyle = rowHeaderStyle
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
@@ -292,57 +322,65 @@ class OutputDataProcessor {
             Row row = sheet.createRow((rowCount+1))
 
             def dataType, value, rowHeader
-            model.eachWithIndex { modelVal, i ->
+            int columnIndex = 0
+            model.each { Map modelVal ->
                 value = rowValue[modelVal.name] ?: ''
 
                 dataType = modelVal.dataType
+                if (OutputModelProcessor.isMultiSelect(modelVal)) {
+                    dataType = 'stringList' // work around some forms declared with a data type of 'text' and a view type of 'select2Many'.
+                }
                 rowHeader = modelVal.rowHeader
 
-                Cell cell = row.createCell(i)
+                int numColumns = hints[modelVal.name]?.numColumns ?: 1
+                for (int i=0; i<numColumns; i++) {
+                    Cell cell = row.createCell(columnIndex)
 
-                switch(dataType){
-                    case 'number':
-                        try {
-                            cell.setCellValue(new BigDecimal(value))
-                        }
-                        catch (NumberFormatException e) {
-                            cell.setCellValue(0)
-                            log.warn("Invalid numeric value: "+value)
-                        }
+                    switch (dataType) {
+                        case 'number':
+                            try {
+                                cell.setCellValue(new BigDecimal(value))
+                            }
+                            catch (NumberFormatException e) {
+                                cell.setCellValue(0)
+                                log.warn("Invalid numeric value: " + value)
+                            }
 
-                        break
-                    case 'species':
-                        cell.setCellValue(value?value.name:'')
-                        break
-                    case 'stringList':
-                        if (value) {
+                            break
+                        case 'species':
+                            cell.setCellValue(value ? value.name : '')
+                            break
+                        case 'stringList':
                             if (value instanceof List) {
-                                value = new ArrayList(value) // Copy the list to avoid JSONArray "join" behaviour
+                                if (i<value.size()) {
+                                    cell.setCellValue(value[i]?.toString() ?: '')
+                                } else {
+                                    cell.setCellValue('')
+                                }
                             }
                             else {
-                                value = [value]
+                                cell.setCellValue(i==0 ? value.toString() : '')
                             }
-                        }
-                        cell.setCellValue(value?value.join(','):'')
-                        break
-                    case 'feature':
-                        cell.setCellValue("")
-                        break
-                    case 'date':
-                    case 'text':
-                    default:
-                        cell.setCellValue(value.toString())
-                        break
-                }
-                if(rowHeader){
-                    cell.setCellStyle(rowHeaderStyle)
-                }
-                if (editMode) {
-                    if (!modelVal.readOnly) {
-                        cell.setCellStyle(unlockedCellStyle)
+                            break
+                        case 'feature':
+                            cell.setCellValue("")
+                            break
+                        case 'date':
+                        case 'text':
+                        default:
+                            cell.setCellValue(value.toString())
+                            break
                     }
+                    if (rowHeader) {
+                        cell.setCellStyle(rowHeaderStyle)
+                    }
+                    if (editMode) {
+                        if (!modelVal.readOnly) {
+                            cell.setCellStyle(unlockedCellStyle)
+                        }
+                    }
+                    columnIndex++
                 }
-
             }
         }
     }
@@ -352,12 +390,14 @@ class ValidationProcessor extends OutputModelProcessor {
 
     private Workbook workbook
     private Sheet sheet
-    def model
+    List<Map> model
+    Map hints = [:]
 
-    public ValidationProcessor(workbook, sheet, model) {
+    public ValidationProcessor(Workbook workbook, Sheet sheet, List<Map> model, Map hints = [:]){
         this.workbook = workbook
         this.sheet = sheet
         this.model = model
+        this.hints = hints
     }
 
     public void process(int firstRow = 1) {
@@ -368,14 +408,18 @@ class ValidationProcessor extends OutputModelProcessor {
         workbook.setSheetHidden(workbook.getSheetIndex(validationSheet), true)
 
         ExcelValidationContext context = new ExcelValidationContext([currentSheet:sheet, validationSheet:validationSheet])
-        ValidationHandler validationHandler = new ValidationHandler()
+        ValidationHandler validationHandler = new ValidationHandler(hints)
         validationHandler.firstRow = firstRow
-        model.eachWithIndex{node, i ->
-            context.currentColumn = i
-            processNode(validationHandler, node, context)
+        int currentColumn = 0
+        model.each{ Map node ->
+            // Special handling for multi-select fields allows multiple columns to be created with the same validation rules.
+            int numberOfColumnsForNode = (hints[node.name]?.numColumns) ?: 1
+            for (int i=0; i<numberOfColumnsForNode; i++) {
+                context.currentColumn = currentColumn++
+                processNode(validationHandler, node, context)
+            }
         }
     }
-
 
 }
 
@@ -390,8 +434,13 @@ class ExcelValidationContext implements OutputModelProcessor.ProcessingContext {
 class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidationContext> {
     int firstRow = 1
     final int MAX_ROWS = 1000
+    Map hints = [:]
 
-    def addValidation(node, context, constraint = null) {
+    ValidationHandler(Map hints = [:]) {
+        this.hints = hints
+    }
+
+    def addValidation(Map node, ExcelValidationContext context, DataValidationConstraint constraint = null, String message = null) {
 
         DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
         OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)
@@ -400,10 +449,32 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
         if (rules.isMandatory()) {
             dataValidation.setEmptyCellAllowed(false)
         }
-        dataValidation.setErrorStyle(DataValidation.ErrorStyle.STOP);
-        dataValidation.setShowErrorBox(true);
+        dataValidation.setErrorStyle(DataValidation.ErrorStyle.STOP)
+        if (message) {
+            dataValidation.createErrorBox("Invalid Value", message)
+        }
+        dataValidation.setShowErrorBox(true)
 
         context.currentSheet.addValidationData(dataValidation);
+    }
+
+    static void addHeaderComment(ExcelValidationContext excelValidationContext, String message) {
+        Sheet sheet = excelValidationContext.currentSheet
+        int column = excelValidationContext.currentColumn
+        // Add a comment to the header cell to explain column validation rules
+        Drawing<?> drawing = sheet.createDrawingPatriarch()
+        CreationHelper factory = sheet.getWorkbook().getCreationHelper()
+        ClientAnchor anchor = factory.createClientAnchor()
+        anchor.setCol1(column)
+        anchor.setCol2(column + 3)
+        anchor.setRow1(0)
+        anchor.setRow2(4)
+        Comment comment = drawing.createCellComment(anchor)
+        RichTextString str = factory.createRichTextString(message)
+        comment.setString(str)
+        Cell headerCell = sheet.getRow(0).getCell(column)
+        headerCell.setCellComment(comment);
+
     }
 
     @Override
@@ -435,36 +506,55 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
         text(node, context)
     }
 
+    /**
+     * Extracts the constraints from the node configuration and writes them to the validation sheet.
+     * @param node The annotated model node.
+     * @param context The processing context.
+     * @return The list of constraints for use in the data validation formula and message.
+     */
+    private static List buildConstraintList(Map node, ExcelValidationContext context, Map hints) {
+        List constraints = []
+        if (node.constraints instanceof Map && node.constraints.type == 'computed') {
+            constraints = node.constraints.options?.collect { it.value }?.flatten()?.unique()
+            // Pre-populated constraints are complex and can depend on form rendering context (e.g. the project) so we use hints supplied by the caller to populate constraints
+        } else if (node.constraints.type == 'pre-populated') {
+            if (hints[node.name]?.constraints) {
+                constraints = hints[node.name].constraints
+            }
+        } else {
+            constraints = node.constraints
+        }
+
+        constraints.eachWithIndex { value, i ->
+            Row row = context.validationSheet.getRow(i)
+            if (!row) {
+                row = context.validationSheet.createRow(i)
+            }
+            Cell cell = row.createCell(context.currentColumn)
+            cell.setCellValue(value)
+        }
+        return constraints
+    }
+
     @Override
     def text(Object node, ExcelValidationContext context) {
         if (node.constraints) {
-            List constraints = []
-            if (node.constraints instanceof Map == false || node.constraints instanceof Map && node.constraints.type != 'pre-populated') {
-                if (node.constraints instanceof Map && node.constraints.type == 'computed') {
-                    constraints = node.constraints.options?.collect{it.value}?.flatten()?.unique()
-                }
-                else {
-                    constraints = node.constraints
-                }
-                constraints.eachWithIndex { value, i ->
-                    Row row = context.validationSheet.getRow(i)
-                    if (!row) {
-                        row = context.validationSheet.createRow(i)
-                    }
-                    Cell cell = row.createCell(context.currentColumn)
-                    cell.setCellValue(value)
-                }
-                def colString = CellReference.convertNumToColString(context.currentColumn)
-                def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${constraints.size()}"
-
-                DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
-                DataValidationConstraint dvConstraint =
-                        dvHelper.createFormulaListConstraint(rangeFormula)
-
-
-                addValidation(node, context, dvConstraint)
-            }
+            List constraintList = buildConstraintList(node, context, hints)
+            createDropDownValidation(node, context, constraintList)
         }
+    }
+
+    private void createDropDownValidation(node, ExcelValidationContext context, List constraintList) {
+        if (!constraintList) {
+            return // We can't always construct constraints, e.g. pre-populated constraints without hints (which happens if the table has no rows at time of download)
+        }
+
+        String colString = CellReference.convertNumToColString(context.currentColumn)
+        String formula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${constraintList.size()}"
+        DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
+        DataValidationConstraint dvConstraint =
+                dvHelper.createFormulaListConstraint(formula)
+        addValidation(node, context, dvConstraint)
     }
 
     @Override
@@ -484,12 +574,14 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def species(Object node, ExcelValidationContext context) {
-
+        addHeaderComment(context, "Please enter only the scientific name of the species.  A lookup of the name will be performed during data import to match the name to an ALA taxon.")
     }
 
     @Override
     def stringList(Object node, ExcelValidationContext context) {
-
+        List constraintList = buildConstraintList(node, context, hints)
+        addHeaderComment(context, "For multiple selections, add each value in a separate column.  You may add new columns to the sheet as required but must use the same column heading for each.  Acceptable values are: " + constraintList.join(", "))
+        createDropDownValidation(node, context, constraintList)
     }
 
     def columnRange(int col) {
@@ -503,9 +595,13 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     @Override
-    def document(node, ExcelValidationContext context) {}
+    def document(node, ExcelValidationContext context) {
+        addHeaderComment("Document uploads are not supported in this template.  Documents should be uploaded via the user interface after uploading the spreadsheet.")
+    }
 
     @Override
-    def feature(node, ExcelValidationContext context) {}
+    def feature(node, ExcelValidationContext context) {
+        addHeaderComment("Uploading spatial data is not supported in this template.  Please enter spatial data via the user interface after uploading the spreadsheet.")
+    }
 
 }

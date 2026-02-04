@@ -103,9 +103,9 @@ dependencies {
 
     implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.8'
 
-    implementation 'org.apache.poi:poi:5.4.1'
-    implementation 'org.apache.poi:poi-ooxml:5.4.1'
-    implementation 'org.apache.poi:poi-ooxml-full:5.4.1'
+    implementation 'org.apache.poi:poi:5.5.1'
+    implementation 'org.apache.poi:poi-ooxml:5.5.1'
+    implementation 'org.apache.poi:poi-ooxml-full:5.5.1'
     implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"

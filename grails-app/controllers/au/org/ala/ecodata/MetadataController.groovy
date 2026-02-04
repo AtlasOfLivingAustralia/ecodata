@@ -123,7 +123,7 @@ class MetadataController {
      */
     def excelOutputTemplate() {
 
-        def outputName, listName, data, expandList
+        def outputName, listName, data, expandList, hints
         boolean editMode, allowExtraRows, autosizeColumns, includeDataPathHeader
         String activityForm
         Integer formVersion
@@ -139,6 +139,7 @@ class MetadataController {
             includeDataPathHeader = json.includeDataPathHeader != null ? Boolean.valueOf(json.includeDataPathHeader) : false
             data = json.data ? JSON.parse(json.data) : null
             expandList = json.expandList
+            hints = json.hints ? JSON.parse(json.hints) : [:]
 
         }
         else {
@@ -151,6 +152,7 @@ class MetadataController {
             includeDataPathHeader = params.getBoolean('includeDataPathHeader', false)
             activityForm = params.activityForm
             formVersion = params.getInt('formVersion', null)
+            hints = params.hint ? JSON.parse(params.hint) : [:]
         }
 
 
@@ -193,7 +195,7 @@ class MetadataController {
                 }
             }
             annotatedModel = annotatedModel.grep{it.dataType != 'list'}
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns)
             builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
             if(includeDataPathHeader) {
                 builder.buildDataPathHeaderList()
@@ -202,7 +204,7 @@ class MetadataController {
                 builder.buildGroupHeaderList()
             }
         } else {
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns, false, hints)
             builder.build()
         }
 
