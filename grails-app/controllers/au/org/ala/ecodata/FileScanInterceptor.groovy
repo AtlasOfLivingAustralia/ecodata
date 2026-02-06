@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import org.apache.http.HttpStatus
 
 class FileScanInterceptor {
     DocumentService documentService
@@ -29,8 +30,8 @@ class FileScanInterceptor {
             }
 
             if (infected) {
-                response.status = 400
-                render contentType: 'application/json', text: [success: false, message: "File upload rejected: virus detected"] as JSON, status: 400
+                response.status = HttpStatus.SC_UNPROCESSABLE_ENTITY
+                render contentType: 'application/json', text: [success: false, message: "File upload rejected: virus detected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
                 return false
             }
         }
