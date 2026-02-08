@@ -1005,7 +1005,7 @@ class AdminController {
                 return
             }
             else {
-                render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_BAD_REQUEST
+                render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
                 return
             }
         } else {

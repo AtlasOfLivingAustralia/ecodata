@@ -30,7 +30,6 @@ class FileScanInterceptor {
             }
 
             if (infected) {
-                response.status = HttpStatus.SC_UNPROCESSABLE_ENTITY
                 render contentType: 'application/json', text: [success: false, message: "File upload rejected: virus detected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
                 return false
             }

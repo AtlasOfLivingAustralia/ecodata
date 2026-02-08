@@ -77,7 +77,7 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         controller.scanDocument()
 
         then:
-        response.status == HttpStatus.SC_BAD_REQUEST
+        response.status == HttpStatus.SC_UNPROCESSABLE_ENTITY
         response.json.message == "File is infected"
     }
 

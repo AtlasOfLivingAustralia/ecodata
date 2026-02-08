@@ -589,7 +589,7 @@ class DocumentService {
         }
     }
 
-    def clamavClient =  {
+    ClamavClient getClamavClient ()  {
         String host = grailsApplication.config.getProperty('clamav.host', 'localhost')
         int port = grailsApplication.config.getProperty('clamav.port', Integer, 3310)
         return new ClamavClient(host, port)
@@ -603,7 +603,7 @@ class DocumentService {
             return false
         }
 
-        ClamavClient client = clamavClient()
+        ClamavClient client = clamavClient
         ScanResult result = client.scan(fileIn)
         if (result instanceof ScanResult.OK) {
             return false // No virus found

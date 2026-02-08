@@ -44,7 +44,7 @@ class FileScanInterceptorSpec extends Specification implements InterceptorUnitTe
 
         then:
         1 * documentService.isDocumentInfected(_ as InputStream) >> true
-        response.status == 400
+        response.status == 422
         result == null
     }
 
@@ -71,7 +71,7 @@ class FileScanInterceptorSpec extends Specification implements InterceptorUnitTe
         then:
         1 * documentService.isDocumentInfected(cleanFile.inputStream) >> false
         1 * documentService.isDocumentInfected(infectedFile.inputStream) >> true
-        response.status == 400
+        response.status == 422
         result == null
     }
 }

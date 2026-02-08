@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
-import jakarta.annotation.PostConstruct
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
@@ -25,7 +25,7 @@ class S3Service implements StorageService {
     String region
     boolean containerCredentials
 
-    @javax.annotation.PostConstruct
+    @PostConstruct
     void init() {
         // initialize the config values
         def config = grailsApplication.config
