@@ -580,6 +580,17 @@ class DownloadService {
             file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
         }
         String thumbnailURL = doc.getThumbnailUrl(true)
+        if (thumbnailURL && thumbnailURL.startsWith("/")) {
+            String prefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
+            if (prefix) {
+                thumbnailURL = prefix + thumbnailURL
+                log.info("thumbnailURL normalized [documentId={}, url='{}']", doc.documentId, thumbnailURL)
+            } else {
+                log.warn("thumbnailURL is relative but no host prefix set [documentId={}, url='{}']", doc.documentId, thumbnailURL)
+                thumbnailURL = null
+            }
+        }
+
         if (file != null && file.exists()) {
             zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
