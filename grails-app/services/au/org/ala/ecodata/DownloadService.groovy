@@ -31,6 +31,7 @@ class DownloadService {
     SiteService siteService
     EmailService emailService
     WebService webService
+    StorageService storageService
 
     def grailsApplication
     def groovyPageRenderer
@@ -529,33 +530,39 @@ class DownloadService {
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
         String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
-        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
-        File file = new File(path)
-        String url
-
-        if (thumbnail) {
-            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
-        }
-        String thumbnailURL = doc.getThumbnailUrl(true)
-        if (file != null && file.exists()) {
-            zip.putNextEntry(new ZipEntry(zipName))
-            file.withInputStream { i -> zip << i }
-        }
-        else if (thumbnailURL) {
-            // reporting server does not hold images.
-            // download it by requesting image from BioCollect/MERIT
-            def stream = webService.getStream(thumbnailURL, true)
-            if (!(stream instanceof Map)) {
-                zip.putNextEntry(new ZipEntry(zipName))
-                zip << stream
+        InputStream fileInputStream = null
+        try {
+            if (thumbnail) {
+                fileInputStream = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+            } else {
+                fileInputStream = storageService.getFile(doc.filepath, doc.filename)
             }
-        } else {
-            zipName = zipName + ".notfound"
-            zip.putNextEntry(new ZipEntry(zipName))
-            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
+
+            String thumbnailURL = doc.getThumbnailUrl(true)
+            if (fileInputStream != null) {
+                zip.putNextEntry(new ZipEntry(zipName))
+                zip << fileInputStream
+            }
+            else if (thumbnailURL) {
+                // reporting server does not hold images.
+                // download it by requesting image from BioCollect/MERIT
+                def stream = webService.getStream(thumbnailURL, true)
+                if (!(stream instanceof Map)) {
+                    zip.putNextEntry(new ZipEntry(zipName))
+                    zip << stream
+                }
+            } else {
+                zipName = zipName + ".notfound"
+                zip.putNextEntry(new ZipEntry(zipName))
+                log.error("Document domain object exists with documentId ${doc.documentId} and file ${doc.filepath}/${doc.filename}, but the corresponding file does not exist!")
+            }
+
+            documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
+            zip.closeEntry()
         }
-        documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
-        zip.closeEntry()
+        finally {
+            fileInputStream?.close()
+        }
     }
 
     private static Map<String, Map<String, List<Document>>> groupProjectDocumentsByActivityAndOutput(String projectId) {
