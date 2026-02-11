@@ -31,6 +31,7 @@ class DownloadService {
     SiteService siteService
     EmailService emailService
     WebService webService
+    StorageService storageService
 
     def grailsApplication
     def groovyPageRenderer
@@ -287,24 +288,33 @@ class DownloadService {
         new ZipOutputStream(outputStream).withStream { zip ->
             try{
 
-                addShapeFilesToZip(zip, activitiesByProject.keySet())
-                log.debug("Shape files added")
+                if (params.includeShapefiles) {
+                    addShapeFilesToZip(zip, activitiesByProject.keySet())
+                    log.debug("Shape files added")
+                }
 
-                addImagesToZip(zip, activitiesByProject, documentMap)
-                log.debug("Images added")
+                if (params.includeImages) {
+                    addImagesToZip(zip, activitiesByProject, documentMap)
+                    log.debug("Images added")
+                }
 
-                XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
-                zip.putNextEntry(new ZipEntry("data.xlsx"))
-                ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
-                xlsExporter.save(xslFile)
-                xslFile.flush()
-                zip << xslFile.toByteArray()
-                xslFile.flush()
-                xslFile.close()
-                zip.closeEntry()
-                log.debug("XLS file added")
+                if (params.includeData) {
+                    XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
+                    zip.putNextEntry(new ZipEntry("data.xlsx"))
+                    ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
+                    xlsExporter.save(xslFile)
+                    xslFile.flush()
+                    zip << xslFile.toByteArray()
+                    xslFile.flush()
+                    xslFile.close()
+                    zip.closeEntry()
+                    log.debug("XLS file added")
+                }
 
-                addReadmeToZip(zip, timeZone)
+                if (params.includeData || params.includeImages || params.includeShapefiles) {
+                    addReadmeToZip(zip, timeZone, params)
+                }
+
             } catch (Exception e){
                 log.error("Error creating download archive", e)
             } finally {
@@ -318,32 +328,46 @@ class DownloadService {
         true
     }
 
-    private static addReadmeToZip(ZipOutputStream zip, TimeZone timeZone) {
+    private static addReadmeToZip(ZipOutputStream zip, TimeZone timeZone, Map params) {
+
+        boolean includeData = params.includeData as boolean
+        boolean includeImages = params.includeImages as boolean
+        boolean includeShapefiles = params.includeShapefiles as boolean
+
+        def dataSection = includeData ? """\
+        |- data.xlsx -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
+        """ : ""
+
+        def shapefilesSection = includeShapefiles ? """\
+        |- shapefiles
+        |- - <project name>
+        |- - - projectExtent.zip -> Shape file for the project extent
+        |- - - sites.zip -> Shape file containing all Sites associated with the project
+        """ : ""
+
+        def imagesSection = includeImages ? """\
+        |- images
+        |- - <project name>
+        |- - - <image files> -> Images associated with the project itself (e.g. logo)
+        |- - - activities -> directory structure containing images for the activities and their outputs
+        |- - - - <activity name>
+        |- - - - - <image files> -> Images associated with the activity itself
+        |- - - - - <output name>
+        |- - - - - - <image files> -> images associated with an individual Output entity
+        |- - - records -> directory structure containing images for individual records not already organised by activity/output
+        |- - - - <occurrenceId>
+        |- - - - - <image files> -> Images associated with the record
+        |- - - records.csv -> Map of record id onto image locations
+        """ : ""
+
         zip.putNextEntry(new ZipEntry("README.txt"))
         zip << """\
-            File format is as follows:
+        File format is as follows:
 
-            |- data.xls -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
-            |- README.txt -> this file
-            |- shapefiles
-            |- - <project name>
-            |- - - projectExtent.zip -> Shape file for the project extent
-            |- - - sites.zip -> Shape file containing all Sites associated with the project
-            |- images
-            |- - <project name>
-            |- - - <image files> -> Images associated with the project itself (e.g. logo)
-            |- - - activities -> directory structure containing images for the activities and their outputs
-            |- - - - <activity name>
-            |- - - - - <image files> -> Images associated with the activity itself
-            |- - - - - <output name>
-            |- - - - - - <image files> -> images associated with an individual Output entity
-            |- - - records -> directory structure containing images for individual records not already organised by activty/output
-            |- - - - <occurrenceId>
-            |- - - - - <image files> -> Images associated with the record
-            |- - - records.csv -> Map of record id onto image locations
+        ${dataSection}|- README.txt -> this file
+        ${shapefilesSection}${imagesSection}
 
-
-            This download was produced on ${new Date().format("dd/MM/yyyy HH:mm:ss Z z", timeZone)}.
+        This download was produced on ${new Date().format("dd/MM/yyyy HH:mm:ss Z z", timeZone)}.
         """.stripIndent()
 
         zip.closeEntry()
@@ -506,33 +530,39 @@ class DownloadService {
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
         String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
-        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
-        File file = new File(path)
-        String url
-
-        if (thumbnail) {
-            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
-        }
-        String thumbnailURL = doc.getThumbnailUrl(true)
-        if (file != null && file.exists()) {
-            zip.putNextEntry(new ZipEntry(zipName))
-            file.withInputStream { i -> zip << i }
-        }
-        else if (thumbnailURL) {
-            // reporting server does not hold images.
-            // download it by requesting image from BioCollect/MERIT
-            def stream = webService.getStream(thumbnailURL, true)
-            if (!(stream instanceof Map)) {
-                zip.putNextEntry(new ZipEntry(zipName))
-                zip << stream
+        InputStream fileInputStream = null
+        try {
+            if (thumbnail) {
+                fileInputStream = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+            } else {
+                fileInputStream = storageService.getFile(doc.filepath, doc.filename)
             }
-        } else {
-            zipName = zipName + ".notfound"
-            zip.putNextEntry(new ZipEntry(zipName))
-            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
+
+            String thumbnailURL = doc.getThumbnailUrl(true)
+            if (fileInputStream != null) {
+                zip.putNextEntry(new ZipEntry(zipName))
+                zip << fileInputStream
+            }
+            else if (thumbnailURL) {
+                // reporting server does not hold images.
+                // download it by requesting image from BioCollect/MERIT
+                def stream = webService.getStream(thumbnailURL, true)
+                if (!(stream instanceof Map)) {
+                    zip.putNextEntry(new ZipEntry(zipName))
+                    zip << stream
+                }
+            } else {
+                zipName = zipName + ".notfound"
+                zip.putNextEntry(new ZipEntry(zipName))
+                log.error("Document domain object exists with documentId ${doc.documentId} and file ${doc.filepath}/${doc.filename}, but the corresponding file does not exist!")
+            }
+
+            documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
+            zip.closeEntry()
         }
-        documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
-        zip.closeEntry()
+        finally {
+            fileInputStream?.close()
+        }
     }
 
     private static Map<String, Map<String, List<Document>>> groupProjectDocumentsByActivityAndOutput(String projectId) {

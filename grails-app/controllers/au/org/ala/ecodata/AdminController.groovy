@@ -991,4 +991,27 @@ class AdminController {
     def graphql() {
         forward(uri:'/graphql-spring')
     }
+
+    @AlaSecured(["ROLE_ADMIN"])
+    def scanDocument () {
+        MultipartFile file = null
+        if (request.respondsTo('getFile'))
+            file = request.getFile('fileToScan')
+        if (file) {
+            InputStream input = file.getInputStream()
+            boolean isInfected = documentService.isDocumentInfected(input)
+            if (!isInfected) {
+                render text: [message: "File is clean"] as JSON, contentType: "application/json", status: HttpStatus.SC_OK
+                return
+            }
+            else {
+                render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+                return
+            }
+        } else {
+            render text: [message: "No file provided"] as JSON, contentType: "application/json", status: HttpStatus.SC_BAD_REQUEST
+            return
+        }
+    }
+
 }

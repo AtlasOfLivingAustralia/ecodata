@@ -436,6 +436,10 @@ class SearchController {
             params.offset = 0
             params.userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
+            params.includeData = params.includeData?.toBoolean() ?: true
+            params.includeImages = params.includeImages?.toBoolean() ?: false
+            params.includeShapefiles = params.includeShapefiles?.toBoolean() ?: false
+
             if (params.async?.toBoolean()) {
                 if (!params.email) {
                     response.setStatus(400)
