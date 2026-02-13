@@ -35,6 +35,7 @@ class UrlMappings {
 
         "/ws/document/listImages"(controller: "document", action: "listImages")
         "/ws/document/createThumbnail"(controller:"document", action:"createThumbnail")
+        "/ws/document/scanDocument"(controller: "document", action: "scanDocument")
         "/ws/document/$id/file"(controller: "document", action: "getFile")
 
         "/ws/site/getImages"( controller: 'site', action: 'getImages')
