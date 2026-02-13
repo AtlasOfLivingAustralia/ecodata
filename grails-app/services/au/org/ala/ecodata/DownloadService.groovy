@@ -505,7 +505,6 @@ class DownloadService {
             groupDocumentsByRecord(projectId, activityIds).each { recordId, documentList ->
                 def recordFolder = zipSafeFolderComponent(recordId, "record", 64)
                 def recordIdPath = makePath("${recordPath}${recordFolder}/", paths)
-                recordIdPath = makePath(recordIdPath, paths)
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
                        // if (!documentMap.containsKey(doc.documentId)) {
