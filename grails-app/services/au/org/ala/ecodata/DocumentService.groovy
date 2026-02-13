@@ -5,9 +5,10 @@ import com.itextpdf.text.html.simpleparser.HTMLWorker
 import com.itextpdf.text.pdf.PdfWriter
 import grails.core.GrailsApplication
 import groovy.json.JsonSlurper
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import xyz.capybara.clamav.ClamavClient
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -33,6 +34,7 @@ class DocumentService {
     GrailsApplication grailsApplication
     ActivityService activityService
     WebService webService
+    StorageService storageService
 
     /**
      * Converts the domain object into a map of properties, including
@@ -230,7 +232,7 @@ class DocumentService {
      * @param props the desired properties of the Document.
      * @param fileIn an InputStream attached to the file to save.  This will be saved to the uploads directory.
      */
-    def create(props, fileIn) {
+    def create(Map props, InputStream fileIn, long contentLength = 0) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
         props.remove('url')
         props.remove('thumbnailUrl')
@@ -243,10 +245,10 @@ class DocumentService {
                 DateFormat dateFormat = new SimpleDateFormat(DIRECTORY_PARTITION_FORMAT)
                 def partition = dateFormat.format(new Date())
 				if(props.saveAs?.equals("pdf")){
-					props.filename = saveAsPDF(fileIn, partition, props.filename,false)
+					props.filename = saveAsPDF(fileIn, partition, props.filename,false, contentLength)
 				}
 				else {
-                    props.filename = saveFile(partition, props.filename, fileIn, false, props.type)
+                    props.filename = saveFile(partition, props.filename, fileIn, false, props.type, contentLength)
                 }
                 props.filepath = partition
             }
@@ -274,12 +276,12 @@ class DocumentService {
      * @param fileIn (optional) an InputStream attached to the file to save.  If supplied, this will overwrite any
      * file with the same name in the uploads directory.
      */
-    def update(props, id, fileIn = null) {
+    def update(props, id, fileIn = null, long contentLength = 0) {
         def d = Document.findByDocumentId(id)
         if (d) {
             try {
                 if (fileIn) {
-                    props.filename = saveFile(d.filepath, props.filename, fileIn, true, d.type)
+                    props.filename = saveFile(d.filepath, props.filename, fileIn, true, d.type, contentLength)
                 }
                 props.remove('url')
                 props.remove('thumbnailUrl')
@@ -309,41 +311,47 @@ class DocumentService {
      * @return the filename (not the full path) the file was saved using.  This may not be the same as the supplied
      * filename in the case that overwrite is false.
      */
-    private String saveFile(String filepath, String filename, InputStream fileIn, boolean overwrite, String type = null) {
+    private String saveFile(String filepath, String filename, InputStream fileIn, boolean overwrite, String type = null, long contentLength = 0) {
         if (fileIn) {
             synchronized (FILE_LOCK) {
-                //create upload dir if it doesn't exist...
-                def uploadDir = new File(fullPath(filepath, ''))
-
-                if(!uploadDir.exists()){
-                    FileUtils.forceMkdir(uploadDir)
+                // save file temporarily as we may need to read it multiple times i.e. during save and processing image
+                File tempFile = File.createTempFile("temp_upload_", filename)
+                try (OutputStream tempFileOut = tempFile.newOutputStream()) {
+                    tempFileOut << fileIn
+                    fileIn.close()
                 }
 
                 if (!overwrite) {
-                    filename = nextUniqueFileName(filepath, filename)
+                    filename = storageService.nextUniqueFileName(filepath, filename)
                 }
 
-                File destination = new File(fullPath(filepath, filename))
-                new FileOutputStream(destination).withStream { it << fileIn }
+                try(InputStream tempFileIn = tempFile.newInputStream()) {
+                    storageService.saveFile(filepath, filename, tempFileIn, contentLength)
+                }
 
                 if (type == Document.DOCUMENT_TYPE_IMAGE) {
-
-                    filename = processImage(filepath, filename, destination, overwrite)
+                    filename = processImage(filepath, filename, tempFile, overwrite)
                 }
+
+                tempFile.delete()
             }
         }
         return filename
     }
 
-    private String processImage(String filepath, String filename, File destination, boolean overwrite) {
-        File processed = new File(fullPath(filepath, Document.PROCESSED_PREFIX + filename))
-        boolean result = ImageUtils.reorientImage(destination, processed)
+    private String processImage(String filepath, String filename, File file, boolean overwrite) {
+        File processed = File.createTempFile("temp_processed_", filename)
+        boolean result = ImageUtils.reorientImage(file, processed)
         if (result) {
+            // since processed file will be used from now on, delete the original uploaded file
+            storageService.deleteFile(filepath, filename)
             // If the image was processed, used the processed image when making the thumbnail.
             filename = Document.PROCESSED_PREFIX + filename
+            storageService.saveFile(filepath, filename, processed.newInputStream(), processed.size())
         }
 
         makeThumbnail(filepath, filename, overwrite)
+        processed.delete()
         filename
     }
 
@@ -354,22 +362,41 @@ class DocumentService {
      *
      * @return The thumbnail file or null for no thumbnail
      */
-    File makeThumbnail(filepath, filename, overwrite = true) {
-        File sFile = new File(fullPath(filepath, filename))
-        if (!sFile.exists())
-            return null
-
-        File tnFile = new File(fullPath(filepath, Document.THUMBNAIL_PREFIX+filename))
-        if (tnFile.exists()) {
+    InputStream makeThumbnail(String filepath, String filename, boolean overwrite = true) {
+        InputStream originalFileInputStream = null
+        String thumbnailFileName = Document.THUMBNAIL_PREFIX+filename
+        if (storageService.fileExists(filepath, thumbnailFileName)) {
             if (!overwrite) {
-                return tnFile
+                return storageService.getFile(filepath, thumbnailFileName)
             }
             else {
-                tnFile.delete()
+                storageService.deleteFile(filepath, thumbnailFileName)
             }
         }
 
-        return ImageUtils.makeThumbnail(sFile, tnFile, 300)
+        // get the original file to create a new thumbnail
+        if (storageService.fileExists(filepath, filename)) {
+            originalFileInputStream = storageService.getFile(filepath, filename)
+        }
+        else {
+            return null
+        }
+
+        File tempThumbnailFile = File.createTempFile(Document.THUMBNAIL_PREFIX, filename)
+        File tempOriginalFile = File.createTempFile("original_", filename)
+        try ( OutputStream tempOriginalOutputStream = tempOriginalFile.newOutputStream()) {
+            tempOriginalOutputStream << originalFileInputStream
+            ImageUtils.makeThumbnail(tempOriginalFile, tempThumbnailFile, 300)
+            try (InputStream tempThumbnailFileInputStream = tempThumbnailFile.newInputStream()) {
+                storageService.saveFile(filepath, thumbnailFileName, tempThumbnailFileInputStream, tempThumbnailFile.size())
+            }
+        }
+        finally {
+            tempOriginalFile.delete()
+            tempThumbnailFile.delete()
+        }
+
+        storageService.getFile(filepath, thumbnailFileName)
     }
 
 	/**
@@ -382,74 +409,48 @@ class DocumentService {
 	 * @return the filename (not the full path) the file was saved using.  This may not be the same as the supplied
 	 * filename in the case that overwrite is false.
 	 */
-	private saveAsPDF(content, filepath, filename, overwrite){
+	private saveAsPDF(InputStream content, String filepath, String filename, boolean overwrite, long contentLength = 0) {
 		synchronized (FILE_LOCK) {
-			def uploadDir = new File(fullPath(filepath, ''))
-			if(!uploadDir.exists()){
-				FileUtils.forceMkdir(uploadDir)
-			}
+            File tempPdfFile = File.createTempFile("temp_pdf_", ".pdf")
 			// make sure we don't overwrite the file.
 			if (!overwrite) {
-				filename = nextUniqueFileName(filepath, filename)
+				filename = storageService.nextUniqueFileName(filepath, filename)
 			}
-			OutputStream file = new FileOutputStream(new File(fullPath(filepath, filename)));
 
-			//supply outputstream to itext to write the PDF data,
-			com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-			document.setPageSize(PageSize.LETTER.rotate());
-			PdfWriter.getInstance(document, file);
-			document.open();
-			HTMLWorker htmlWorker = new HTMLWorker(document);
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(content, writer);
-			htmlWorker.parse(new StringReader(writer.toString()));
-			document.close();
-			file.close();
+			try (OutputStream tempFileOutputStream = tempPdfFile.newOutputStream()) {
+                //supply output stream to itext to write the PDF data,
+                com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+                document.setPageSize(PageSize.LETTER.rotate());
+                PdfWriter.getInstance(document, tempFileOutputStream);
+                document.open();
+                HTMLWorker htmlWorker = new HTMLWorker(document);
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(content, writer);
+                htmlWorker.parse(new StringReader(writer.toString()));
+                document.close();
+                try (InputStream tempPdfInputStream = tempPdfFile.newInputStream()) {
+                    storageService.saveFile(filepath, filename, tempPdfInputStream, contentLength)
+                }
+
+                tempPdfFile.delete()
+            }
+
 			return filename
-
 		}
-
 	}
-
-    /**
-     * We are preserving the file name so the URLs look nicer and the file extension isn't lost.
-     * As filename are not guaranteed to be unique, we are pre-pending the file with a counter if necessary to
-     * make it unique.
-     */
-    private String nextUniqueFileName(filepath, filename) {
-        int counter = 0;
-        String newFilename = filename
-        while (new File(fullPath(filepath, newFilename)).exists()) {
-            newFilename = "${counter}_${filename}"
-            counter++;
-        };
-        return newFilename;
-    }
-
-    /**
-     * Returns the path the document by combining the path and filename with the directory where documents
-     * are uploaded.
-     * Optionally uses the canonical form of the uploads directory to assist validation.
-     */
-    String fullPath(String filepath, String filename, boolean useCanonicalFormOfUploadPath = false) {
-        String path = filepath ?: ''
-        if (path) {
-            path = path+File.separator
-        }
-        String uploadPath = grailsApplication.config.getProperty('app.file.upload.path')
-        if (useCanonicalFormOfUploadPath) {
-            uploadPath = new File(uploadPath).getCanonicalPath()
-        }
-        return uploadPath + File.separator + path  + filename
-    }
 
     /**
      * This method compares the canonical path to a document with the path potentially supplied by the
      * user and returns false if they don't match.  This is to prevent attempts at file system traversal.
      */
     boolean validateDocumentFilePath(String path, String filename) {
-        String file = fullPath(path, filename, true)
-        new File(file).getCanonicalPath() == file
+        if (storageService instanceof FileSystemService) {
+            String file = storageService.fullPath(path, filename, true)
+            return new File(file).getCanonicalPath() == file
+        }
+
+        // this check is only relevant for file system storage and not for S3 storage
+        return true
     }
 
     void deleteAllForProject(String projectId, boolean destroy = false) {
@@ -491,8 +492,7 @@ class DocumentService {
      * @return true if the delete operation was successful.
      */
     boolean deleteFile(Document document) {
-        File fileToDelete = new File(fullPath(document.filepath, document.filename))
-        fileToDelete.delete();
+        storageService.deleteFile(document.filepath, document.filename)
     }
 
     /**
@@ -502,16 +502,7 @@ class DocumentService {
      * @return the new absolute location of the file
      */
     void archiveFile(Document document) {
-        File fileToArchive = new File(fullPath(document.filepath, document.filename))
-
-        if (fileToArchive.exists()) {
-            File archiveDir = new File("${grailsApplication.config.getProperty('app.file.archive.path')}/${document.filepath}")
-            // This overwrites an archived file with the same name.
-            FileUtils.copyFileToDirectory(fileToArchive, archiveDir)
-            FileUtils.deleteQuietly(fileToArchive)
-        } else {
-            log.warn("Unable to move file for document ${document.documentId}: the file ${fileToArchive.absolutePath} does not exist.")
-        }
+        storageService.archiveFile(document.filepath, document.filename)
     }
 
     def findAllByOwner(ownerType, owner, includeDeleted = false) {
@@ -566,20 +557,17 @@ class DocumentService {
     }
 
     /**
-     * Reads the contents of a file associated with a Document and return content as JSON
+     * Reads the contents of a file associated with a Document and return content as JSON.
+     * This method supports both local file system storage and S3 storage.
      */
     Map readJsonDocument(Map document) {
-        String fullPath = this.fullPath(document.filepath, document.filename)
-        File file = new File(fullPath)
-        Map documentData
-        if (!file.exists()) {
-            // In the current reporting server setup, documents are not locally stored and need to be
-            // retrieved from the primary server.
-            documentData = webService.getJson(document.url, null, null, true)
-        }
-        else {
+        Map documentData = null
+        try (InputStream fileIn = storageService.getFile(document.filepath as String, document.filename as String)) {
             JsonSlurper jsonSlurper = new JsonSlurper()
-            documentData = jsonSlurper.parse(file)
+            documentData = jsonSlurper.parse(fileIn)
+        }
+        catch (Exception e) {
+            log.error("Error reading JSON document ${document.documentId} (${document.filepath}/${document.filename}): ${e.message}", e)
         }
 
         return documentData
@@ -598,6 +586,34 @@ class DocumentService {
             count = documents.size()
             offset += batchSize
             Document.withSession { session -> session.clear() }
+        }
+    }
+
+    ClamavClient getClamavClient ()  {
+        String host = grailsApplication.config.getProperty('clamav.host', 'localhost')
+        int port = grailsApplication.config.getProperty('clamav.port', Integer, 3310)
+        return new ClamavClient(host, port)
+    }
+
+    /**
+     * Scan document for viruses using clamav daemon.
+     */
+    boolean isDocumentInfected(InputStream fileIn) {
+        if(!grailsApplication.config.getProperty('scanFile.enabled', Boolean, true)) {
+            return false
+        }
+
+        ClamavClient client = clamavClient
+        ScanResult result = client.scan(fileIn)
+        if (result instanceof ScanResult.OK) {
+            return false // No virus found
+        } else if (result instanceof ScanResult.VirusFound) {
+            Map virusesFound = ((ScanResult.VirusFound) result).getFoundViruses()
+            log.warn("Virus found during document scan: " + virusesFound)
+            return true // Virus found
+        } else {
+            log.warn("Error occurred while scanning document: " + result?.toString())
+            return true
         }
     }
 }

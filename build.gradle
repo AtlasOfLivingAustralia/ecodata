@@ -148,6 +148,14 @@ dependencies {
     implementation 'au.org.ala.plugins:openapi:1.3.0'
     implementation "org.hibernate:hibernate-validator:6.2.0.Final"
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
+    implementation 'xyz.capybara:clamav-client:2.1.2'
+
+    // aws sdk v2
+    implementation "software.amazon.awssdk:s3:$awsSdkVersion"
+    implementation "software.amazon.awssdk:apache-client:$awsSdkVersion"
+    implementation "software.amazon.awssdk:sts:$awsSdkVersion"
+    implementation "software.amazon.awssdk:sso:$awsSdkVersion"
+    implementation "software.amazon.awssdk:ssooidc:$awsSdkVersion"
 
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails.plugins:geb"

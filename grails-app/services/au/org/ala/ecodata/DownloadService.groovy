@@ -31,6 +31,7 @@ class DownloadService {
     SiteService siteService
     EmailService emailService
     WebService webService
+    StorageService storageService
 
     def grailsApplication
     def groovyPageRenderer
