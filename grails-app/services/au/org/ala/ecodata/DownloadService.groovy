@@ -12,6 +12,7 @@ import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
+import org.apache.commons.io.FilenameUtils
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -746,15 +747,8 @@ class DownloadService {
     }
 
     private String zipSafeProjectFolderName(def project, String projectId, int maxLen = 32, int idLen = 12) {
-        String name = (project?.name ?: projectId).toString()
-            .replaceAll(/[\\\/:\*\?"<>\|]/, "_")
-            .replaceAll(/\p{Cntrl}/, "")
-            .replaceAll(/\s+/, " ")
-            .trim()
 
-        if (name.size() > maxLen) {
-            name = name.substring(0, maxLen).trim()
-        }
+        String name = sanitiseZipComponent(project?.name, projectId, maxLen)
 
         String idPart = (projectId ?: "")
             .replaceAll("-", "")
@@ -764,36 +758,48 @@ class DownloadService {
     }
 
     private String zipSafeFolderComponent(String value, String fallback, int maxLen = 48) {
-        String name = (value ?: fallback).toString()
+        sanitiseZipComponent(value, fallback, maxLen)
+    }
+
+    private String zipSafeFileName(String filename, String fallback, int maxLen = 80) {
+        sanitiseZipComponent(filename, fallback, maxLen, true)
+    }
+
+    private String sanitiseZipComponent(String value, String fallback = "", int maxLen, boolean preserveExtension = false) {
+
+        String name = (value ?: fallback ?: "")
             .replaceAll(/[\\\/:\*\?"<>\|]/, "_")
             .replaceAll(/\p{Cntrl}/, "")
             .replaceAll(/\s+/, " ")
             .trim()
 
-        if (!name) name = fallback
+        if (maxLen <= 0) {
+            return ""
+        }
+
+        if (preserveExtension) {
+            String ext = FilenameUtils.getExtension(name)
+            String base = FilenameUtils.getBaseName(name)
+
+            ext = ext ? ".${ext}" : ""
+
+            int maxBase = Math.max(1, maxLen - ext.size())
+            if (base.size() > maxBase) {
+                base = base.substring(0, maxBase).trim()
+            }
+
+            String result = (base + ext)
+            if (result.size() > maxLen) {
+                result = result.substring(0, maxLen).trim()
+            }
+
+            return result
+        }
 
         if (name.size() > maxLen) {
             name = name.substring(0, maxLen).trim()
         }
+
         return name
-    }
-
-    private String zipSafeFileName(String filename, String fallback, int maxLen = 80) {
-        String name = (filename ?: fallback).toString()
-            .replaceAll(/[\\\/:\*\?"<>\|]/, "_")
-            .replaceAll(/\p{Cntrl}/, "")
-            .replaceAll(/[\. ]+$/, "")
-            .trim()
-
-        if (!name) name = fallback
-
-        int dot = name.lastIndexOf(".")
-        String ext = (dot > 0 && dot < name.size() - 1) ? name.substring(dot) : ""
-        String base = ext ? name.substring(0, dot) : name
-
-        int maxBase = Math.max(1, maxLen - ext.size())
-        if (base.size() > maxBase) base = base.substring(0, maxBase).trim()
-
-        return base + ext
     }
 }
