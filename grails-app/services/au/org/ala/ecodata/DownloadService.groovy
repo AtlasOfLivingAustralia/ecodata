@@ -12,6 +12,7 @@ import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
+import org.apache.commons.io.FilenameUtils
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -257,7 +258,7 @@ class DownloadService {
      * Constructs a zip file with the following structure:
      * |- data.xls --> spreadsheet as per {@link au.org.ala.ecodata.reporting.CSProjectXlsExporter}
      * |- images
-     * |--- <projectId> --> one directory for each projectId
+     * |--- <projectFolder> --> shortened project name + projectId
      * |--- |- <fileName> --> one file for each project-level image
      * |--- |- activities
      * |--- |- |- <activityId> --> one directory for each activityId
@@ -270,7 +271,7 @@ class DownloadService {
      * |--- |- |- <recordId> --> one directory for each record occurrenceId
      * |--- |- |- |- <fileName> --> one file for each record-level image
      * |- shapes
-     * |--- <projectId> --> one directory for each projectId
+     * |--- <projectFolder> --> shortened project name + projectId
      * |--- |- extent.zip --> shapefile for the project extent
      * |--- |- sites.zip  --> shapefile containing all sites for the project
      *
@@ -340,14 +341,14 @@ class DownloadService {
 
         def shapefilesSection = includeShapefiles ? """\
         |- shapefiles
-        |- - <project name>
+        |- - <project folder>
         |- - - projectExtent.zip -> Shape file for the project extent
         |- - - sites.zip -> Shape file containing all Sites associated with the project
         """ : ""
 
         def imagesSection = includeImages ? """\
         |- images
-        |- - <project name>
+        |- - <project folder>
         |- - - <image files> -> Images associated with the project itself (e.g. logo)
         |- - - activities -> directory structure containing images for the activities and their outputs
         |- - - - <activity name>
@@ -379,11 +380,24 @@ class DownloadService {
 
         projectIds.each { projectId ->
             Project project = Project.findByProjectId(projectId)
-            def projectName = project.name ?: projectId
+            if (!project) {
+                log.warn("No project found for projectId={} when building shapefiles zip", projectId)
+                return
+            }
 
-            zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/"))
+            def projectFolder = zipSafeProjectFolderName(project, projectId)
+            log.debug(
+                "ZIP shapefiles folder resolved [projectId={}, originalName='{}', zipFolder='{}']",
+                projectId,
+                project.name,
+                projectFolder
+            )
+            def basePath = "shapefiles/${projectFolder}/"
+
+            zip.putNextEntry(new ZipEntry(basePath))
+
             if (project.projectSiteId) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/projectExtent.zip"))
+                zip.putNextEntry(new ZipEntry("${basePath}projectExtent.zip"))
                 ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
                 builder.addSite(project.projectSiteId)
                 builder.writeShapefile(zip)
@@ -391,7 +405,7 @@ class DownloadService {
 
             List<Site> sites = Site.findAllByProjectsAndStatus(projectId, Status.ACTIVE)
             if (sites) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/sites.zip"))
+                zip.putNextEntry(new ZipEntry("${basePath}sites.zip"))
                 ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
                 builder.addProject(projectId)
                 builder.writeShapefile(zip)
@@ -408,8 +422,15 @@ class DownloadService {
         activitiesByProject.each { projectId, activityIds ->
             long currentTimeMillis = System.currentTimeMillis()
             def project = projectService.get(projectId, [ProjectService.BRIEF])
-            def projectName = project.name ?: projectId
-            def projectPath = makePath("images/${projectName}/", paths)
+            def projectFolder = zipSafeProjectFolderName(project, projectId)
+            log.debug(
+                "ZIP project folder resolved [projectId={}, originalName='{}', zipFolder='{}']",
+                projectId,
+                project?.name,
+                projectFolder
+            )
+
+            def projectPath = makePath("images/${projectFolder}/", paths)
             def recordMap = [:].withDefault { [] }
             def activityPathBase = makePath("${projectPath}activities/", paths)
             zip.putNextEntry(new ZipEntry(activityPathBase))
@@ -427,16 +448,26 @@ class DownloadService {
             docs.each { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
                     def activity = activityService.get(activityId, [ActivityService.FLAT])
-                    def projectActivity = projectActivityService.get(activity.projectActivityId)
-                    def activityName = projectActivity.name ?: activityId
+                    def projectActivity = activity?.projectActivityId ? projectActivityService.get(activity.projectActivityId) : null
+                    def activityNameRaw = projectActivity?.name ?: activityId
+                    def activityName = zipSafeFolderComponent(activityNameRaw, activityId, 48)
                     def activityPath = makePath("${activityPathBase}${activityName}/", paths)
+                    if (activityNameRaw != activityName) {
+                        log.debug("ZIP activity folder sanitised [projectId={}, activityId={}, original='{}', zipSafe='{}']",
+                            projectId, activityId, activityNameRaw, activityName)
+                    }
                     zip.putNextEntry(new ZipEntry(activityPath))
 
                     documentsMap.each { outputId, documentList ->
                         if (outputId) {
                             def output = outputService.get(outputId)
-                            def outputName = output.name ?: outputId
+                            def outputNameRaw = output?.name ?: outputId
+                            def outputName = zipSafeFolderComponent(outputNameRaw, outputId, 48)
                             def outputPath = makePath("${activityPath}${outputName}/", paths)
+                            if (outputNameRaw != outputName) {
+                                log.debug("ZIP output folder sanitised [projectId={}, activityId={}, outputId={}, original='{}', zipSafe='{}']",
+                                    projectId, activityId, outputId, outputNameRaw, outputName)
+                            }
                             zip.putNextEntry(new ZipEntry(outputPath))
 
                             documentList.each { doc ->
@@ -473,8 +504,8 @@ class DownloadService {
             currentTimeMillis = System.currentTimeMillis()
 
             groupDocumentsByRecord(projectId, activityIds).each { recordId, documentList ->
-                def recordIdPath = "${recordPath}${recordId}/"
-                recordIdPath = makePath(recordIdPath, paths)
+                def recordFolder = zipSafeFolderComponent(recordId, "record", 64)
+                def recordIdPath = makePath("${recordPath}${recordFolder}/", paths)
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
                        // if (!documentMap.containsKey(doc.documentId)) {
@@ -529,40 +560,48 @@ class DownloadService {
     }
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
-        String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
-        InputStream fileInputStream = null
-        try {
-            if (thumbnail) {
-                fileInputStream = documentService.makeThumbnail(doc.filepath, doc.filename, false)
-            } else {
-                fileInputStream = storageService.getFile(doc.filepath, doc.filename)
-            }
-
-            String thumbnailURL = doc.getThumbnailUrl(true)
-            if (fileInputStream != null) {
-                zip.putNextEntry(new ZipEntry(zipName))
-                zip << fileInputStream
-            }
-            else if (thumbnailURL) {
-                // reporting server does not hold images.
-                // download it by requesting image from BioCollect/MERIT
-                def stream = webService.getStream(thumbnailURL, true)
-                if (!(stream instanceof Map)) {
-                    zip.putNextEntry(new ZipEntry(zipName))
-                    zip << stream
-                }
-            } else {
-                zipName = zipName + ".notfound"
-                zip.putNextEntry(new ZipEntry(zipName))
-                log.error("Document domain object exists with documentId ${doc.documentId} and file ${doc.filepath}/${doc.filename}, but the corresponding file does not exist!")
-            }
-
-            documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
-            zip.closeEntry()
+        String safeFilename = zipSafeFileName(doc.filename, doc.documentId ?: "file")
+        if (doc.filename != safeFilename) {
+            log.debug(
+                "ZIP filename sanitised [documentId={}, original='{}', zipSafe='{}']",
+                doc.documentId,
+                doc.filename,
+                safeFilename
+            )
         }
-        finally {
-            fileInputStream?.close()
+        String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${safeFilename}", existing)
+        if (zipName.length() > 200) {
+            log.warn("ZIP entry path length high ({} chars): {}", zipName.length(), zipName)
         }
+        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
+        File file = new File(path)
+        String url
+
+        if (thumbnail) {
+            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+        }
+
+        String thumbnailURL = doc.getThumbnailUrl(true)
+
+        if (file != null && file.exists()) {
+            zip.putNextEntry(new ZipEntry(zipName))
+            file.withInputStream { i -> zip << i }
+        }
+        else if (thumbnailURL) {
+            // reporting server does not hold images.
+            // download it by requesting image from BioCollect/MERIT
+            def stream = webService.getStream(thumbnailURL, true)
+            if (!(stream instanceof Map)) {
+                zip.putNextEntry(new ZipEntry(zipName))
+                zip << stream
+            }
+        } else {
+            zipName = zipName + ".notfound"
+            zip.putNextEntry(new ZipEntry(zipName))
+            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
+        }
+        documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
+        zip.closeEntry()
     }
 
     private static Map<String, Map<String, List<Document>>> groupProjectDocumentsByActivityAndOutput(String projectId) {
@@ -705,5 +744,62 @@ class DownloadService {
         }
         existing << path
         return dir ? path + '/' : path
+    }
+
+    private String zipSafeProjectFolderName(def project, String projectId, int maxLen = 32, int idLen = 12) {
+
+        String name = sanitiseZipComponent(project?.name, projectId, maxLen)
+
+        String idPart = (projectId ?: "")
+            .replaceAll("-", "")
+            .take(idLen)
+
+        return idPart ? "${name}_${idPart}" : name
+    }
+
+    private String zipSafeFolderComponent(String value, String fallback, int maxLen = 48) {
+        sanitiseZipComponent(value, fallback, maxLen)
+    }
+
+    private String zipSafeFileName(String filename, String fallback, int maxLen = 80) {
+        sanitiseZipComponent(filename, fallback, maxLen, true)
+    }
+
+    private String sanitiseZipComponent(String value, String fallback = "", int maxLen, boolean preserveExtension = false) {
+
+        String name = (value ?: fallback ?: "")
+            .replaceAll(/[\\\/:\*\?"<>\|]/, "_")
+            .replaceAll(/\p{Cntrl}/, "")
+            .replaceAll(/\s+/, " ")
+            .trim()
+
+        if (maxLen <= 0) {
+            return ""
+        }
+
+        if (preserveExtension) {
+            String ext = FilenameUtils.getExtension(name)
+            String base = FilenameUtils.getBaseName(name)
+
+            ext = ext ? ".${ext}" : ""
+
+            int maxBase = Math.max(1, maxLen - ext.size())
+            if (base.size() > maxBase) {
+                base = base.substring(0, maxBase).trim()
+            }
+
+            String result = (base + ext)
+            if (result.size() > maxLen) {
+                result = result.substring(0, maxLen).trim()
+            }
+
+            return result
+        }
+
+        if (name.size() > maxLen) {
+            name = name.substring(0, maxLen).trim()
+        }
+
+        return name
     }
 }
