@@ -302,7 +302,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     }
 
     private List<ParatooProject> stubUserProjects() {
-        ParatooProject project = new ParatooProject(id:'projectId', plots:[])
+        ParatooProject project = new ParatooProject(id:'projectId', plots:[], roles:[ParatooService.EDITOR])
         [project]
     }
 

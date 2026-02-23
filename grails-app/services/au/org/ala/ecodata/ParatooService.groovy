@@ -26,9 +26,13 @@ class ParatooService {
     static final String PARATOO_PROTOCOL_FORM_TYPE = 'EMSA'
     static final String PARATOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PARATOO_PROTOCOL_DATA_MAPPING_KEY = 'paratoo.surveyData.mapping'
+    static final String PARATOO_ROLE_MAPPING_KEY = 'paratoo.roleProtocol.mapping'
+    static final String PARATOO_READ_PERMISSION = 'read'
+    static final String PARATOO_WRITE_PERMISSION = 'write'
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
+    static final List DETERMINER_ONLY_PROTOCOLS = ['Herbarium Determinations']
     static final String INTERVENTION_PROTOCOL_TAG = 'intervention'
     static final String DEVELOPMENT_PROTOCOL_TAG = 'development'
     static final String PARATOO_UNIT_FIELD_NAME = "x-paratoo-unit"
@@ -62,6 +66,10 @@ class ParatooService {
     static final String PARATOO_DATAMODEL_PLOT_LAYOUT = "plot_layout"
     static final String PARATOO_DATAMODEL_PLOT_SELECTION = "plot_selection"
     static final String PARATOO_DATAMODEL_PLOT_VISIT = "plot_visit"
+    static String EDITOR = 'authenticated'
+    static String ADMIN = 'project_admin'
+    static String PUBLIC = 'public'
+    static String DETERMINER = 'determiner'
 
     GrailsApplication grailsApplication
     SettingService settingService
@@ -76,6 +84,15 @@ class ParatooService {
     MetadataService metadataService
     UserService userService
     SpeciesReMatchService speciesReMatchService
+
+    private synchronized Map paratooRoleMapping
+    private synchronized Map getRoleProtocolMapping() {
+        if (paratooRoleMapping == null) {
+            String result = settingService.getSetting(PARATOO_ROLE_MAPPING_KEY)
+            paratooRoleMapping = (Map)JSON.parse(result ?: '{}')
+        }
+        paratooRoleMapping
+    }
 
     /**
      * The rules we use to find projects eligible for use by paratoo are:
@@ -94,7 +111,14 @@ class ParatooService {
         List<ParatooProject> projects = findUserProjects(userId)
 
         projects.each { ParatooProject project ->
-            project.protocols = findProjectProtocols(project)
+            List projectProtocols = findProjectProtocols(project)
+            // Only return the protocols the user has write access to
+            // as this is used to display protocols in the Monitor app
+            // the user can complete.
+            project.protocols = projectProtocols.findAll {
+                String protocolId = it.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }?.externalId
+                protocolCheck(project.roles, protocolId, false, userId, project.id)
+            }
         }
 
         projects.findAll { it.protocols }
@@ -125,9 +149,6 @@ class ParatooService {
         if (monitoringProtocolCategories) {
             List categoriesWithDefaults = monitoringProtocolCategories + project.getDefaultModules()
             protocols += findProtocolsByCategories(categoriesWithDefaults.unique())
-            if (!project.isParaooAdmin()) {
-                protocols = protocols.findAll { !(it.name in ADMIN_ONLY_PROTOCOLS) }
-            }
 
             // Exclude protocols tagged as excluded
             List excludedTags = grailsApplication.config.getProperty('paratoo.excludedTags', List.class, [INTERVENTION_PROTOCOL_TAG, DEVELOPMENT_PROTOCOL_TAG])
@@ -137,7 +158,7 @@ class ParatooService {
     }
 
     private static List findProtocolsByCategories(List categories) {
-        List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndExternalAndStatusNotEqual(categories, true, Status.DELETED)
+        List<ActivityForm> forms = ActivityForm.findAllByCategoryInListAndTypeAndStatusNotEqual(categories, PARATOO_PROTOCOL_FORM_TYPE, Status.DELETED)
         forms
     }
 
@@ -462,14 +483,46 @@ class ParatooService {
     }
 
     private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
-        List projects = userProjects(userId)
+        UserPermission permission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqual(userId, projectId, Project.class.name, Status.DELETED)
+        if (!permission) {
+            log.warn("User ${userId} has no permissions for project ${projectId}")
+            return false
+        }
+        Project project = Project.findByProjectIdAndStatusNotEqual(projectId, Status.DELETED)
+        ParatooProject paratooProject = mapProject(project, permission.accessLevel, []) // Don't need sites for this check
+        // First ensure the user has access to the project
+        List roles = paratooProject.getRoles()
+        if (!roles) {
+            log.warn("User ${userId} has no paratoo roles for project ${projectId}")
+            return false
+        }
 
-        ParatooProject project = projects.find { it.id == projectId }
-        ActivityForm protocol = project?.protocols?.find { it.externalIds.find { it.externalId == protocolId } }
-        int minAccessLevel = AccessLevel.projectParticipant.code
-        // Note we don't need to include a check for ADMIN_ONLY_PROTOCOLS here as those protocol will have already be filtered
-        // out of the list of protocols attached to the project in findProjectProtocols if the user isn't an admin.
-        protocol && project.accessLevel.code >= minAccessLevel
+        List<ActivityForm> protocols = findProjectProtocols(paratooProject)
+
+        // Now check if the user's role has access to the protocol
+        ActivityForm protocol = protocols?.find { it.externalIds.find { it.externalId == protocolId } }
+        if (!protocol) {
+            log.warn("Protocol ${protocolId} not found for project ${projectId}")
+            return false
+        }
+
+        protocolCheck(roles, protocolId, read, userId, projectId)
+    }
+
+    private boolean protocolCheck( List<String> roles, String protocolId, boolean read, String userId, String projectId) {
+        String requestedAccess = read ? PARATOO_READ_PERMISSION : PARATOO_WRITE_PERMISSION
+
+        boolean hasAccess = false
+        for (String role in roles) { // Roles are additive so if any role has access, the user has access
+            try {
+                hasAccess = hasAccess || getRoleProtocolMapping()[role][requestedAccess][protocolId]
+            }
+            catch (Exception e) {
+                log.error("Error checking protocol access for user ${userId} on project ${projectId} for protocol ${protocolId}: ${e.message}")
+                false
+            }
+        }
+        hasAccess
     }
 
     Map findDataSet(String userId, String orgMintedUUID) {
@@ -812,7 +865,6 @@ class ParatooService {
         form.external = true
         form.publicationStatus = PublicationStatus.PUBLISHED
         form.description = protocol.attributes.description
-        form.tags = config.tags
         form.externalIds
         form.sections = [getFormSectionForProtocol(protocol, config)]
     }
@@ -842,11 +894,12 @@ class ParatooService {
         List<Site> plotSelections = sites.findAll{it.externalIds?.find{externalId -> externalId.idType == ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID}}
 
         Program program = Program.findByProgramId(project.programId)
+        List<String> roles = mapParatooRoles(accessLevel)
         Map attributes = [
                 id:project.projectId,
                 name:project.name,
                 grantID:project.grantId,
-                accessLevel: accessLevel,
+                roles: roles,
                 project:project,
                 projectArea: projectAreaGeoJson,
                 projectAreaSite: projectArea,
@@ -854,6 +907,35 @@ class ParatooService {
                 program: program]
         new ParatooProject(attributes)
 
+    }
+
+    private List<String> mapParatooRoles(AccessLevel accessLevel) {
+        List paratooRoles = []
+        switch (accessLevel) {
+            case AccessLevel.admin:
+            case AccessLevel.caseManager:
+                paratooRoles = [ADMIN]
+                break
+            case AccessLevel.projectParticipant:
+            case AccessLevel.editor:
+                paratooRoles = [EDITOR]
+                break
+                // The Monitor app wants to support multiple roles for a user, we are faking that
+                // by using the Moderator role as a combination role
+            case AccessLevel.moderator:
+                paratooRoles = [ADMIN, DETERMINER]
+                break
+            case AccessLevel.determiner:
+                paratooRoles = [DETERMINER]
+                break
+            case AccessLevel.determinerParticipant:
+                paratooRoles = [EDITOR, DETERMINER]
+                break
+            default:
+                paratooRoles = []
+                break
+        }
+        paratooRoles
     }
 
     private static Map mapParatooCollectionId(ParatooCollectionId paratooCollectionId, Project project) {
@@ -2131,11 +2213,17 @@ class ParatooService {
             return null
         }
 
+        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
+        // do not create record for special cases
+        if (specialCases.contains(name)) {
+            return null
+        }
+
         String regex = "([^\\[\\(]*)(?:\\[(.*)\\])?\\s*(?:\\(scientific:\\s*(.*?)\\))?"
         String commonName, scientificName, taxonRank
         Pattern pattern = Pattern.compile(regex)
         Matcher matcher = pattern.matcher(name)
-        Map result = [scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
+        Map result = [rawScientificName: name, scientificName: name, commonName: name, outputSpeciesId: UUID.randomUUID().toString()]
 
         if (matcher.find()) {
             commonName = matcher.group(1)?.trim()
@@ -2147,14 +2235,19 @@ class ParatooService {
         }
 
         Map resp = speciesReMatchService.searchByName(result.scientificName)
-        if (resp) {
-            result.putAll(resp)
-        }
+        // Remove null values from the API response so they do not overwrite existing non-null
+        // values in the result map when we merge; this behavior is the core fix for issue #3681.
+        resp = resp?.findAll { k, v -> v != null }
+        result.putAll(resp ?: [:])
+
         // try again with common name
         if ((result.guid == null) && result.commonName) {
             resp = speciesReMatchService.searchByName(commonName, false, true)
             if (resp) {
-                result.putAll(resp)
+                // Remove null values from the API response so they do not overwrite existing non-null
+                // values in the result map when we merge; this behavior is the core fix for issue #3681.
+                resp = resp?.findAll { k, v -> v != null }
+                result.putAll(resp ?: [:])
                 result.commonName = commonName
             }
         }
@@ -2168,15 +2261,7 @@ class ParatooService {
             result.commonName = null
         }
 
-        List specialCases = grailsApplication.config.getProperty("paratoo.species.specialCases", List)
-        // do not create record for special cases
-        if (specialCases.contains(name)) {
-            result.remove("guid")
-        }
-        else {
-            // record is only created if guid is present
-            result.guid = result.guid ?: Record.UNMATCHED_GUID
-        }
+        result.guid = result.guid ?: Record.UNMATCHED_GUID
         result
     }
 }

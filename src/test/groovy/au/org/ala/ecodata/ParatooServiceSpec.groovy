@@ -61,6 +61,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
+
+        String roleMappingSetting = new File('src/test/resources/paratoo/roleMapping.json').text
+        settingService.getSetting(ParatooService.PARATOO_ROLE_MAPPING_KEY) >> roleMappingSetting
+
     }
 
     private Map readSurveyData(String name) {
@@ -99,7 +103,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects.size() == 1
         projects[0].id == "p1"
         projects[0].name == "Project 1"
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
@@ -143,7 +147,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         projects.size() == 1
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
 
     }
 
@@ -159,7 +163,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         projects.size() == 1
         projects[0].id == "p1"
         projects[0].name == "Project 1"
-        projects[0].accessLevel == AccessLevel.admin
+        projects[0].roles == [ParatooService.ADMIN]
         projects[0].projectArea == DUMMY_POLYGON
         projects[0].plots.size() == 1
         projects[0].plots[0].siteId == 's2'
@@ -578,6 +582,29 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         activityForm.externalIds = [new ExternalId(externalId: "guid-4", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
         activityForm.save(failOnError: true, flush: true)
 
+        activityForm = new ActivityForm(name: "Determinations", type: 'EMSA', category: 'protocol category 1', external: true,
+                sections: [
+                        new FormSection(name: "section 1", type: "section", template: [
+                                dataModel    : [
+                                        [
+                                                dataType: "list",
+                                                name    : "species-determination",
+                                                columns : [
+                                                        [
+                                                                dataType: "text",
+                                                                name    : "scientificName"
+                                                        ]
+                                                ]
+                                        ]
+                                ],
+                                viewModel    : []
+                        ]
+                        )
+                ]
+        )
+        activityForm.externalIds = [new ExternalId(externalId: "determinations", idType: ExternalId.IdType.MONITOR_PROTOCOL_GUID)]
+        activityForm.save(failOnError: true, flush: true)
+
         def activity = new Activity(
                 activityId: UUID.randomUUID().toString(),
                 type             : activityForm.name,
@@ -697,7 +724,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String outputSpeciesId = result.remove("outputSpeciesId")
         then:
         outputSpeciesId != null
-        result == [name: "Acacia glauca Willd. (Acacia glauca)", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
+        result == [rawScientificName: "Acacia glauca [Species] (scientific: Acacia glauca Willd.)", name: "Acacia glauca Willd. (Acacia glauca)", scientificName: "Acacia glauca Willd.", guid: "A_GUID", commonName: "Acacia glauca", taxonRank: "Species"]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
@@ -707,9 +734,19 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         outputSpeciesId != null
-        result == [name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
+        result == [rawScientificName: "Frogs [Class] (scientific: )", name: "Frogs", scientificName: "", guid: "A_GUID", commonName: "Frogs", taxonRank: "Class"]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
+
+        when: // no scientific name
+        result = service.transformSpeciesName("Kangaroo")
+        outputSpeciesId = result.remove("outputSpeciesId")
+
+        then:
+        outputSpeciesId != null
+        result == [rawScientificName: "Kangaroo", name: "Macropodinae (Kangaroo)", scientificName: "Macropodinae", guid: "https://biodiversity.org.au/afd/taxa/b07804d2-d068-48d8-8c06-f87cc2620d87", commonName: "Kangaroo", taxonRank: "Subfamily"]
+        1 * speciesReMatchService.searchByName(_) >> [scientificName: "Macropodinae", guid: "https://biodiversity.org.au/afd/taxa/b07804d2-d068-48d8-8c06-f87cc2620d87", commonName: null, taxonRank: "Subfamily"]
+        0 * speciesReMatchService.searchByName(_, false, true)
 
         when: // user inputs scientific name to field
         result = service.transformSpeciesName("Centipeda cunninghamii")
@@ -717,7 +754,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         outputSpeciesId != null
-        result == [name: "Centipeda cunninghamii (Common Sneezeweed)", scientificName: "Centipeda cunninghamii", guid: "https://id.biodiversity.org.au/node/apni/2916674", commonName: "Common Sneezeweed", taxonRank: "species"]
+        result == [rawScientificName: "Centipeda cunninghamii", name: "Centipeda cunninghamii (Common Sneezeweed)", scientificName: "Centipeda cunninghamii", guid: "https://id.biodiversity.org.au/node/apni/2916674", commonName: "Common Sneezeweed", taxonRank: "species"]
         1 * speciesReMatchService.searchByName(_) >> [
                 scientificName: "Centipeda cunninghamii",
                 commonName: "Common Sneezeweed",
@@ -732,19 +769,17 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         outputSpeciesId != null
-        result == [name: "Centipeda cunninghamii", scientificName: "Centipeda cunninghamii", commonName: null, taxonRank: null, guid: "A_GUID"]
+        result == [rawScientificName: "Centipeda cunninghamii", name: "Centipeda cunninghamii", scientificName: "Centipeda cunninghamii", commonName: null, taxonRank: null, guid: "A_GUID"]
         1 * speciesReMatchService.searchByName(_) >> null
         1 * speciesReMatchService.searchByName(_, false, true) >> null
 
         when: // Do not create record when value equals special cases. Therefore, removes guid.
         result = service.transformSpeciesName("Other")
-        outputSpeciesId = result.remove("outputSpeciesId")
 
         then:
-        outputSpeciesId != null
-        result == [name: "Other", scientificName: "Other", commonName: null, taxonRank: null]
-        1 * speciesReMatchService.searchByName(_) >> null
-        1 * speciesReMatchService.searchByName(_, false, true) >> null
+        result == null
+        0 * speciesReMatchService.searchByName(_) >> null
+        0 * speciesReMatchService.searchByName(_, false, true) >> null
 
     }
 
@@ -1476,6 +1511,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ]
         result == [
                 lut: [
+                        rawScientificName: "Cat",
                         commonName: "Cat",
                         name: "Felis catus (Cat)",
                         taxonRank: "species",
@@ -1506,6 +1542,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ]
         result == [
                 lut: [
+                        rawScientificName: "Cats [Species] (scientific: Felis catus)",
                         commonName: "Cats",
                         name: "Felis catus (Cats)",
                         taxonRank: "species",
@@ -1599,15 +1636,21 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         where:
         protocolId | accessLevel                     | canRead | canWrite
-        'plot-selection-guid' | AccessLevel.editor   | false   | false
+        'plot-selection-guid' | AccessLevel.editor   | true    | false
         'plot-selection-guid' | AccessLevel.admin    | true    | true
+        'determinations'      | AccessLevel.admin    | false   | false
         'guid-2'   | AccessLevel.admin               | true    | true
         'guid-2'   | AccessLevel.caseManager         | true    | true
         'guid-2'   | AccessLevel.editor              | true    | true
         'guid-2'   | AccessLevel.projectParticipant  | true    | true
         'guid-2'   | AccessLevel.readOnly            | false   | false
-
+        'determinations' | AccessLevel.determiner    | true    | true
+        'determinations' | AccessLevel.moderator     | true    | true
+        'plot-selection-guid' | AccessLevel.moderator | true   | true
         'guid-10' | AccessLevel.admin                | false   | false // Note guid-10 doesn't exist/isn't attached to the project.
+        'plot-selection-guid' | AccessLevel.determinerParticipant | true   | false
+        'determinations' | AccessLevel.determinerParticipant | true    | true
+        'guid-2'  | AccessLevel.determinerParticipant | true    | true
     }
 
     def "buildTemplateForProtocol must switch record generation on or off" (createSpeciesRecord, expected) {
