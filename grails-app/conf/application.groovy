@@ -1,4 +1,6 @@
 import au.org.ala.ecodata.Document
+import grails.util.Holders
+
 import static au.org.ala.ecodata.Status.DELETED
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -1685,8 +1687,9 @@ if (!darwinCore.termsGroupedByClass) {
                                                     "identifier"  : identifier ?: mediaRecord.identifier,
                                                     "format"      : document?.contentType ?: mediaRecord.contentType,
                                                     "creator"     : document?.creator ?: document?.attribution ?: mediaRecord.creator,
-                                                    "licence"     : document?.licence ?: document?.license ?: mediaRecord.license,
-                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder
+                                                    "license"     : document?.licence ?: document?.license ?: mediaRecord.license,
+                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder,
+                                                    "modified"    : document?.lastUpdated
                                             ]
                                         }
                                     }
@@ -1699,8 +1702,9 @@ if (!darwinCore.termsGroupedByClass) {
                                     "identifier",
                                     "format",
                                     "creator",
-                                    "licence",
-                                    "rightsHolder"
+                                    "license",
+                                    "rightsHolder",
+                                    "modified"
                             ]
                     ]
             ],
@@ -1835,7 +1839,11 @@ if (!darwinCore.termsGroupedByClass) {
                     ],
                     [
                             "name"     : "recordNumber",
-                            "namespace": "dwc"
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                String url = Holders.config.getProperty('biocollect.activity.sightingsUrl')
+                                return "${url}/bioActivity/index/${record.eventID}"
+                            }
                     ],
                     [
                             "name"     : "reproductiveCondition",
