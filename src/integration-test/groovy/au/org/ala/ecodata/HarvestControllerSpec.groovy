@@ -228,7 +228,7 @@ class HarvestControllerSpec extends Specification {
                     CSVReader readerCSV = new CSVReader(new StringReader(content))
                     List<String[]> lines = readerCSV.readAll()
                     assert lines.size() == 2
-                    assert lines[0] == ["eventID","occurrenceID","type","identifier","format","creator","licence","rightsHolder"]
+                    assert lines[0] == ["eventID","occurrenceID","type","identifier","format","creator","license","rightsHolder"]
                     assert lines[1] == ["activity1","outputSpecies1","StillImage","https://images-test.ala.org.au/proxyImage?id=image1","image/png","John Doe","CC BY 4.0","John Doe"]
                     // check Media.csv
                     break
