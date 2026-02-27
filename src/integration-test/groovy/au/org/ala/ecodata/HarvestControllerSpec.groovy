@@ -231,7 +231,7 @@ class HarvestControllerSpec extends Specification {
                     assert lines[0] == ["eventID","occurrenceID","type","identifier","format","creator","license","rightsHolder", "modified"]
                     // remove last entry from a string array
                     List modifiedRemoved = Arrays.asList(lines[1])
-                    modifiedRemoved.remove(modifiedRemoved.size() - 1)
+                    modifiedRemoved = modifiedRemoved.subList(0, modifiedRemoved.size() - 1)
                     assert modifiedRemoved == ["activity1","outputSpecies1","StillImage","https://images-test.ala.org.au/proxyImage?id=image1","image/png","John Doe","CC BY 4.0","John Doe"]
                     // check Media.csv
                     break
