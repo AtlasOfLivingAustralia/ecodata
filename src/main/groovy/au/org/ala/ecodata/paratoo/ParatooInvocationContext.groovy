@@ -6,6 +6,15 @@ import au.org.ala.ecodata.Permission
 class ParatooInvocationContext {
 
     static ThreadLocal<ParatooInvocationContext> current = new ThreadLocal<>()
+    static ParatooInvocationContext getCurrent() {
+        return current.get()
+    }
+    static void setCurrent(ParatooInvocationContext context) {
+        current.set(context)
+    }
+    static void removeCurrent() {
+        current.remove()
+    }
 
     String userId
     String apiVersion
@@ -26,7 +35,7 @@ class ParatooInvocationContext {
     }
 
     boolean supportsMultipleRoles() {
-        return apiVersion && apiVersaion != "v1"
+        return apiVersion && apiVersion != "v1"
     }
 
 }

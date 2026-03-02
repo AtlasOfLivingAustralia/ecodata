@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.plugin.json.view.test.JsonRenderResult
 import grails.plugin.json.view.test.JsonViewTest
@@ -13,6 +14,8 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     static List DUMMY_POLYGON = [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]
     def "The /user-projects v2 response is rendered correctly"() {
         setup:
+        ParatooInvocationContext context = new ParatooInvocationContext(userId:"user1", apiVersion:"v2")
+        ParatooInvocationContext.setCurrent(context)
         int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
         Map expectedResult = [
                 projects: [[
@@ -52,6 +55,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[2] == expectedResult.projects[2]
 
         when: "The results of /paratoo/user-projects is rendered from an apiVersion v1 request"
+        context.apiVersion = "v1"
         expectedResult.projects.each{ Map project ->
             List roles = project.remove('roles')
             project.role = roles[0]
@@ -67,6 +71,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[2] == expectedResult.projects[2]
 
         when: "The results of /paratoo/user-projects is rendered from a request with no apiVersion"
+        context.apiVersion = null
         result = render([view: "/paratoo/userProjects", model:[projects:projects]])
 
         then:"The view defaults to v1 of the API"

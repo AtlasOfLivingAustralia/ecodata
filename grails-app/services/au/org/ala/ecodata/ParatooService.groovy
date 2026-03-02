@@ -107,7 +107,7 @@ class ParatooService {
      */
     List<ParatooProject> userProjects() {
 
-        ParatooInvocationContext ctx = ParatooInvocationContext.current.get()
+        ParatooInvocationContext ctx = ParatooInvocationContext.getCurrent()
         String userId = ctx.userId
         List<ParatooProject> projects = findUserProjects(userId)
 
@@ -928,7 +928,7 @@ class ParatooService {
                 break
         }
 
-        ParatooInvocationContext context = ParatooInvocationContext.current.get()
+        ParatooInvocationContext context = ParatooInvocationContext.getCurrent()
         context.filterRoles(paratooRoles)
         paratooRoles
     }

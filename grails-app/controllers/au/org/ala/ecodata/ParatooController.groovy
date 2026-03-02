@@ -272,7 +272,7 @@ class ParatooController {
             error(collectionId.errors)
         } else {
             String userId = userService.currentUserDetails.userId
-            boolean hasProtocol = paratooService.protocolWriteCheck(userId, collectionId.projectId, collectionId.protocolId)
+            boolean hasProtocol = paratooService.protocolCheck(userId, collectionId.projectId, collectionId.protocolId, Permission.WRITE)
             if (hasProtocol) {
                 Map mintResults = paratooService.mintCollectionId(userId, collectionId)
                 if (mintResults.error) {
@@ -312,7 +312,7 @@ class ParatooController {
             Map dataSet = paratooService.findDataSet(userId, collection.orgMintedUUID)
             if (dataSet?.dataSet?.surveyId) {
                 ParatooCollectionId collectionId = ParatooCollectionId.fromMap(dataSet.dataSet.surveyId)
-                boolean hasProtocol = paratooService.protocolWriteCheck(userId, dataSet.project.id, collectionId.protocolId)
+                boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
                 if (hasProtocol) {
                     Map result = paratooService.submitCollection(collection, dataSet.project)
                     if (!result.updateResult.error) {
@@ -411,8 +411,7 @@ class ParatooController {
             tags = "Org Interface"
     )
     def getPlotSelections() {
-        String userId = userService.currentUserDetails.userId
-        List<ParatooProject> projects = paratooService.userProjects(userId, Permission.READ)
+        List<ParatooProject> projects = paratooService.userProjects()
         // Plots can be reused between projects so we need to ensure they are unique
         List plotSelections = []
         projects.each {
@@ -468,7 +467,7 @@ class ParatooController {
     )
     def updateProjectSites(@Parameter(name = "id", description = "Project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")) String id) {
         String userId = userService.currentUserDetails.userId
-        List projects = paratooService.userProjects(userId, Permission.WRITE)
+        List projects = paratooService.userProjects()
         ParatooProject project = projects?.find { it.id == id }
         if (!project) {
             error(HttpStatus.SC_FORBIDDEN, "Project not available")

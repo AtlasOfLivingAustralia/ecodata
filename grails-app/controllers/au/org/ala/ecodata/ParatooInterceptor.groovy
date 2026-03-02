@@ -20,12 +20,12 @@ class ParatooInterceptor {
             operationType = request.method == "GET" ? Permission.READ : Permission.WRITE
         }
 
-        ParatooInvocationContext.current = new ParatooInvocationContext(userId: authService.userId, operationType: operationType, apiVersion: apiVersion)
+        ParatooInvocationContext.setCurrent(new ParatooInvocationContext(userId: authService.userId, operationType: operationType, apiVersion: apiVersion))
         true
     }
 
     void afterView() {
-        ParatooInvocationContext.current.remove()
+        ParatooInvocationContext.removeCurrent()
     }
 
 

@@ -66,7 +66,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         settingService.getSetting(ParatooService.PARATOO_ROLE_MAPPING_KEY) >> roleMappingSetting
 
         ParatooInvocationContext ctx = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion: "v2")
-        ParatooInvocationContext.current.set(ctx)
+        ParatooInvocationContext.setCurrent(ctx)
     }
 
     private Map readSurveyData(String name) {
