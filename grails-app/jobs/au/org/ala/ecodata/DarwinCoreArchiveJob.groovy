@@ -17,6 +17,9 @@ class DarwinCoreArchiveJob {
     }
 
     def execute() {
+        // set the document host URL prefix so that the correct URLs are generated for documents in the Darwin Core Archive.
+        String biocollectURL = grailsApplication.config.getProperty("biocollect.baseURL")
+        DocumentHostInterceptor.documentHostUrlPrefix.set(biocollectURL)
         recordService.saveToDiskDarwinCoreArchiveForAllProjects()
     }
 }
