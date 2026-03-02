@@ -13,6 +13,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 import static grails.async.Promises.task
+
 /**
  * Supports the implementation of the paratoo "org" interface
  */
@@ -27,8 +28,6 @@ class ParatooService {
     static final String PARATOO_PROTOCOLS_KEY = 'paratoo.protocols'
     static final String PARATOO_PROTOCOL_DATA_MAPPING_KEY = 'paratoo.surveyData.mapping'
     static final String PARATOO_ROLE_MAPPING_KEY = 'paratoo.roleProtocol.mapping'
-    static final String PARATOO_READ_PERMISSION = 'read'
-    static final String PARATOO_WRITE_PERMISSION = 'write'
     static final String PARATOO_APP_NAME = "Monitor"
     static final String MONITOR_AUTH_HEADER = "Authorization"
     static final List ADMIN_ONLY_PROTOCOLS = ['Plot Selection']
@@ -106,9 +105,12 @@ class ParatooService {
      * @param includeProtocols
      * @return
      */
-    List<ParatooProject> userProjects(String userId) {
+    List<ParatooProject> userProjects() {
 
+        ParatooInvocationContext ctx = ParatooInvocationContext.current.get()
+        String userId = ctx.userId
         List<ParatooProject> projects = findUserProjects(userId)
+
 
         projects.each { ParatooProject project ->
             List projectProtocols = findProjectProtocols(project)
@@ -117,11 +119,11 @@ class ParatooService {
             // the user can complete.
             project.protocols = projectProtocols.findAll {
                 String protocolId = it.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }?.externalId
-                protocolCheck(project.roles, protocolId, false, userId, project.id)
+                protocolRoleCheck(project.roles, protocolId, ctx.operationType, userId, project.id)
             }
         }
 
-        projects.findAll { it.protocols }
+        projects
     }
 
     List<String> userCollections (String userId) {
@@ -474,15 +476,7 @@ class ParatooService {
         new ParatooProtocolConfig(config ?: [:])
     }
 
-    boolean protocolReadCheck(String userId, String projectId, String protocolId) {
-        protocolCheck(userId, projectId, protocolId, true)
-    }
-
-    boolean protocolWriteCheck(String userId, String projectId, String protocolId) {
-        protocolCheck(userId, projectId, protocolId, false)
-    }
-
-    private boolean protocolCheck(String userId, String projectId, String protocolId, boolean read) {
+    boolean protocolCheck(String userId, String projectId, String protocolId, Permission operationType) {
         UserPermission permission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqual(userId, projectId, Project.class.name, Status.DELETED)
         if (!permission) {
             log.warn("User ${userId} has no permissions for project ${projectId}")
@@ -506,16 +500,14 @@ class ParatooService {
             return false
         }
 
-        protocolCheck(roles, protocolId, read, userId, projectId)
+        protocolRoleCheck(roles, protocolId, operationType, userId, projectId)
     }
 
-    private boolean protocolCheck( List<String> roles, String protocolId, boolean read, String userId, String projectId) {
-        String requestedAccess = read ? PARATOO_READ_PERMISSION : PARATOO_WRITE_PERMISSION
-
+    private boolean protocolRoleCheck( List<String> roles, String protocolId, Permission operationType, String userId, String projectId) {
         boolean hasAccess = false
         for (String role in roles) { // Roles are additive so if any role has access, the user has access
             try {
-                hasAccess = hasAccess || getRoleProtocolMapping()[role][requestedAccess][protocolId]
+                hasAccess = hasAccess || getRoleProtocolMapping()[role][operationType.toString()][protocolId]
             }
             catch (Exception e) {
                 log.error("Error checking protocol access for user ${userId} on project ${projectId} for protocol ${protocolId}: ${e.message}")
@@ -935,6 +927,9 @@ class ParatooService {
                 paratooRoles = []
                 break
         }
+
+        ParatooInvocationContext context = ParatooInvocationContext.current.get()
+        context.filterRoles(paratooRoles)
         paratooRoles
     }
 
@@ -978,7 +973,7 @@ class ParatooService {
 
     Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {
 
-        List projects = userProjects(userId)
+        List projects = userProjects()
         if (!projects) {
             return [error: 'User has no projects eligible for Monitor site data']
         }

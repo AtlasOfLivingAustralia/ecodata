@@ -897,7 +897,7 @@ class AdminController {
         }
 
         ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
-        List<ParatooProject> projects = paratooService.userProjects(userId)
+        List<ParatooProject> projects = paratooService.userProjects(userId, Permission.WRITE)
         ParatooProject project = projects.find {it.project.projectId == projectId }
         if (project) {
             paratooService.submitCollection(collection, project, userId)

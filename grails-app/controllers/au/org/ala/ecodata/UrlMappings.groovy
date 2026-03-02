@@ -241,11 +241,13 @@ class UrlMappings {
             action = 'download'
         }
 
-        "/ws/paratoo/$apiVersion/user-projects" {
+        "/ws/paratoo/user-projects" {
             controller = 'paratoo'
             action = 'userProjects'
+            operationType = 'write'
         }
-        "/ws/paratoo/user-projects" {
+
+        "/ws/paratoo/$apiVersion/user-projects/$operationType" {
             controller = 'paratoo'
             action = 'userProjects'
         }
@@ -253,6 +255,7 @@ class UrlMappings {
         "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
             action = 'hasReadAccess'
+            operationType = 'read'
         }
         "/ws/paratoo/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
@@ -262,10 +265,12 @@ class UrlMappings {
         "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/write" {
             controller = 'paratoo'
             action = 'hasWriteAccess'
+            operationType = 'write'
         }
         "/ws/paratoo/pdp/$projectId/$protocolId/write" {
             controller = 'paratoo'
             action = 'hasWriteAccess'
+            operationType = 'write'
         }
 
         "/ws/paratoo/$apiVersion/get-all-collections" {

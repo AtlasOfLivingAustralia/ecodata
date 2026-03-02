@@ -21,11 +21,15 @@ import io.swagger.v3.oas.annotations.servers.Server
 import io.swagger.v3.oas.annotations.servers.ServerVariable
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
+import org.springframework.web.bind.WebDataBinder
+import org.springframework.web.bind.annotation.InitBinder
 
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
 import javax.ws.rs.Path
+import java.beans.PropertyEditorSupport
+
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j
 @au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
@@ -103,11 +107,14 @@ class ParatooController {
 
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
-    @Path("/user-projects")
+    @Path("/{apiVersion}/user-projects/{operationType}")
     @Operation(
             method = "GET",
             summary = "Gets all projects for an authenticated user",
             description = "Gets all projects that a user is assigned to",
+            parameters = [
+                    @Parameter(name = "operationType", description = "The type of operation the user is trying to perform. This is used to determine the roles that are returned for the user. If not provided, defaults to 'write' which means the determiner role will be removed from the response as this role is only relevant for read operations.", required = false, in = ParameterIn.PATH, schema = @Schema(type = "string", allowableValues = ["read", "write"]))
+            ],
             responses = [
                     @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ParatooProject.class)))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -116,14 +123,8 @@ class ParatooController {
             tags = "Org Interface"
     )
     def userProjects() {
-        List projects = paratooService.userProjects(userService.currentUserDetails.userId)
-        if (!params.apiVersion || params.apiVersion == "v1") {
-            // For api version v1 we don't support the determiner role
-            projects.each {
-                it.roles.remove(ParatooService.DETERMINER)
-            }
-            projects = projects.findAll{it.roles}
-        }
+        List projects = paratooService.userProjects()
+
         respond projects:projects
     }
 
@@ -208,7 +209,7 @@ class ParatooController {
     def hasReadAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
                       @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
         protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
-            paratooService.protocolReadCheck(userId, prjId, proId)
+            paratooService.protocolCheck(userId, prjId, proId, Permission.READ)
         })
     }
 
@@ -233,7 +234,7 @@ class ParatooController {
     def hasWriteAccess(@RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String projectId,
                        @RequestBody(required = true, content = @Content(schema = @Schema(type = "string"))) String protocolId) {
         protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
-            paratooService.protocolWriteCheck(userId, prjId, proId)
+            paratooService.protocolCheck(userId, prjId, proId, Permission.WRITE)
         })
     }
 
@@ -411,7 +412,7 @@ class ParatooController {
     )
     def getPlotSelections() {
         String userId = userService.currentUserDetails.userId
-        List<ParatooProject> projects = paratooService.userProjects(userId)
+        List<ParatooProject> projects = paratooService.userProjects(userId, Permission.READ)
         // Plots can be reused between projects so we need to ensure they are unique
         List plotSelections = []
         projects.each {
@@ -467,7 +468,7 @@ class ParatooController {
     )
     def updateProjectSites(@Parameter(name = "id", description = "Project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")) String id) {
         String userId = userService.currentUserDetails.userId
-        List projects = paratooService.userProjects(userId)
+        List projects = paratooService.userProjects(userId, Permission.WRITE)
         ParatooProject project = projects?.find { it.id == id }
         if (!project) {
             error(HttpStatus.SC_FORBIDDEN, "Project not available")

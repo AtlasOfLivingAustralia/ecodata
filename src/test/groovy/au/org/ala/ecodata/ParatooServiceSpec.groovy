@@ -65,6 +65,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String roleMappingSetting = new File('src/test/resources/paratoo/roleMapping.json').text
         settingService.getSetting(ParatooService.PARATOO_ROLE_MAPPING_KEY) >> roleMappingSetting
 
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion: "v2")
+        ParatooInvocationContext.current.set(ctx)
     }
 
     private Map readSurveyData(String name) {
@@ -97,7 +99,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can map user projects into a format useful for the paratoo API"() {
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         projects.size() == 1
@@ -122,7 +124,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         userPermission.save(flush: true, failOnError: true)
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         projects.size() == 0
@@ -130,7 +132,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         when: "The user has the MERIT grant manager role"
         UserPermission meritGrantManager = new UserPermission(userId: userId, entityId: 'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel: AccessLevel.caseManager)
         meritGrantManager.save(flush: true, failOnError: true)
-        projects = service.userProjects(userId)
+        projects = service.userProjects()
 
         then:
         projects.size() == 1
@@ -143,7 +145,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         userPermission.save(flush: true, failOnError: true)
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         projects.size() == 1
@@ -154,7 +156,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "userProjects can convert a Feature or MultiPolygon typed project extent to a Polygon to support the use of known shape selection in MERIT (e.g. a NRM region)"() {
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         1 * siteService.geometryAsGeoJson(_) >> DUMMY_MULTI_POLYGON
@@ -1627,8 +1629,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         when:
         UserPermission up = new UserPermission(userId: userId, accessLevel: accessLevel, entityId: projectId, entityType: Project.class.name)
         up.save(flush:true, failOnError: true)
-        boolean actualCanRead = service.protocolReadCheck(userId, 'p1', protocolId)
-        boolean actualCanWrite = service.protocolWriteCheck(userId, 'p1', protocolId)
+        boolean actualCanRead = service.protocolCheck(userId, 'p1', protocolId, Permission.READ)
+        boolean actualCanWrite = service.protocolCheck(userId, 'p1', protocolId, Permission.WRITE)
 
         then:
         actualCanRead == canRead

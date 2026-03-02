@@ -1,3 +1,4 @@
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 
 model {
@@ -11,5 +12,5 @@ json {
     protocols tmpl.paratooProtocol('protocol', project.protocols)
     project_area project.projectArea ? tmpl.projectArea(projectArea:project.projectArea) : null
     plot_selections tmpl.plot('plot', project.plots)
-    (params.apiVersion && params.apiVersion != "v1") ? (roles project.roles) : (role project.roles[0])
+    ParatooInvocationContext.current.get().supportsMultipleRoles() ? (roles project.roles) : (role project.roles[0])
 }
