@@ -1689,7 +1689,7 @@ if (!darwinCore.termsGroupedByClass) {
                                                     "creator"     : document?.creator ?: document?.attribution ?: mediaRecord.creator,
                                                     "license"     : document?.licence ?: document?.license ?: mediaRecord.license,
                                                     "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder,
-                                                    "modified"    : document?.lastUpdated
+                                                    "modified"    : params.recordService.toStringIsoDateTime(document?.lastUpdated)
                                             ]
                                         }
                                     }
@@ -1725,6 +1725,14 @@ if (!darwinCore.termsGroupedByClass) {
                     ],
                     [
                             "name": "scientificName"
+                    ],
+//                    remove scientificNameID for now as ALA name matching fails to run when this field is included.
+                    [
+                            "name": "scientificNameID",
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                null
+                            }
                     ],
                     [
                             "name"     : "occurrenceStatus",
@@ -1853,6 +1861,15 @@ if (!darwinCore.termsGroupedByClass) {
                             "name"     : "sex",
                             "namespace": "dwc"
                     ],
+                    [
+                            "name"     : "modified",
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                if (record.modified) {
+                                    return params.recordService.toStringIsoDateTime(record.modified)
+                                }
+                            }
+                    ]
             ],
             "Organism"            : [
             ],
