@@ -1911,12 +1911,14 @@ if (!darwinCore.namespaces) {
             measurementDeterminedDate    : "http://rs.tdwg.org/dwc/terms/measurementDeterminedDate",
             measurementDeterminedBy      : "http://rs.tdwg.org/dwc/terms/measurementDeterminedBy",
             measurementRemarks           : "http://rs.tdwg.org/dwc/terms/measurementRemarks",
+            recordNumber                 : "http://rs.tdwg.org/dwc/terms/recordNumber",
             type                         : "http://purl.org/dc/terms/type",
             identifier                   : "http://purl.org/dc/terms/identifier",
             format                       : "http://purl.org/dc/terms/format",
             creator                      : "http://purl.org/dc/terms/creator",
             license                      : "http://purl.org/dc/terms/license",
-            rightsHolder                 : "http://purl.org/dc/terms/rightsHolder"
+            rightsHolder                 : "http://purl.org/dc/terms/rightsHolder",
+            modified                     : "http://purl.org/dc/terms/modified"
     ]
 }
 
