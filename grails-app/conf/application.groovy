@@ -1850,7 +1850,10 @@ if (!darwinCore.termsGroupedByClass) {
                             "namespace": "dwc",
                             "code": { record, params ->
                                 String url = Holders.config.getProperty('biocollect.activity.sightingsUrl')
-                                return "${url}/bioActivity/index/${record.eventID}"
+                                if (url) {
+                                    return "${url}/bioActivity/index/${record.eventID}"
+                                }
+                                return null
                             }
                     ],
                     [
