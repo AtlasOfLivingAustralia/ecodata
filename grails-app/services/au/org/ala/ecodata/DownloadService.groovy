@@ -33,6 +33,7 @@ class DownloadService {
     EmailService emailService
     WebService webService
     StorageService storageService
+    UserService userService
 
     def grailsApplication
     def groovyPageRenderer
@@ -186,7 +187,11 @@ class DownloadService {
         // Make the document host url prefix available for use by the task as when the reporting server
         // needs document access, it also needs access to this prefix.
         String documentHostUrlPrefix = DocumentHostInterceptor.documentHostUrlPrefix.get()
+        // get current user id so that it can be set in the task: the async call runs with a separate thread,
+        // so any calls to get the current user details will return null unless we set the user in the task.
+        String userId = userService.getCurrentUserDetails()?.userId
         Promise p = task {
+            userService.setCurrentUser(userId)
             DocumentHostInterceptor.documentHostUrlPrefix.set(documentHostUrlPrefix)
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
@@ -195,6 +200,7 @@ class DownloadService {
                }
         }
         p.onComplete {
+            userService.clearCurrentUser()
             int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.getProperty('async.download.url.prefix')
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
@@ -206,6 +212,7 @@ class DownloadService {
             }
         }
         p.onError { Throwable error ->
+            userService.clearCurrentUser()
             log.error("Failed to generate file for download.", error)
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)

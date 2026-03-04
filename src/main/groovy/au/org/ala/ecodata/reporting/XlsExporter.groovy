@@ -19,15 +19,23 @@ class XlsExporter extends XlsxExporter {
         this.fileName = fileName
     }
 
-    /** Produces a 31 character sheet name from the supplied string by replacing a middle section with ellipsis */
-    public static String sheetName(String name) {
+    /**
+     * Produces a 31 character sheet name from the supplied string, sanitizing for Excel compatibility.
+     */
+    static String sheetName(String name) {
+        // Remove invalid characters: \\ / ? * [ ] :
+        String sanitized = name.replaceAll(/[\\\/\?\*\[\]:]/, "-")
+        // Trim leading/trailing spaces
+        sanitized = sanitized.trim()
+        // Remove leading/trailing single quotes
+        sanitized = sanitized.replaceAll(/^'+|'+$/, "")
         int prefixLength = 17
         int suffixLength = 11
-        String shortName = name
-        if (name.size() > MAX_SHEET_NAME_LENGTH) {
-            shortName = name[0..prefixLength-1]+'...'+name[-suffixLength..name.size()-1]
+        if (sanitized.size() > MAX_SHEET_NAME_LENGTH) {
+            sanitized = sanitized[0..prefixLength-1] + '...' + sanitized[-suffixLength..sanitized.size()-1]
         }
-        shortName.replaceAll('/', '-')
+
+        return sanitized
     }
 
     public AdditionalSheet addSheet(name, headers, groupHeaders = null, dataPathHeader = null) {
