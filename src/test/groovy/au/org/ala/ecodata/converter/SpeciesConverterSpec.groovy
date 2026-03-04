@@ -20,4 +20,18 @@ class SpeciesConverterSpec extends Specification {
         null                                                                | false
     }
 
+    def "converter should sanitize scientificName and vernacularName"() {
+        setup:
+        Map data = [species: [scientificName: "<b>Acacia </b>dealbata", commonName: "<i>Silver Wattl</i>e", outputSpeciesId: "123"]]
+        Map metadata = [name: "species"]
+
+        when:
+        List<Map> result = new SpeciesConverter().convert(data, metadata)
+
+        then:
+        result.size() == 1
+        result[0].scientificName == "Acacia dealbata"
+        result[0].vernacularName == "Silver Wattle"
+    }
+
 }
