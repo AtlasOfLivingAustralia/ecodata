@@ -109,8 +109,8 @@ class Document {
                 return identifier
             }
 
-            File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
-            if (skipExistCheck || thumbFile.exists()) {
+            StorageService storageService = Holders.grailsApplication.mainContext.getBean("storageService")
+            if (skipExistCheck || storageService?.fileExists(filepath, THUMBNAIL_PREFIX + filename)) {
                 return urlFor(filepath, THUMBNAIL_PREFIX + filename)
             }
             else {

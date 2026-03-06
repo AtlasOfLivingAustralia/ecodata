@@ -710,6 +710,7 @@ environments {
 
         paratoo.core.baseUrl = "http://localhost:${wiremock.port}/monitor"
         spatial.baseUrl = "http://localhost:${wiremock.port}"
+        scanFile.enabled = false
     }
     production {
         grails.logging.jul.usebridge = false

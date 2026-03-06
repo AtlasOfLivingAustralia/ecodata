@@ -1457,7 +1457,8 @@ class RecordService {
                 break
             case DWC_OCCURRENCE:
             default:
-                if (attributes && attributes.scientificName) {
+                // only add a record to occurrence table if has scientificName and occurrenceID
+                if (attributes && attributes.scientificName && attributes.occurrenceID) {
                     result[dwcClass].addAll(attributes)
                 }
                 break

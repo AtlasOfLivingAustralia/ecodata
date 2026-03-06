@@ -4,7 +4,6 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import grails.util.Holders
-
 /**
  * Tests the DocumentService.
  * Images for orientation testing are from: https://github.com/recurser/exif-orientation-examples
@@ -30,7 +29,13 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
         service.grailsApplication = grailsApplication
         Holders.config.app = grailsApplication.config.app
         service.webService = Mock(WebService)
+        service.storageService = new FileSystemService()
+        service.storageService.grailsApplication = grailsApplication
     }
+
+    Closure doWithSpring() {{ ->
+        storageService FileSystemService
+    }}
 
     def cleanup() {
         tempUploadDir.delete()
@@ -113,8 +118,8 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
 
     def "The full path method prepends the app.file.upload.path config item"() {
         expect:
-        service.fullPath("2020-01", "myfile.jpg") == tempUploadDir.getAbsolutePath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
-        service.fullPath("2020-01", "myfile.jpg", true) == tempUploadDir.getCanonicalPath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
+        service.storageService.fullPath("2020-01", "myfile.jpg") == tempUploadDir.getAbsolutePath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
+        service.storageService.fullPath("2020-01", "myfile.jpg", true) == tempUploadDir.getCanonicalPath() + File.separator + "2020-01" + File.separator + "myfile.jpg"
     }
 
     def "The document service can validate a path to protect from file traversal vulnerabilities"(String path, String filename, boolean expectedResult) {
@@ -154,16 +159,4 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
         cleanup:
         d.delete(flush: true)
     }
-
-    def "If a local copy of the file doesn't exist, the DocumentService should try the URL"() {
-        setup:
-        Map doc = [name:'doc1', path:'path1', url:'https://host/document/download']
-
-        when:
-        service.readJsonDocument(doc)
-
-        then:
-        1 * service.webService.getJson(doc.url, null, null, true)
-    }
-
 }

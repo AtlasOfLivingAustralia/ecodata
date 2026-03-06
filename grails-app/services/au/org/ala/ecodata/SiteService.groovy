@@ -353,6 +353,9 @@ class SiteService {
                 populateLocationMetadataForSite(props, fids)
             }
         }
+        else {
+            props.remove('extent') // Don't update the extent if the geometry hasn't changed
+        }
 
         // The commonService won't update externalId because it's a transient property
         if (props.externalId) {

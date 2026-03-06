@@ -76,7 +76,7 @@ class DocumentControllerIntegrationSpec extends Specification {
             savedDoc.filename.endsWith(doc.filename) // Filenames that are not unique are given a prefix.
             savedDoc.role == doc.role
             savedDoc.dynamicProperty == doc.dynamicProperty
-            def savedFile = new File(documentService.fullPath(savedDoc.filepath, savedDoc.filename))
+            def savedFile = new File(documentService.storageService.fullPath(savedDoc.filepath, savedDoc.filename))
             savedFile.exists()
 
     }

@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
 
 import grails.testing.web.interceptor.InterceptorUnitTest
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestAttributes
 import spock.lang.Specification
 
 class DocumentHostInterceptorSpec extends Specification implements InterceptorUnitTest<DocumentHostInterceptor> {
