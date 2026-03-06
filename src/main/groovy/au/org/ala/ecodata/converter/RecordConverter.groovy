@@ -234,10 +234,10 @@ class RecordConverter {
             dwcFields.datasetName = projectActivity.name
             // use licence if specified, otherwise default to CC-0
             if (projectActivity.dataSharingLicense) {
-              dwcFields.licence = projectActivity.dataSharingLicense
+              dwcFields.license = projectActivity.dataSharingLicense
             }
             else {
-              dwcFields.licence = DEFAULT_LICENCE_TYPE
+              dwcFields.license = DEFAULT_LICENCE_TYPE
             }
 
             // human observation is most common record type
@@ -277,6 +277,7 @@ class RecordConverter {
             dwcFields.eventID = activity.activityId
             dwcFields.eventDate = activity.dateCreated
             dwcFields.verbatimEventDate = activity.startDate
+            dwcFields.modified = activity.lastUpdated
         }
 
         dwcFields
