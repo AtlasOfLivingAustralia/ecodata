@@ -1,8 +1,11 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
+import au.org.ala.web.AuthService
 
 class ParatooInterceptor {
+
+    AuthService authService
 
     int order = 110 // Runs after the AuditInterceptor which sets the user in the UserService
     ParatooInterceptor() {
