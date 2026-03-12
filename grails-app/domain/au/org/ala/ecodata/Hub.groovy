@@ -12,6 +12,8 @@ class Hub implements ProcessEmbedded {
     String hubId
     /** The title for the hub - used in the banner in the nrm hub */
     String title
+    /** A brief description of the hub - used in the PWA */
+    String description
     /** The path used to access this hub (must appear as the first path after the context path) */
     String urlPath
     /** One of ala2 or nrm - defines the look of pages accessed via this hub */
@@ -20,6 +22,8 @@ class Hub implements ProcessEmbedded {
     List supportedPrograms
     /** New projects created from this hub will inherit the default program, if specified */
     String defaultProgram
+    /** Defines whether the hub should be visible in the PWA */
+    Boolean showInPWA
     /** Defines the full set of facets available for use on search pages for this hub */
     List availableFacets
     /** Defines the subset of availableFacets that should only be visible to FC_ADMINS */
@@ -94,10 +98,12 @@ class Hub implements ProcessEmbedded {
 
     static constraints = {
         urlPath unique: true
-        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1', 'bs4']
+        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1', 'bs4', 'bs5']
         title nullable:true
+        description nullable:true
         homePagePath nullable:true
         defaultProgram nullable: true
+        showInPWA nullable: true
         templateConfiguration nullable: true
         content nullable: true
         customBreadCrumbs nullable: true
