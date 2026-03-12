@@ -386,7 +386,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         selectedSite.extent.geometry.state == ["ACT"]
 
         when: "we update the site with the same geometry"
-        service.update(site, resp.siteId)
+        service.update(new HashMap(site), resp.siteId) // The update method can mutate the site map so we pass a copy
 
         then:
         0 * spatialServiceMock.intersectGeometry(_, _) // No intersection should be done as the geometry hasn't changed
@@ -407,7 +407,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
 
         when: "We modify one of the coordinates in the site"
         site.features[0].geometry.coordinates[1][0] = site.features[0].geometry.coordinates[1][0] + 0.0001 // Change the first coordinate slightly
-        service.update(site, resp.siteId)
+        service.update(new HashMap(site), resp.siteId)
 
         then: "The intersection should be done again as the geometry has changed"
         1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]

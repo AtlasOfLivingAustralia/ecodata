@@ -248,3 +248,18 @@ openapi:
 userProfile:
     userIdAttribute: "username"
 
+---
+storage:
+    type: "filesystem" # possible values S3, filesystem
+
+aws:
+    region: ap-southeast-2
+    credentials:
+#       When developing locally, you can use the AWS CLI to configure your credentials. You should login via test
+#       account and assume 'assume-ala-developer' role. Set below configs.
+#       aws.credentials.container=false
+#       aws.credentials.profile=test-ala-developer.
+        container: true
+        profile: default
+    s3:
+        bucket: ala-ecodata-test

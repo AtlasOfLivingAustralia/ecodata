@@ -8,8 +8,6 @@ import com.drew.metadata.exif.ExifIFD0Directory
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FilenameUtils
 import org.imgscalr.Scalr
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -93,7 +91,7 @@ class ImageUtils {
     /**
      * Returns the orientation tag from the image EXIF data, if available.  If no EXIF data exists,
      * this method returns 0.
-     * @param file the image file to check.
+     * @param inputStream the image file to check.
      * @return the value of the EXIF orientation tag, or 0 if no EXIF data was found.
      */
     private static int getOrientation(File file) {
