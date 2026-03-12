@@ -1,4 +1,6 @@
 import au.org.ala.ecodata.Document
+import grails.util.Holders
+
 import static au.org.ala.ecodata.Status.DELETED
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -1685,8 +1687,9 @@ if (!darwinCore.termsGroupedByClass) {
                                                     "identifier"  : identifier ?: mediaRecord.identifier,
                                                     "format"      : document?.contentType ?: mediaRecord.contentType,
                                                     "creator"     : document?.creator ?: document?.attribution ?: mediaRecord.creator,
-                                                    "licence"     : document?.licence ?: document?.license ?: mediaRecord.license,
-                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder
+                                                    "license"     : document?.licence ?: document?.license ?: mediaRecord.license,
+                                                    "rightsHolder": document?.rightsHolder ?: document?.attribution ?: mediaRecord.rightsHolder,
+                                                    "modified"    : params.recordService.toStringIsoDateTime(document?.lastUpdated)
                                             ]
                                         }
                                     }
@@ -1699,8 +1702,9 @@ if (!darwinCore.termsGroupedByClass) {
                                     "identifier",
                                     "format",
                                     "creator",
-                                    "licence",
-                                    "rightsHolder"
+                                    "license",
+                                    "rightsHolder",
+                                    "modified"
                             ]
                     ]
             ],
@@ -1721,6 +1725,14 @@ if (!darwinCore.termsGroupedByClass) {
                     ],
                     [
                             "name": "scientificName"
+                    ],
+//                    remove scientificNameID for now as ALA name matching fails to run when this field is included.
+                    [
+                            "name": "scientificNameID",
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                null
+                            }
                     ],
                     [
                             "name"     : "occurrenceStatus",
@@ -1835,7 +1847,14 @@ if (!darwinCore.termsGroupedByClass) {
                     ],
                     [
                             "name"     : "recordNumber",
-                            "namespace": "dwc"
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                String url = Holders.config.getProperty('biocollect.activity.sightingsUrl')
+                                if (url) {
+                                    return "${url}/bioActivity/index/${record.eventID}"
+                                }
+                                return null
+                            }
                     ],
                     [
                             "name"     : "reproductiveCondition",
@@ -1845,6 +1864,15 @@ if (!darwinCore.termsGroupedByClass) {
                             "name"     : "sex",
                             "namespace": "dwc"
                     ],
+                    [
+                            "name"     : "modified",
+                            "namespace": "dwc",
+                            "code": { record, params ->
+                                if (record.modified) {
+                                    return params.recordService.toStringIsoDateTime(record.modified)
+                                }
+                            }
+                    ]
             ],
             "Organism"            : [
             ],
@@ -1903,12 +1931,14 @@ if (!darwinCore.namespaces) {
             measurementDeterminedDate    : "http://rs.tdwg.org/dwc/terms/measurementDeterminedDate",
             measurementDeterminedBy      : "http://rs.tdwg.org/dwc/terms/measurementDeterminedBy",
             measurementRemarks           : "http://rs.tdwg.org/dwc/terms/measurementRemarks",
+            recordNumber                 : "http://rs.tdwg.org/dwc/terms/recordNumber",
             type                         : "http://purl.org/dc/terms/type",
             identifier                   : "http://purl.org/dc/terms/identifier",
             format                       : "http://purl.org/dc/terms/format",
             creator                      : "http://purl.org/dc/terms/creator",
             license                      : "http://purl.org/dc/terms/license",
-            rightsHolder                 : "http://purl.org/dc/terms/rightsHolder"
+            rightsHolder                 : "http://purl.org/dc/terms/rightsHolder",
+            modified                     : "http://purl.org/dc/terms/modified"
     ]
 }
 
