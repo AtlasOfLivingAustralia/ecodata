@@ -986,7 +986,7 @@ class AdminController {
             ],
             tags = "GraphQL"
     )
-    @au.ala.org.ws.security.RequireApiKey()
+    @au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
     @PreAuthorise(idType="hubId", accessLevel = "readOnly")
     def graphql() {
         forward(uri:'/graphql-spring')
