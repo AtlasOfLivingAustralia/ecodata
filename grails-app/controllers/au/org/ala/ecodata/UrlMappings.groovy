@@ -241,7 +241,7 @@ class UrlMappings {
             action = 'download'
         }
 
-        "/ws/paratoo/$apiVersion/user-projects" {
+        "/ws/paratoo/$apiVersion/user-projects/$operationType" {
             controller = 'paratoo'
             action = 'userProjects'
         }
