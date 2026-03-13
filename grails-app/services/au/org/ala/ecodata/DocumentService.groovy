@@ -598,22 +598,12 @@ class DocumentService {
     /**
      * Scan document for viruses using clamav daemon.
      */
-    boolean isDocumentInfected(InputStream fileIn) {
+    ScanResult isDocumentInfected(InputStream fileIn) {
         if(!grailsApplication.config.getProperty('scanFile.enabled', Boolean, true)) {
-            return false
+            return ScanResult.OK.INSTANCE
         }
 
         ClamavClient client = clamavClient
-        ScanResult result = client.scan(fileIn)
-        if (result instanceof ScanResult.OK) {
-            return false // No virus found
-        } else if (result instanceof ScanResult.VirusFound) {
-            Map virusesFound = ((ScanResult.VirusFound) result).getFoundViruses()
-            log.warn("Virus found during document scan: " + virusesFound)
-            return true // Virus found
-        } else {
-            log.warn("Error occurred while scanning document: " + result?.toString())
-            return true
-        }
+        client.scan(fileIn)
     }
 }
