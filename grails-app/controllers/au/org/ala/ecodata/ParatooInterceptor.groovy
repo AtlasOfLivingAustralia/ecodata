@@ -16,7 +16,7 @@ class ParatooInterceptor {
         String apiVersion = params.apiVersion ?: "v1"
         Permission operationType = null
         if (params.operationType) {
-            operationType = Permission.fromString(operationType)
+            operationType = Permission.fromString(params.operationType)
         }
         else {
             // Default to read for GET requests and write for all others
