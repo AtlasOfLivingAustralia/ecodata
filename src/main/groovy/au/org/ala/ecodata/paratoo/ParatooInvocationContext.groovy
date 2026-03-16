@@ -38,4 +38,8 @@ class ParatooInvocationContext {
         return apiVersion && apiVersion != "v1"
     }
 
+    boolean supportsClientMeta() {
+        return apiVersion && apiVersion != "v1" && operationType == Permission.WRITE
+    }
+
 }

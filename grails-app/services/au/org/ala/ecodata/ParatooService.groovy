@@ -6,6 +6,7 @@ import au.org.ala.ws.tokens.TokenService
 import grails.async.Promise
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import groovy.util.logging.Slf4j
 import javassist.NotFoundException
 
@@ -84,13 +85,11 @@ class ParatooService {
     UserService userService
     SpeciesReMatchService speciesReMatchService
 
-    private synchronized Map paratooRoleMapping
-    private synchronized Map getRoleProtocolMapping() {
-        if (paratooRoleMapping == null) {
-            String result = settingService.getSetting(PARATOO_ROLE_MAPPING_KEY)
-            paratooRoleMapping = (Map)JSON.parse(result ?: '{}')
-        }
-        paratooRoleMapping
+    @Cacheable("monitorRolesAndProtocols")
+    private Map getRoleProtocolMapping() {
+        String result = settingService.getSetting(PARATOO_ROLE_MAPPING_KEY)
+        Map paratooRoleMapping = (Map)JSON.parse(result ?: '{}')
+        return Collections.synchronizedMap(paratooRoleMapping)
     }
 
     /**
@@ -113,13 +112,21 @@ class ParatooService {
 
 
         projects.each { ParatooProject project ->
-            List projectProtocols = findProjectProtocols(project)
+            List protocolForms = findProjectProtocols(project)
             // Only return the protocols the user has write access to
             // as this is used to display protocols in the Monitor app
             // the user can complete.
-            project.protocols = projectProtocols.findAll {
+            protocolForms = protocolForms.findAll {
                 String protocolId = it.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }?.externalId
                 protocolRoleCheck(project.roles, protocolId, ctx.operationType, userId, project.id)
+            }
+            project.protocols = protocolForms.collect { ActivityForm form ->
+                Map clientMeta = null
+                if (ctx.supportsClientMeta()) {
+                    String protocolId = form.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }?.externalId
+                    clientMeta = [allowUIDataCollection: protocolRoleCheck(project.roles, protocolId, Permission.CREATE, userId, project.id)]
+                }
+                new ParatooProtocol(form, clientMeta)
             }
         }
 

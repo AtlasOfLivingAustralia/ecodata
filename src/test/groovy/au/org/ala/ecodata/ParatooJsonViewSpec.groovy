@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocol
 import grails.plugin.json.view.test.JsonRenderResult
 import grails.plugin.json.view.test.JsonViewTest
 import grails.plugin.json.view.test.TestRequestConfigurer
@@ -94,7 +95,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
     private ParatooProject buildProject(int projectIndex, int numberOfProtocols, int numberOfPlots, boolean includeProjectArea) {
         List protocols = []
         for (int i = 0; i<numberOfProtocols; i++) {
-            protocols << buildActivityForm(i+1)
+            protocols << buildParatooProtocol(i+1)
         }
         List plots = []
         for (int i=0; i<numberOfPlots; i++) {
@@ -108,8 +109,9 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", grantID:"g$projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, roles: [ParatooService.ADMIN])
     }
 
-    private ActivityForm buildActivityForm(int i) {
-        new ActivityForm(externalIds: [new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"guid-$i"), new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId:i)], name:"Protocol $i", formVersion: 1, category: "module-$i")
+    private ParatooProtocol buildParatooProtocol(int i, boolean includeClientMeta = false) {
+        ActivityForm activityForm = new ActivityForm(externalIds: [new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"guid-$i"), new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId:i)], name:"Protocol $i", formVersion: 1, category: "module-$i")
+        new ParatooProtocol(activityForm, includeClientMeta ? [allowUIDataCollection: true] : null)
     }
 
     private Site buildSite(i) {
