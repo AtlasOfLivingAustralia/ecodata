@@ -362,7 +362,7 @@ class DocumentService {
      *
      * @return The thumbnail file or null for no thumbnail
      */
-    InputStream makeThumbnail(String filepath, String filename, boolean overwrite = true) {
+    void makeThumbnail(String filepath, String filename, boolean overwrite = true) {
         InputStream originalFileInputStream = null
         String thumbnailFileName = Document.THUMBNAIL_PREFIX+filename
         if (storageService.fileExists(filepath, thumbnailFileName)) {
