@@ -367,7 +367,7 @@ class DocumentService {
         String thumbnailFileName = Document.THUMBNAIL_PREFIX+filename
         if (storageService.fileExists(filepath, thumbnailFileName)) {
             if (!overwrite) {
-                return storageService.getFile(filepath, thumbnailFileName)
+                return null
             }
             else {
                 storageService.deleteFile(filepath, thumbnailFileName)
@@ -394,9 +394,8 @@ class DocumentService {
         finally {
             tempOriginalFile.delete()
             tempThumbnailFile.delete()
+            originalFileInputStream?.close()
         }
-
-        storageService.getFile(filepath, thumbnailFileName)
     }
 
 	/**

@@ -65,22 +65,23 @@ class DocumentController {
                 response.status = 404
                 render status:404, text: 'No such id'
             } else {
-                InputStream inputStream = storageService.getFile(document.filepath, document.filename)
-                if (inputStream == null) {
-                    response.status = 404
+                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
+                    if (inputStream == null) {
+                        response.status = 404
+                        return null
+                    }
+
+                    if (params.forceDownload?.toBoolean()) {
+                        // set the content type to octet-stream to stop the browser from auto playing known types
+                        response.setContentType('application/octet-stream')
+                    } else {
+                        response.setContentType(document.contentType ?: 'application/octet-stream')
+                    }
+                    response.outputStream << inputStream
+                    response.outputStream.flush()
+
                     return null
                 }
-
-                if (params.forceDownload?.toBoolean()) {
-                    // set the content type to octet-stream to stop the browser from auto playing known types
-                    response.setContentType('application/octet-stream')
-                } else {
-                    response.setContentType(document.contentType ?: 'application/octet-stream')
-                }
-                response.outputStream << inputStream
-                response.outputStream.flush()
-
-                return null
             }
         } else {
             response.status = 400
@@ -218,19 +219,20 @@ class DocumentController {
             return null
         }
 
-        InputStream inputStream = storageService.getFile(path, filename)
-        if (inputStream == null) {
-            response.status = HttpStatus.SC_NOT_FOUND
+        try (InputStream inputStream = storageService.getFile(path, filename)) {
+            if (inputStream == null) {
+                response.status = HttpStatus.SC_NOT_FOUND
+                return null
+            }
+
+            // Probably should store the mime type in the document, however in prod the files will be served up by
+            // Apache so this doesn't have to be perfect.
+            def contentType = URLConnection.guessContentTypeFromName(filename)
+            response.setContentType(contentType?:'application/octet-stream')
+            response.outputStream << inputStream
+            response.outputStream.flush()
             return null
         }
-
-        // Probably should store the mime type in the document, however in prod the files will be served up by
-        // Apache so this doesn't have to be perfect.
-        def contentType = URLConnection.guessContentTypeFromName(filename)
-        response.setContentType(contentType?:'application/octet-stream')
-        response.outputStream << inputStream
-        response.outputStream.flush()
-        return null
     }
 
 

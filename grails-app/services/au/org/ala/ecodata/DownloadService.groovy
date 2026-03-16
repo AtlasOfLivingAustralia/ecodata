@@ -580,33 +580,23 @@ class DownloadService {
         if (zipName.length() > 200) {
             log.warn("ZIP entry path length high ({} chars): {}", zipName.length(), zipName)
         }
-        String path = "${grailsApplication.config.getProperty('app.file.upload.path')}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
-        File file = new File(path)
-        String url
 
         if (thumbnail) {
-            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+            documentService.makeThumbnail(doc.filepath, doc.filename, false)
         }
 
-        String thumbnailURL = doc.getThumbnailUrl(true)
-
-        if (file != null && file.exists()) {
-            zip.putNextEntry(new ZipEntry(zipName))
-            file.withInputStream { i -> zip << i }
-        }
-        else if (thumbnailURL) {
-            // reporting server does not hold images.
-            // download it by requesting image from BioCollect/MERIT
-            def stream = webService.getStream(thumbnailURL, true)
-            if (!(stream instanceof Map)) {
+        if (storageService.fileExists(doc.filepath, Document.THUMBNAIL_PREFIX + doc.filename)) {
+            try (def stream = storageService.getFile(doc.filepath, Document.THUMBNAIL_PREFIX + doc.filename)) {
                 zip.putNextEntry(new ZipEntry(zipName))
                 zip << stream
             }
-        } else {
+        }
+        else {
             zipName = zipName + ".notfound"
             zip.putNextEntry(new ZipEntry(zipName))
-            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
+            log.error("Document not found ${doc.filepath}/${doc.filename}")
         }
+
         documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
         zip.closeEntry()
     }

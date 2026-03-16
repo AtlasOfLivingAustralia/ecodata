@@ -285,6 +285,9 @@ class S3Service implements StorageService {
     }
 
     private static String getKey(String path, String filename) {
-        return "${path}/${filename}"
+        if (path)
+            return "${path}/${filename}"
+        else
+            return filename
     }
 }
