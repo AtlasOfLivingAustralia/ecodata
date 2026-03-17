@@ -219,6 +219,15 @@ class DocumentController {
             return null
         }
 
+        // If the request is for a thumbnail, ensure it exists before attempting to serve it up.
+        // This is because the thumbnails does not exist for all images.
+        if (documentService.isThumbnail(filename)) {
+            String originalFilename = filename.substring(Document.THUMBNAIL_PREFIX.length())
+            // Method makeThumbnail will check if the thumbnail already exists and return it if so since overwrite is set to false.
+            // Therefore, avoiding an explicit exists check here.
+            documentService.makeThumbnail(path, originalFilename, false)
+        }
+
         try (InputStream inputStream = storageService.getFile(path, filename)) {
             if (inputStream == null) {
                 response.status = HttpStatus.SC_NOT_FOUND

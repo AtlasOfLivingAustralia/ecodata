@@ -615,4 +615,13 @@ class DocumentService {
             return true
         }
     }
+
+    /**
+     * Checks if the supplied filename is a thumbnail (i.e. starts with the thumbnail prefix).
+     * @param filename
+     * @return
+     */
+    boolean isThumbnail(String filename) {
+        return filename?.startsWith(Document.THUMBNAIL_PREFIX)
+    }
 }

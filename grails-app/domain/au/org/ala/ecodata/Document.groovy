@@ -102,20 +102,14 @@ class Document {
         return urlFor(filepath, filename)
     }
 
-    def getThumbnailUrl(boolean skipExistCheck = false) {
+    def getThumbnailUrl() {
         if (isImage()) {
 
             if(isImageHostedOnPublicServer()) {
                 return identifier
             }
 
-            StorageService storageService = Holders.grailsApplication.mainContext.getBean("storageService")
-            if (skipExistCheck || storageService?.fileExists(filepath, THUMBNAIL_PREFIX + filename)) {
-                return urlFor(filepath, THUMBNAIL_PREFIX + filename)
-            }
-            else {
-                return getUrl()
-            }
+            return urlFor(filepath, THUMBNAIL_PREFIX + filename)
         }
         return ''
     }
