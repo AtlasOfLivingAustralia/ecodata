@@ -242,6 +242,14 @@ class DocumentController {
             response.outputStream.flush()
             return null
         }
+        catch (FileNotFoundException fnfe) {
+            response.status = HttpStatus.SC_NOT_FOUND
+            return null
+        }
+        catch (Exception ex) {
+            response.status = HttpStatus.SC_INTERNAL_SERVER_ERROR
+            return null
+        }
     }
 
 

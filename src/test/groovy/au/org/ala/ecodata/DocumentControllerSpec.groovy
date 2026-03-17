@@ -57,6 +57,18 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         response.status == HttpStatus.SC_OK
     }
 
+    def "The document download should return error when file not found "() {
+        setup:
+        controller.documentService = new DocumentService()
+        controller.documentService.storageService = storageService
+
+        when:
+        controller.download('test', Document.THUMBNAIL_PREFIX + "not_a_file.jpg")
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
+    }
+
     def "The download will return an error if a file traversal is detected"() {
         when:
         controller.download('../../test', tmpFile.getName())
