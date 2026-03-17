@@ -360,14 +360,14 @@ class DocumentService {
      * @param filepath the path (relative to root document storage) at which the file can be found.
      * @param filename the name of the file.
      *
-     * @return The thumbnail file or null for no thumbnail
+     * @return void
      */
     void makeThumbnail(String filepath, String filename, boolean overwrite = true) {
         InputStream originalFileInputStream = null
         String thumbnailFileName = Document.THUMBNAIL_PREFIX+filename
         if (storageService.fileExists(filepath, thumbnailFileName)) {
             if (!overwrite) {
-                return null
+                return
             }
             else {
                 storageService.deleteFile(filepath, thumbnailFileName)
@@ -379,7 +379,7 @@ class DocumentService {
             originalFileInputStream = storageService.getFile(filepath, filename)
         }
         else {
-            return null
+            return
         }
 
         File tempThumbnailFile = File.createTempFile(Document.THUMBNAIL_PREFIX, filename)
