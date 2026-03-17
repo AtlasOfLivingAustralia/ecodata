@@ -10,6 +10,7 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
@@ -355,15 +356,26 @@ class DocumentController {
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()
-            boolean isInfected = documentService.isDocumentInfected(input)
-            if (!isInfected) {
-                render text: [message: "File is clean"] as JSON, status: HttpStatus.SC_OK
+            try {
+                ScanResult result = documentService.isDocumentInfected(input)
+                if (result == ScanResult.OK.INSTANCE) {
+                    render text: [message: "File is clean"] as JSON, status: HttpStatus.SC_OK
+                    return
+                }
+                else if (result instanceof ScanResult.VirusFound) {
+                    render text: [message: "File is infected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+                    return
+                }
+            }
+            catch (Exception e) {
+                log.error("Error scanning file: ${e.message}", e)
+                render text: [message: "An error occurred while scanning file"] as JSON, status: HttpStatus.SC_INTERNAL_SERVER_ERROR
                 return
             }
-            else {
-                render text: [message: "File is infected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
-                return
+            finally {
+                input.close()
             }
+
         } else {
             render text: [message: "No file provided"] as JSON, status: HttpStatus.SC_BAD_REQUEST
             return
