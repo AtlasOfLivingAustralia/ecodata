@@ -66,22 +66,23 @@ class DocumentController {
                 response.status = 404
                 render status:404, text: 'No such id'
             } else {
-                InputStream inputStream = storageService.getFile(document.filepath, document.filename)
-                if (inputStream == null) {
-                    response.status = 404
+                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
+                    if (inputStream == null) {
+                        response.status = 404
+                        return null
+                    }
+
+                    if (params.forceDownload?.toBoolean()) {
+                        // set the content type to octet-stream to stop the browser from auto playing known types
+                        response.setContentType('application/octet-stream')
+                    } else {
+                        response.setContentType(document.contentType ?: 'application/octet-stream')
+                    }
+                    response.outputStream << inputStream
+                    response.outputStream.flush()
+
                     return null
                 }
-
-                if (params.forceDownload?.toBoolean()) {
-                    // set the content type to octet-stream to stop the browser from auto playing known types
-                    response.setContentType('application/octet-stream')
-                } else {
-                    response.setContentType(document.contentType ?: 'application/octet-stream')
-                }
-                response.outputStream << inputStream
-                response.outputStream.flush()
-
-                return null
             }
         } else {
             response.status = 400
@@ -219,19 +220,37 @@ class DocumentController {
             return null
         }
 
-        InputStream inputStream = storageService.getFile(path, filename)
-        if (inputStream == null) {
+        // If the request is for a thumbnail, ensure it exists before attempting to serve it up.
+        // This is because the thumbnails does not exist for all images.
+        if (documentService.isThumbnail(filename)) {
+            String originalFilename = filename.substring(Document.THUMBNAIL_PREFIX.length())
+            // Method makeThumbnail will check if the thumbnail already exists and return it if so since overwrite is set to false.
+            // Therefore, avoiding an explicit exists check here.
+            documentService.makeThumbnail(path, originalFilename, false)
+        }
+
+        try (InputStream inputStream = storageService.getFile(path, filename)) {
+            if (inputStream == null) {
+                response.status = HttpStatus.SC_NOT_FOUND
+                return null
+            }
+
+            // Probably should store the mime type in the document, however in prod the files will be served up by
+            // Apache so this doesn't have to be perfect.
+            def contentType = URLConnection.guessContentTypeFromName(filename)
+            response.setContentType(contentType?:'application/octet-stream')
+            response.outputStream << inputStream
+            response.outputStream.flush()
+            return null
+        }
+        catch (FileNotFoundException fnfe) {
             response.status = HttpStatus.SC_NOT_FOUND
             return null
         }
-
-        // Probably should store the mime type in the document, however in prod the files will be served up by
-        // Apache so this doesn't have to be perfect.
-        def contentType = URLConnection.guessContentTypeFromName(filename)
-        response.setContentType(contentType?:'application/octet-stream')
-        response.outputStream << inputStream
-        response.outputStream.flush()
-        return null
+        catch (Exception ex) {
+            response.status = HttpStatus.SC_INTERNAL_SERVER_ERROR
+            return null
+        }
     }
 
 

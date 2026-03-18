@@ -159,4 +159,17 @@ class DocumentServiceSpec extends MongoSpec implements ServiceUnitTest<DocumentS
         cleanup:
         d.delete(flush: true)
     }
+
+    def "isThumbnail should return true if the document is a thumbnail"() {
+        when:
+        boolean result = service.isThumbnail(filename)
+
+        then:
+        result == testValue
+
+        where:
+        testValue | filename
+        true      | "thumb_Landscape_1.jpg"
+        false     | "Landscape_1.jpg"
+    }
 }
