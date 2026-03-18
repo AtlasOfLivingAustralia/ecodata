@@ -26,6 +26,7 @@ import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.multipart.MultipartFile
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import java.text.SimpleDateFormat
 
@@ -999,13 +1000,19 @@ class AdminController {
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()
-            boolean isInfected = documentService.isDocumentInfected(input)
-            if (!isInfected) {
-                render text: [message: "File is clean"] as JSON, contentType: "application/json", status: HttpStatus.SC_OK
-                return
-            }
-            else {
-                render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+            try {
+                ScanResult result = documentService.isDocumentInfected(input)
+                if (result == ScanResult.OK.INSTANCE) {
+                    render text: [message: "File is clean"] as JSON, contentType: "application/json", status: HttpStatus.SC_OK
+                    return
+                }
+                else if (result instanceof ScanResult.VirusFound) {
+                    render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+                    return
+                }
+            } catch (Exception e) {
+                log.error("An error occurred while scanning file, message: ${e.message}", e)
+                render text: [message: "An error occurred while scanning file"] as JSON, contentType: "application/json", status: HttpStatus.SC_INTERNAL_SERVER_ERROR
                 return
             }
         } else {
