@@ -70,4 +70,12 @@ class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, D
         result.hubId == 'id'
         result.urlPath == 'test'
     }
+
+    void "hubs configured to be visible in PWA are returned"() {
+        setup:
+        new Hub(urlPath:"test1", hubId:"hub1", showInPWA:true, accessManagementOptions: [expireUsersAfterDurationInactive:"P24M", warnUsersAfterDurationInactive:"P23M"]).save(flush:true, deleteOnerror:true)
+
+        expect:
+        service.findHubsToShowInPWA().size() == 1
+    }
 }

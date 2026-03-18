@@ -138,4 +138,9 @@ class HubService implements DataBinder {
         }
     }
 
+    /** Returns a list of hubs that are configured for PWA visibility */
+    List<Hub> findHubsToShowInPWA() {
+        Hub.where { showInPWA == true }.list()
+    }
+
 }
