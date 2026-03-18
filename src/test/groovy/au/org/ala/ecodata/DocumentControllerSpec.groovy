@@ -11,6 +11,7 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
     StorageService storageService = new FileSystemService()
 
     File tmpFile
+    File tmpImageFile
 
     def setup() {
         controller.documentService = documentService
@@ -19,10 +20,19 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         File tmpUploadDir = new File(tempDir, "test")
         tmpUploadDir.mkdir()
         tmpFile = File.createTempFile("tmp", ".pdf",  tmpUploadDir)
+        tmpImageFile = new File(tmpUploadDir, "Landscape_1.jpg")
+        tmpImageFile.createNewFile()
+        FileOutputStream outputStream = new FileOutputStream(tmpImageFile)
+        outputStream << fileAsStream("Landscape_1.jpg")
+        outputStream.close()
 
         grailsApplication.config.app = [file: [upload: [path: tempDir.getAbsolutePath()]]]
         controller.grailsApplication = grailsApplication
         storageService.grailsApplication = grailsApplication
+    }
+
+    private InputStream fileAsStream(String filename) {
+        new File("src/test/resources/images/"+filename).newInputStream()
     }
 
     def "The document service can download a file"() {
@@ -32,6 +42,31 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
 
         then:
         response.contentType == "application/pdf"
+    }
+
+    def "The document can create thumbnail on request"() {
+        setup:
+        controller.documentService = new DocumentService()
+        controller.documentService.storageService = storageService
+
+        when:
+        controller.download('test', Document.THUMBNAIL_PREFIX + tmpImageFile.getName())
+
+        then:
+        response.contentType == "image/jpeg"
+        response.status == HttpStatus.SC_OK
+    }
+
+    def "The document download should return error when file not found "() {
+        setup:
+        controller.documentService = new DocumentService()
+        controller.documentService.storageService = storageService
+
+        when:
+        controller.download('test', Document.THUMBNAIL_PREFIX + "not_a_file.jpg")
+
+        then:
+        response.status == HttpStatus.SC_NOT_FOUND
     }
 
     def "The download will return an error if a file traversal is detected"() {

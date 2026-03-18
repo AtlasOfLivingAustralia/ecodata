@@ -263,3 +263,5 @@ aws:
         profile: default
     s3:
         bucket: ala-ecodata-test
+        maxConnections: 50
+        connectionAcquisitionTimeout: 10
