@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import grails.testing.web.interceptor.InterceptorUnitTest
 import spock.lang.Specification
+import xyz.capybara.clamav.ScanFailureException
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 class FileScanInterceptorSpec extends Specification implements InterceptorUnitTest<FileScanInterceptor> {
     def documentService
@@ -24,7 +26,7 @@ class FileScanInterceptorSpec extends Specification implements InterceptorUnitTe
         }
 
         then:
-        1 * documentService.isDocumentInfected(_ as InputStream) >> false
+        1 * documentService.isDocumentInfected(_ as InputStream) >> ScanResult.OK.INSTANCE
         result == []
         response.status == 200
     }
@@ -43,7 +45,7 @@ class FileScanInterceptorSpec extends Specification implements InterceptorUnitTe
         }
 
         then:
-        1 * documentService.isDocumentInfected(_ as InputStream) >> true
+        1 * documentService.isDocumentInfected(_ as InputStream) >> new ScanResult.VirusFound(["infected.text": ["EICAR-Test-File"]])
         response.status == 422
         result == null
     }
@@ -69,9 +71,30 @@ class FileScanInterceptorSpec extends Specification implements InterceptorUnitTe
         }
 
         then:
-        1 * documentService.isDocumentInfected(cleanFile.inputStream) >> false
-        1 * documentService.isDocumentInfected(infectedFile.inputStream) >> true
+        1 * documentService.isDocumentInfected(cleanFile.inputStream) >> ScanResult.OK.INSTANCE
+        1 * documentService.isDocumentInfected(infectedFile.inputStream) >> new ScanResult.VirusFound(["infected.txt": ["EICAR-Test-File"]])
         response.status == 422
+        result == null
+    }
+
+    void "interceptor should return internal server error if an exception is encountered"() {
+        given:
+        def controller = (DocumentationController) mockController(DocumentationController)
+        def cleanFile = Mock(org.springframework.web.multipart.MultipartFile)
+        cleanFile.name >> "clean"
+        cleanFile.originalFilename >> "clean.txt"
+        cleanFile.inputStream >> new ByteArrayInputStream("clean file content".bytes)
+        request.getFileNames() >> ['clean.txt'].iterator()
+        request.addFile(cleanFile)
+
+        when:
+        def result = withInterceptors(controller: DocumentationController) {
+            controller.getProjectSites()
+        }
+
+        then:
+        1 * documentService.isDocumentInfected(cleanFile.inputStream) >> { throw new ScanFailureException("Scan failed") }
+        response.status == 500
         result == null
     }
 }

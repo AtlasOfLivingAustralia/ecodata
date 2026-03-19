@@ -2,17 +2,18 @@ package au.org.ala.ecodata
 
 import grails.core.GrailsApplication
 import groovy.util.logging.Slf4j
-import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.sync.RequestBody
+import software.amazon.awssdk.http.apache.ApacheHttpClient
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.S3ClientBuilder
 import software.amazon.awssdk.services.s3.model.*
+
+import javax.annotation.PostConstruct
+import java.time.Duration
 
 @Slf4j
 class S3Service implements StorageService {
@@ -24,6 +25,8 @@ class S3Service implements StorageService {
     String profileName
     String region
     boolean containerCredentials
+    Integer maxConnections
+    Integer  connectionAcquisitionTimeout
 
     @PostConstruct
     void init() {
@@ -34,12 +37,20 @@ class S3Service implements StorageService {
         profileName = config.getProperty('aws.credentials.profile', String)
         bucketName = config.getProperty('aws.s3.bucket', String)
         baseUrl = config.getProperty('aws.s3.baseUrl', String)
+        maxConnections = config.getProperty('aws.s3.maxConnections', Integer)
+        connectionAcquisitionTimeout = config.getProperty('aws.s3.connectionAcquisitionTimeout', Integer)
     }
 
     S3Client getS3Client() {
         if (!client && !!profileName && !!region) {
             S3ClientBuilder clientBuilder = S3Client.builder()
                     .region(Region.of(region))
+                    .httpClientBuilder(
+                        ApacheHttpClient.builder()
+                            .maxConnections(maxConnections)
+                            .connectionAcquisitionTimeout(Duration.ofSeconds(connectionAcquisitionTimeout))
+                    )
+
             if (containerCredentials) {
                 log.info("Using container credentials for S3 client")
                 clientBuilder.credentialsProvider(DefaultCredentialsProvider.create())
@@ -285,6 +296,9 @@ class S3Service implements StorageService {
     }
 
     private static String getKey(String path, String filename) {
-        return "${path}/${filename}"
+        if (path)
+            return "${path}/${filename}"
+        else
+            return filename
     }
 }

@@ -10,6 +10,7 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
@@ -65,22 +66,23 @@ class DocumentController {
                 response.status = 404
                 render status:404, text: 'No such id'
             } else {
-                InputStream inputStream = storageService.getFile(document.filepath, document.filename)
-                if (inputStream == null) {
-                    response.status = 404
+                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
+                    if (inputStream == null) {
+                        response.status = 404
+                        return null
+                    }
+
+                    if (params.forceDownload?.toBoolean()) {
+                        // set the content type to octet-stream to stop the browser from auto playing known types
+                        response.setContentType('application/octet-stream')
+                    } else {
+                        response.setContentType(document.contentType ?: 'application/octet-stream')
+                    }
+                    response.outputStream << inputStream
+                    response.outputStream.flush()
+
                     return null
                 }
-
-                if (params.forceDownload?.toBoolean()) {
-                    // set the content type to octet-stream to stop the browser from auto playing known types
-                    response.setContentType('application/octet-stream')
-                } else {
-                    response.setContentType(document.contentType ?: 'application/octet-stream')
-                }
-                response.outputStream << inputStream
-                response.outputStream.flush()
-
-                return null
             }
         } else {
             response.status = 400
@@ -218,19 +220,37 @@ class DocumentController {
             return null
         }
 
-        InputStream inputStream = storageService.getFile(path, filename)
-        if (inputStream == null) {
+        // If the request is for a thumbnail, ensure it exists before attempting to serve it up.
+        // This is because the thumbnails does not exist for all images.
+        if (documentService.isThumbnail(filename)) {
+            String originalFilename = filename.substring(Document.THUMBNAIL_PREFIX.length())
+            // Method makeThumbnail will check if the thumbnail already exists and return it if so since overwrite is set to false.
+            // Therefore, avoiding an explicit exists check here.
+            documentService.makeThumbnail(path, originalFilename, false)
+        }
+
+        try (InputStream inputStream = storageService.getFile(path, filename)) {
+            if (inputStream == null) {
+                response.status = HttpStatus.SC_NOT_FOUND
+                return null
+            }
+
+            // Probably should store the mime type in the document, however in prod the files will be served up by
+            // Apache so this doesn't have to be perfect.
+            def contentType = URLConnection.guessContentTypeFromName(filename)
+            response.setContentType(contentType?:'application/octet-stream')
+            response.outputStream << inputStream
+            response.outputStream.flush()
+            return null
+        }
+        catch (FileNotFoundException fnfe) {
             response.status = HttpStatus.SC_NOT_FOUND
             return null
         }
-
-        // Probably should store the mime type in the document, however in prod the files will be served up by
-        // Apache so this doesn't have to be perfect.
-        def contentType = URLConnection.guessContentTypeFromName(filename)
-        response.setContentType(contentType?:'application/octet-stream')
-        response.outputStream << inputStream
-        response.outputStream.flush()
-        return null
+        catch (Exception ex) {
+            response.status = HttpStatus.SC_INTERNAL_SERVER_ERROR
+            return null
+        }
     }
 
 
@@ -355,15 +375,26 @@ class DocumentController {
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()
-            boolean isInfected = documentService.isDocumentInfected(input)
-            if (!isInfected) {
-                render text: [message: "File is clean"] as JSON, status: HttpStatus.SC_OK
+            try {
+                ScanResult result = documentService.isDocumentInfected(input)
+                if (result == ScanResult.OK.INSTANCE) {
+                    render text: [message: "File is clean"] as JSON, status: HttpStatus.SC_OK
+                    return
+                }
+                else if (result instanceof ScanResult.VirusFound) {
+                    render text: [message: "File is infected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+                    return
+                }
+            }
+            catch (Exception e) {
+                log.error("Error scanning file: ${e.message}", e)
+                render text: [message: "An error occurred while scanning file"] as JSON, status: HttpStatus.SC_INTERNAL_SERVER_ERROR
                 return
             }
-            else {
-                render text: [message: "File is infected"] as JSON, status: HttpStatus.SC_UNPROCESSABLE_ENTITY
-                return
+            finally {
+                input.close()
             }
+
         } else {
             render text: [message: "No file provided"] as JSON, status: HttpStatus.SC_BAD_REQUEST
             return
