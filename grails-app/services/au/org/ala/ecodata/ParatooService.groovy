@@ -172,23 +172,14 @@ class ParatooService {
     }
 
     private List<ParatooProject> findUserProjects(String userId) {
-        List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, Status.DELETED)
+        List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqualAndAccessLevelNotEqual(userId, Project.class.name, Status.DELETED, AccessLevel.starred)
 
 
         // If the permission has been set as a favourite then delegate to the Hub permission.
         Map projectAccessLevels = [:]
         permissions?.each { UserPermission permission ->
             String projectId = permission.entityId
-            // Don't override an existing permission with a starred permission
-            if (permission.accessLevel == AccessLevel.starred) {
-                if (!projectAccessLevels[projectId]) {
-                    permission = permissionService.findParentPermission(permission)
-                    projectAccessLevels[projectId] = permission?.accessLevel
-                }
-            } else {
-                // Update the map of projectId to accessLevel
-                projectAccessLevels[projectId] = permission.accessLevel
-            }
+            projectAccessLevels[projectId] = permission.accessLevel
         }
 
         List projects = Project.findAllByProjectIdInListAndStatus(new ArrayList(projectAccessLevels.keySet()), Status.ACTIVE)
@@ -484,7 +475,7 @@ class ParatooService {
     }
 
     boolean protocolCheck(String userId, String projectId, String protocolId, Permission operationType) {
-        UserPermission permission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqual(userId, projectId, Project.class.name, Status.DELETED)
+        UserPermission permission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqualAndAccessLevelNotEqual(userId, projectId, Project.class.name, Status.DELETED, AccessLevel.starred)
         if (!permission) {
             log.warn("User ${userId} has no permissions for project ${projectId}")
             return false

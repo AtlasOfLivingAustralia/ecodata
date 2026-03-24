@@ -116,28 +116,6 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    void "Starred projects won't be included unless the user has a hub permission"() {
-
-        setup:
-        UserPermission userPermission = UserPermission.findByUserId(userId)
-        userPermission.accessLevel = AccessLevel.starred
-        userPermission.save(flush: true, failOnError: true)
-
-        when:
-        List<ParatooProject> projects = service.userProjects()
-
-        then:
-        projects.size() == 0
-
-        when: "The user has the MERIT grant manager role"
-        UserPermission meritGrantManager = new UserPermission(userId: userId, entityId: 'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel: AccessLevel.caseManager)
-        meritGrantManager.save(flush: true, failOnError: true)
-        projects = service.userProjects()
-
-        then:
-        projects.size() == 1
-    }
-
     void "If the user has starred a project and also has a role, the role will be used"() {
 
         setup:
