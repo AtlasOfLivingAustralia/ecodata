@@ -81,8 +81,8 @@ class ParatooController {
     static responseFormats = ['json']
     static allowedMethods = [
             userProjects       : 'GET',
-            protocolReadCheck  : 'GET',
-            protocolWriteCheck : 'GET',
+            hasReadAccess      : 'GET',
+            hasWriteAccess     : 'GET',
             validateToken      : 'POST',
             mintCollectionId   : 'POST',
             submitCollection   : 'POST',

@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.web.AuthService
+import org.apache.http.HttpStatus
 
 class ParatooInterceptor {
 
@@ -17,6 +18,11 @@ class ParatooInterceptor {
         Permission operationType = null
         if (params.operationType) {
             operationType = Permission.fromString(params.operationType)
+            if (!operationType) {
+                log.warn "Invalid operationType ${params.operationType} specified in request"
+                response.status = HttpStatus.SC_BAD_REQUEST
+                return false
+            }
         }
         else {
             // Default to read for GET requests and write for all others

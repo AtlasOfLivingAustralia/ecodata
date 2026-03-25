@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.plugins.openapi.Path
@@ -898,14 +899,20 @@ class AdminController {
         }
 
         ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
-        List<ParatooProject> projects = paratooService.userProjects(userId, Permission.WRITE)
-        ParatooProject project = projects.find {it.project.projectId == projectId }
-        if (project) {
-            paratooService.submitCollection(collection, project, userId)
-            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+        ParatooInvocationContext context = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion:"v2")
+        try {
+            ParatooInvocationContext.setCurrent(context)
+            List<ParatooProject> projects = paratooService.userProjects()
+            ParatooProject project = projects.find { it.project.projectId == projectId }
+            if (project) {
+                paratooService.submitCollection(collection, project, userId)
+                render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+            } else {
+                render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+            }
         }
-        else {
-            render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        finally {
+            ParatooInvocationContext.removeCurrent()
         }
     }
 

@@ -86,7 +86,7 @@ class ParatooService {
     SpeciesReMatchService speciesReMatchService
 
     @Cacheable("monitorRolesAndProtocols")
-    private Map getRoleProtocolMapping() {
+    Map getRoleProtocolMapping() {
         String result = settingService.getSetting(PARATOO_ROLE_MAPPING_KEY)
         Map paratooRoleMapping = (Map)JSON.parse(result ?: '{}')
         return Collections.synchronizedMap(paratooRoleMapping)
@@ -113,9 +113,9 @@ class ParatooService {
 
         projects.each { ParatooProject project ->
             List protocolForms = findProjectProtocols(project)
-            // Only return the protocols the user has write access to
-            // as this is used to display protocols in the Monitor app
-            // the user can complete.
+            // Filter protocols based on the requested operationType from the ParatooInvocationContext
+            // (e.g. READ, WRITE), as this is used to display protocols in the Monitor app
+            // that the user can perform that operation on.
             protocolForms = protocolForms.findAll {
                 String protocolId = it.externalIds.find { it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID }?.externalId
                 protocolRoleCheck(project.roles, protocolId, ctx.operationType, userId, project.id)

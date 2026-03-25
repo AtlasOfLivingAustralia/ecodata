@@ -1,6 +1,3 @@
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.ExternalId
-import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProtocol
 
 model {

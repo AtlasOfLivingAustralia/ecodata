@@ -69,6 +69,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         ParatooInvocationContext.setCurrent(ctx)
     }
 
+    def cleanupSpec() {
+        ParatooInvocationContext.removeCurrent()
+    }
+
     private Map readSurveyData(String name) {
         URL url = getClass().getResource("/paratoo/${name}.json")
         new JsonSlurper().parse(url)
@@ -113,6 +117,23 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         and:
         1 * siteService.geometryAsGeoJson({ it.siteId == 's1' }) >> DUMMY_POLYGON
+
+    }
+
+    void "The service will include clientMeta in protocols for a write operation, but not a read"() {
+
+        when:
+        List<ParatooProject> projects = service.userProjects()
+
+        then:
+        projects[0].protocols*.clientMeta == [[allowUIDataCollection:true], [allowUIDataCollection:true], [allowUIDataCollection:true], [allowUIDataCollection:true]]
+
+        when:
+        ParatooInvocationContext.getCurrent().operationType = Permission.READ
+        projects = service.userProjects()
+
+        then:
+        projects[0].protocols*.clientMeta == [null, null, null, null]
 
     }
 
