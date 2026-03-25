@@ -21,14 +21,11 @@ import io.swagger.v3.oas.annotations.servers.Server
 import io.swagger.v3.oas.annotations.servers.ServerVariable
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
-import org.springframework.web.bind.WebDataBinder
-import org.springframework.web.bind.annotation.InitBinder
 
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
 import javax.ws.rs.Path
-import java.beans.PropertyEditorSupport
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j
@@ -113,7 +110,7 @@ class ParatooController {
             summary = "Gets all projects for an authenticated user",
             description = "Gets all projects that a user is assigned to",
             parameters = [
-                    @Parameter(name = "operationType", description = "The type of operation the user is trying to perform. This is used to determine the roles that are returned for the user. If not provided, defaults to 'write' which means the determiner role will be removed from the response as this role is only relevant for read operations.", required = false, in = ParameterIn.PATH, schema = @Schema(type = "string", allowableValues = ["read", "write"]))
+                    @Parameter(name = "operationType", description = "The type of operation the user is trying to perform. This is used to determine the roles that are returned for the user.",  required = false, in = ParameterIn.PATH, schema = @Schema(type = "string", allowableValues = ["read", "write"]))
             ],
             responses = [
                     @ApiResponse(responseCode = "200", description = "Projects assigned to the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ParatooProject.class)))),
@@ -425,8 +422,7 @@ class ParatooController {
 
     private def addOrUpdatePlotSelection(ParatooPlotSelection plotSelection) {
 
-        String userId = userService.currentUserDetails.userId
-        Map result = paratooService.addOrUpdatePlotSelections(userId, plotSelection.data)
+        Map result = paratooService.addOrUpdatePlotSelections(plotSelection.data)
 
         if (result.error) {
             respond([message: result.error], status: HttpStatus.SC_INTERNAL_SERVER_ERROR)

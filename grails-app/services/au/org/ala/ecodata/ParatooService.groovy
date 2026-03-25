@@ -969,7 +969,7 @@ class ParatooService {
         response?.resp
     }
 
-    Map addOrUpdatePlotSelections(String userId, ParatooPlotSelectionData plotSelectionData) {
+    Map addOrUpdatePlotSelections(ParatooPlotSelectionData plotSelectionData) {
 
         List projects = userProjects()
         if (!projects) {

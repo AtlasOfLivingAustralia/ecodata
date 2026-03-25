@@ -269,10 +269,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
 
-        String userId = 'u1'
-
         when:
-        service.addOrUpdatePlotSelections(userId, new ParatooPlotSelectionData(data))
+        service.addOrUpdatePlotSelections(new ParatooPlotSelectionData(data))
 
         then:
         1 * siteService.create(expected)
