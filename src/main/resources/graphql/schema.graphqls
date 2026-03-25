@@ -40,10 +40,7 @@ type Query {
         query: String
         facetFilters: [String]
 
-        page: Int,
-        max: Int,
-        sort: String,
-        order: String
+        pagination: Pagination
 
     ): MeritProjects
 
@@ -51,6 +48,21 @@ type Query {
 
 type MeritProjects {
     results: [MeritProject]
+    totalCount: Int
+}
+
+type Sites {
+    results: [Site]
+    totalCount: Int
+}
+
+type Reports {
+    results: [Report]
+    totalCount: Int
+}
+
+type Documents {
+    results: [Document]
     totalCount: Int
 }
 
@@ -268,8 +280,8 @@ interface Project {
     description: String
     projectId: UUID
     hubId: UUID
-    sites: [Site]
-    documents: [Document]
+    sites(pagination:Pagination): Sites
+    documents(pagination:Pagination): Documents
 }
 
 type MeritProject implements Project {
@@ -300,11 +312,9 @@ type MeritProject implements Project {
     "Unique identifier of a MERIT project"
     projectId: UUID
     "Has reports"
-    reports: [Report]
-
-    sites: [Site]
-
-    documents: [Document]
+    reports(pagination: Pagination): Reports
+    sites(pagination: Pagination): Sites
+    documents(pagination: Pagination): Documents
     dataSetSummaries: [DataSetSummary]
     deliveredAgainstTargets: [DeliveredAgainstTarget]
 
@@ -546,6 +556,13 @@ input ReportQuery {
 input DateRange {
     from: Date
     to: Date
+}
+
+input Pagination {
+    page: Int
+    max: Int
+    sort: String
+    order: AscDesc
 }
 
 
