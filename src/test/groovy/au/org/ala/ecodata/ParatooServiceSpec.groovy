@@ -65,6 +65,12 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         String roleMappingSetting = new File('src/test/resources/paratoo/roleMapping.json').text
         settingService.getSetting(ParatooService.PARATOO_ROLE_MAPPING_KEY) >> roleMappingSetting
 
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion: "v2")
+        ParatooInvocationContext.setCurrent(ctx)
+    }
+
+    def cleanupSpec() {
+        ParatooInvocationContext.removeCurrent()
     }
 
     private Map readSurveyData(String name) {
@@ -97,7 +103,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "The service can map user projects into a format useful for the paratoo API"() {
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         projects.size() == 1
@@ -114,26 +120,21 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
     }
 
-    void "Starred projects won't be included unless the user has a hub permission"() {
-
-        setup:
-        UserPermission userPermission = UserPermission.findByUserId(userId)
-        userPermission.accessLevel = AccessLevel.starred
-        userPermission.save(flush: true, failOnError: true)
+    void "The service will include clientMeta in protocols for a write operation, but not a read"() {
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
-        projects.size() == 0
+        projects[0].protocols*.clientMeta == [[allowUIDataCollection:true], [allowUIDataCollection:true], [allowUIDataCollection:true], [allowUIDataCollection:true]]
 
-        when: "The user has the MERIT grant manager role"
-        UserPermission meritGrantManager = new UserPermission(userId: userId, entityId: 'merit', entityType: 'au.org.ala.ecodata.Hub', accessLevel: AccessLevel.caseManager)
-        meritGrantManager.save(flush: true, failOnError: true)
-        projects = service.userProjects(userId)
+        when:
+        ParatooInvocationContext.getCurrent().operationType = Permission.READ
+        projects = service.userProjects()
 
         then:
-        projects.size() == 1
+        projects[0].protocols*.clientMeta == [null, null, null, null]
+
     }
 
     void "If the user has starred a project and also has a role, the role will be used"() {
@@ -143,7 +144,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         userPermission.save(flush: true, failOnError: true)
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         projects.size() == 1
@@ -154,7 +155,7 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     void "userProjects can convert a Feature or MultiPolygon typed project extent to a Polygon to support the use of known shape selection in MERIT (e.g. a NRM region)"() {
 
         when:
-        List<ParatooProject> projects = service.userProjects(userId)
+        List<ParatooProject> projects = service.userProjects()
 
         then:
         1 * siteService.geometryAsGeoJson(_) >> DUMMY_MULTI_POLYGON
@@ -268,10 +269,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         Map expected = ['name': 'CTMAUA2222', 'description': 'CTMAUA2222', publicationStatus: 'published', 'externalIds': [new ExternalId(externalId: 'lmpisy5p9g896lad4ut', idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID)], 'notes': 'Test', 'extent': ['geometry': ['type': 'Point', 'coordinates': [149.0651439, -35.2592424], 'decimalLatitude': -35.2592424, 'decimalLongitude': 149.0651439], 'source': 'point'], 'projects': [], 'type': 'surveyArea']
 
-        String userId = 'u1'
-
         when:
-        service.addOrUpdatePlotSelections(userId, new ParatooPlotSelectionData(data))
+        service.addOrUpdatePlotSelections(new ParatooPlotSelectionData(data))
 
         then:
         1 * siteService.create(expected)
@@ -1627,8 +1626,8 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         when:
         UserPermission up = new UserPermission(userId: userId, accessLevel: accessLevel, entityId: projectId, entityType: Project.class.name)
         up.save(flush:true, failOnError: true)
-        boolean actualCanRead = service.protocolReadCheck(userId, 'p1', protocolId)
-        boolean actualCanWrite = service.protocolWriteCheck(userId, 'p1', protocolId)
+        boolean actualCanRead = service.protocolCheck(userId, 'p1', protocolId, Permission.READ)
+        boolean actualCanWrite = service.protocolCheck(userId, 'p1', protocolId, Permission.WRITE)
 
         then:
         actualCanRead == canRead

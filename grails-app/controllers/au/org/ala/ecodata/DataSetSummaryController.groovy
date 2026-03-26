@@ -87,7 +87,7 @@ class DataSetSummaryController {
         if (project && dataSet) {
             ParatooCollectionId paratooCollectionId = ParatooCollectionId.fromMap(dataSet.surveyId)
             String protocolId = paratooCollectionId.getProtocolId()
-            if (!protocolId || !paratooService.protocolWriteCheck(userId, projectId, protocolId)) {
+            if (!protocolId || !paratooService.protocolCheck(userId, projectId, protocolId, Permission.WRITE)) {
                 render status: HttpStatus.SC_UNAUTHORIZED
                 return
             }
