@@ -2,15 +2,18 @@ package au.org.ala.ecodata.graphql.controller
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.input.Pagination
 import au.org.ala.ecodata.graphql.input.SearchMeritProjects
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import au.org.ala.ecodata.reporting.GroupedResult
 import grails.compiler.GrailsCompileStatic
+import grails.gorm.PagedResultList
 import grails.web.databinding.DataBinder
 import graphql.GraphQLContext
 import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingFieldSelectionSet
+import groovy.transform.CompileDynamic
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
@@ -102,12 +105,12 @@ class ProjectQueryController implements DataBinder {
 
 
     @SchemaMapping(typeName = "MeritProject", field = "reports")
-    DataFetcherResult<List<Report>> reports(Project project, DataFetchingFieldSelectionSet selectionSet) {
+    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Pagination pagination) {
         // Create a new local context and store the author value
         GraphQLContext localContext = GraphQLContext.getDefault()
                 .put("project", project);
 
-        if (selectionSet.contains("deliveredAgainstTargets")) {
+        if (selectionSet.contains("results/deliveredAgainstTargets")) {
             Map<String, List> deliveredByActivityId = [:]
             List<String> scoreIds = project.outputTargets?.collect {it.scoreId}
             if (scoreIds) {
@@ -122,18 +125,28 @@ class ProjectQueryController implements DataBinder {
 
         }
 
-        DataFetcherResult.Builder<List<Report>> resultBuilder = DataFetcherResult.newResult()
+        DataFetcherResult.Builder<Map> resultBuilder = DataFetcherResult.newResult()
 
-        List<Report> resultList = (List<Report>)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
+        Map paginationParams = pagination ? pagination.properties : new Pagination().properties
+        PagedResultList resultList = (PagedResultList)reportingService.search(projectId:project.projectId, paginationParams)
+        Map result = [results:resultList, totalCount: resultList.totalCount]
         return resultBuilder
-                .data(resultList)
+                .data(result)
                 .localContext(localContext)
                 .build()
+
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "documents")
-    List<Document> documents(Project project) {
-        Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'desc'])
+    @CompileDynamic
+    Map documents(Project project, @Argument Pagination pagination) {
+
+        Map paginationParams = Pagination.asMap(pagination)
+        PagedResultList documents = Document.createCriteria().list(paginationParams) {
+            eq("projectId", project.projectId)
+            ne("status", Status.DELETED)
+        }
+        [totalCount: documents.totalCount, results: documents]
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "program")
@@ -154,10 +167,14 @@ class ProjectQueryController implements DataBinder {
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "sites")
-    List<Site> sites(Project project) {
-
-        Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
-
+    @CompileDynamic
+    Map sites(Project project, @Argument Pagination pagination) {
+        Map paginationParams = Pagination.asMap(pagination)
+        PagedResultList sites = Site.createCriteria().list(paginationParams) {
+            eq("projects", project.projectId)
+            ne("status", Status.DELETED)
+        }
+        [totalCount:sites.totalCount, results: sites]
     }
 
     @SchemaMapping(typeName = "Site", field = "geoJson")

@@ -18,32 +18,46 @@ directive @deprecated(
 
 
 type Query {
+    "Returns a MERIT project identified by the projectId"
     meritProject(projectId: String!): MeritProject
 
+    "Searches for and returns MERIT projects based on a set of criteria based around the MERIT Project Explorer.  Most critera accept either a single value or a list.  If a list is supplied, any project matching one of the list values will be returned.  If multiple criteria are supplied, any returned projects must match all of the supplied criteria"
     searchMeritProjects(
 
+        "The projectIds to search for.  The projectId field is a GUID assigned by the system when the project is created"
         projectId: [UUID],
+        "The MERIT Project ID (historically also called the grant ID) is the internal code assigned to projects by the user when the project is created.  Prior to 2018, the MERIT Project ID is not unique, projects contracted under a devolved grant arrangement can share the same MERIT Project ID"
         meritProjectID: [String]
+        "The GUID of the program the Project is funded by/contracted under.  Note this value can refer to a top level program or sub-program, unlike the program and subProgram criteria below"
         programId: [UUID]
+        "Specifies the name of the top level program (e.g National Landcare Program) to find projects under.  This value behaves the same as the Program facet in the Project Explorer"
         program:[String]
+        "Specifies the name of the sub-program (e.g RASL - Recovery Actions for Species and Landscapes) to find projects under.  This value behaves the same as the Sub Program facet in the Project Explorer"
         subProgram: [String]
+        "The GUID of the Management Unit the program is in.  Not all MERIT projects fall into a Management Unit"
         managementUnitId: [UUID]
+        "The name of the Management Unit the program is in (e.g. ACT).  Not all MERIT projects fall into a Management Unit"
         managementUnit: [String]
+        "The GUID of an organisation associated with the project.  Projects can be associated with one or more organisations.  This criteria behaves the same as the Organisation facet of the Project Explorer"
         organisationId: [UUID]
+        "The name of an organisation associated with the project.  Projects can be associated with one or more organisations.  This criteria behaves the same as the Organisation facet of the Project Explorer"
         organisation: [String]
+        "Filters projects by their current status (e.g. APPLICATION , ACTIVE)"
         status: [Status]
-
+        "Specifies a range of values which the project start date must fall into"
         startDate: DateRange
+        "Specifies a range of values which the project end date must fall into"
         endDate: DateRange
+        "Species a range of values the project last updated date must fall into.  Different entities in MERIT (Project, Site, Report, Activity) have different last updated dates.   This field will always include the project last updated date, if the selection set includes reports, the report (and any associated data) will be included and if the selection set includes sites the site last updated date will also be checked"
         lastUpdated: DateRange
 
+        "A lucene query string to use to filter the results.  This field behaves the same as the MERIT search field"
         query: String
+        "This criteria accepts a list of facets in the form name:value to use to filter the project.  The name is best found by using the Project Explorer facet and examining the URL for the fq parameter"
         facetFilters: [String]
 
-        page: Int,
-        max: Int,
-        sort: String,
-        order: String
+        "Used to page through the results of a large project query"
+        pagination: Pagination
 
     ): MeritProjects
 
@@ -51,6 +65,21 @@ type Query {
 
 type MeritProjects {
     results: [MeritProject]
+    totalCount: Int
+}
+
+type Sites {
+    results: [Site]
+    totalCount: Int
+}
+
+type Reports {
+    results: [Report]
+    totalCount: Int
+}
+
+type Documents {
+    results: [Document]
     totalCount: Int
 }
 
@@ -268,8 +297,8 @@ interface Project {
     description: String
     projectId: UUID
     hubId: UUID
-    sites: [Site]
-    documents: [Document]
+    sites(pagination:Pagination): Sites
+    documents(pagination:Pagination): Documents
 }
 
 type MeritProject implements Project {
@@ -300,11 +329,9 @@ type MeritProject implements Project {
     "Unique identifier of a MERIT project"
     projectId: UUID
     "Has reports"
-    reports: [Report]
-
-    sites: [Site]
-
-    documents: [Document]
+    reports(pagination: Pagination): Reports
+    sites(pagination: Pagination): Sites
+    documents(pagination: Pagination): Documents
     dataSetSummaries: [DataSetSummary]
     deliveredAgainstTargets: [DeliveredAgainstTarget]
 
@@ -553,6 +580,13 @@ input ReportQuery {
 input DateRange {
     from: Date
     to: Date
+}
+
+input Pagination {
+    offset: Int
+    max: Int
+    sort: String
+    order: AscDesc
 }
 
 

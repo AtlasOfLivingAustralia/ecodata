@@ -39,11 +39,7 @@ class SearchMeritProjects implements Validateable {
     String query = "*:*"
     List<String> facetFilters
 
-    // Pagination options
-    int max = 10
-    int page = 1
-    String sort = "dateCreated"
-    String order = "desc"
+    Pagination pagination
 
     private DataFetchingEnvironment environment
 
@@ -60,24 +56,9 @@ class SearchMeritProjects implements Validateable {
 
         params.fq = buildFacetFilters()
 
-        params.putAll(getSortAndPagingParams())
+        params.putAll(Pagination.asMap(pagination))
         params
     }
-
-    final int MAX_PAGE_SIZE = 50
-
-    private Map getSortAndPagingParams() {
-        Map params = [:]
-        int max = Math.min(max, MAX_PAGE_SIZE)
-        params["max"] = max
-        int page = Math.max(1, page)
-        params["offset"] = max*(page-1)
-
-        params["sort"] = sort
-        params["order"] = order
-        params
-    }
-
 
     List buildFacetFilters() {
         List filters = new ArrayList(facetFilters?:[])
