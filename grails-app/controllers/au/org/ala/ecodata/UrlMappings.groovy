@@ -252,21 +252,15 @@ class UrlMappings {
             action = 'userProjects'
         }
 
-        "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/read" {
+        "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/$operationType" {
             controller = 'paratoo'
             action = 'hasReadAccess'
-            operationType = 'read'
         }
         "/ws/paratoo/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
             action = 'hasReadAccess'
         }
 
-        "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/write" {
-            controller = 'paratoo'
-            action = 'hasWriteAccess'
-            operationType = 'write'
-        }
         "/ws/paratoo/pdp/$projectId/$protocolId/write" {
             controller = 'paratoo'
             action = 'hasWriteAccess'
