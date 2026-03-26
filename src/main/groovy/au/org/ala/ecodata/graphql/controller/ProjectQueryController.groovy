@@ -7,11 +7,13 @@ import au.org.ala.ecodata.graphql.input.SearchMeritProjects
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import au.org.ala.ecodata.reporting.GroupedResult
 import grails.compiler.GrailsCompileStatic
+import grails.gorm.PagedResultList
 import grails.web.databinding.DataBinder
 import graphql.GraphQLContext
 import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingFieldSelectionSet
+import groovy.transform.CompileDynamic
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
@@ -126,8 +128,8 @@ class ProjectQueryController implements DataBinder {
         DataFetcherResult.Builder<Map> resultBuilder = DataFetcherResult.newResult()
 
         Map paginationParams = pagination ? pagination.properties : new Pagination().properties
-        List<Report> resultList = (List<Report>)reportingService.search(projectId:project.projectId, paginationParams)
-        Map result = [results:resultList, totalCount: 0]
+        PagedResultList resultList = (PagedResultList)reportingService.search(projectId:project.projectId, paginationParams)
+        Map result = [results:resultList, totalCount: resultList.totalCount]
         return resultBuilder
                 .data(result)
                 .localContext(localContext)
@@ -136,12 +138,15 @@ class ProjectQueryController implements DataBinder {
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "documents")
+    @CompileDynamic
     Map documents(Project project, @Argument Pagination pagination) {
 
         Map paginationParams = Pagination.asMap(pagination)
-        List<Document> documents = Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, paginationParams)
-        int count = Document.countByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, paginationParams)
-        [totalCount: count, results: documents]
+        PagedResultList documents = Document.createCriteria().list(paginationParams) {
+            eq("projectId", project.projectId)
+            ne("status", Status.DELETED)
+        }
+        [totalCount: documents.totalCount, results: documents]
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "program")
@@ -162,11 +167,14 @@ class ProjectQueryController implements DataBinder {
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "sites")
+    @CompileDynamic
     Map sites(Project project, @Argument Pagination pagination) {
-        Map paginationParams = pagination.properties
-        int count = Site.countByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, paginationParams)
-        List<Site> sites = Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, paginationParams)
-        [totalCount:count, results: sites]
+        Map paginationParams = Pagination.asMap(pagination)
+        PagedResultList sites = Site.createCriteria().list(paginationParams) {
+            eq("projects", project.projectId)
+            ne("status", Status.DELETED)
+        }
+        [totalCount:sites.totalCount, results: sites]
     }
 
     @SchemaMapping(typeName = "Site", field = "geoJson")

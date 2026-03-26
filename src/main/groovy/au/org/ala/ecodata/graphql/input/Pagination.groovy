@@ -7,7 +7,7 @@ class Pagination {
     private static final int DEFAULT_MAX = 10
     private static final int MAXIMUM_RESULTS = 100
     int max = DEFAULT_MAX
-    int page = 0
+    int offset = 0
     String sort = "dateCreated"
     String order = "asc"
 

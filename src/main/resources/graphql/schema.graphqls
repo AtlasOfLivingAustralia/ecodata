@@ -559,7 +559,7 @@ input DateRange {
 }
 
 input Pagination {
-    page: Int
+    offset: Int
     max: Int
     sort: String
     order: AscDesc
