@@ -1,14 +1,18 @@
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.ExternalId
+import au.org.ala.ecodata.paratoo.ParatooProtocol
 
 model {
-    ActivityForm protocol
+    ParatooProtocol protocol
 }
 
 json {
-    id protocol.externalIds?.find {it.idType == ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID}?.externalId as int
-    identifier protocol.externalIds?.find {it.idType == ExternalId.IdType.MONITOR_PROTOCOL_GUID}?.externalId
+    id protocol.id
+    identifier protocol.identifier
     name protocol.name
-    version protocol.formVersion as Integer
-    module protocol.category
+    version protocol.version
+    module protocol.module
+    if (protocol.clientMeta != null) {
+        client_meta {
+            allow_ui_data_collection protocol.clientMeta.allowUIDataCollection
+        }
+    }
 }

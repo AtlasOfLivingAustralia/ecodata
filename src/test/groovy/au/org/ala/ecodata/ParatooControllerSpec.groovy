@@ -37,8 +37,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         controller.userProjects()
 
         then:
-        1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.userProjects() >> projects
 
         and:
         response.status == HttpStatus.SC_OK
@@ -83,7 +82,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.READ) >> true
 
         and:
         response.status == HttpStatus.SC_OK
@@ -95,7 +94,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolReadCheck(userId, 'p2', "guid-1") >> false
+        1 * paratooService.protocolCheck(userId, 'p2', "guid-1", Permission.READ) >> false
 
         and:
         response.status == HttpStatus.SC_OK
@@ -123,7 +122,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId: userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
         1 * paratooService.mintCollectionId(userId, _) >> [orgMintedIdentifier:"id1"]
 
         and:
@@ -142,7 +141,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -178,7 +177,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
-        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> false
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> false
 
         and:
         response.status == HttpStatus.SC_FORBIDDEN
@@ -203,7 +202,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
-        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
         1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [:], promise: null]
 
         and:
@@ -229,7 +228,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         then:
         1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
-        1 * paratooService.protocolWriteCheck(userId, 'p1', "guid-1") >> true
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
         1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [error:"Error"], promise: null]
 
         and:
@@ -270,7 +269,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.userProjects() >> projects
         1 * paratooService.updateProjectSites(projects[0], _, projects) >> [success:true]
 
         and:
@@ -293,8 +292,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         controller.getPlotSelections()
 
         then:
-        1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.userProjects(userId) >> projects
+        1 * paratooService.userProjects() >> projects
 
         and:
         model.plots.size() == 3
