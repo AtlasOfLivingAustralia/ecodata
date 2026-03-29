@@ -360,14 +360,14 @@ class DocumentService {
      * @param filepath the path (relative to root document storage) at which the file can be found.
      * @param filename the name of the file.
      *
-     * @return The thumbnail file or null for no thumbnail
+     * @return void
      */
-    InputStream makeThumbnail(String filepath, String filename, boolean overwrite = true) {
+    void makeThumbnail(String filepath, String filename, boolean overwrite = true) {
         InputStream originalFileInputStream = null
         String thumbnailFileName = Document.THUMBNAIL_PREFIX+filename
         if (storageService.fileExists(filepath, thumbnailFileName)) {
             if (!overwrite) {
-                return storageService.getFile(filepath, thumbnailFileName)
+                return
             }
             else {
                 storageService.deleteFile(filepath, thumbnailFileName)
@@ -379,7 +379,7 @@ class DocumentService {
             originalFileInputStream = storageService.getFile(filepath, filename)
         }
         else {
-            return null
+            return
         }
 
         File tempThumbnailFile = File.createTempFile(Document.THUMBNAIL_PREFIX, filename)
@@ -394,9 +394,8 @@ class DocumentService {
         finally {
             tempOriginalFile.delete()
             tempThumbnailFile.delete()
+            originalFileInputStream?.close()
         }
-
-        storageService.getFile(filepath, thumbnailFileName)
     }
 
 	/**
@@ -598,22 +597,21 @@ class DocumentService {
     /**
      * Scan document for viruses using clamav daemon.
      */
-    boolean isDocumentInfected(InputStream fileIn) {
+    ScanResult isDocumentInfected(InputStream fileIn) {
         if(!grailsApplication.config.getProperty('scanFile.enabled', Boolean, true)) {
-            return false
+            return ScanResult.OK.INSTANCE
         }
 
         ClamavClient client = clamavClient
-        ScanResult result = client.scan(fileIn)
-        if (result instanceof ScanResult.OK) {
-            return false // No virus found
-        } else if (result instanceof ScanResult.VirusFound) {
-            Map virusesFound = ((ScanResult.VirusFound) result).getFoundViruses()
-            log.warn("Virus found during document scan: " + virusesFound)
-            return true // Virus found
-        } else {
-            log.warn("Error occurred while scanning document: " + result?.toString())
-            return true
-        }
+        client.scan(fileIn)
+    }
+
+    /**
+     * Checks if the supplied filename is a thumbnail (i.e. starts with the thumbnail prefix).
+     * @param filename
+     * @return
+     */
+    boolean isThumbnail(String filename) {
+        return filename?.startsWith(Document.THUMBNAIL_PREFIX)
     }
 }

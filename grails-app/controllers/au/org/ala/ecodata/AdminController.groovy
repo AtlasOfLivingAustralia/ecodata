@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.plugins.openapi.Path
@@ -26,6 +27,7 @@ import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.multipart.MultipartFile
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import java.text.SimpleDateFormat
 
@@ -897,14 +899,20 @@ class AdminController {
         }
 
         ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
-        List<ParatooProject> projects = paratooService.userProjects(userId)
-        ParatooProject project = projects.find {it.project.projectId == projectId }
-        if (project) {
-            paratooService.submitCollection(collection, project, userId)
-            render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+        ParatooInvocationContext context = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion:"v2")
+        try {
+            ParatooInvocationContext.setCurrent(context)
+            List<ParatooProject> projects = paratooService.userProjects()
+            ParatooProject project = projects.find { it.project.projectId == projectId }
+            if (project) {
+                paratooService.submitCollection(collection, project, userId)
+                render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
+            } else {
+                render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+            }
         }
-        else {
-            render text: [message: "Project not found"] as JSON, status: HttpStatus.SC_NOT_FOUND
+        finally {
+            ParatooInvocationContext.removeCurrent()
         }
     }
 
@@ -986,7 +994,7 @@ class AdminController {
             ],
             tags = "GraphQL"
     )
-    @au.ala.org.ws.security.RequireApiKey()
+    @au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
     @PreAuthorise(idType="hubId", accessLevel = "readOnly")
     def graphql() {
         forward(uri:'/graphql-spring')
@@ -999,13 +1007,19 @@ class AdminController {
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()
-            boolean isInfected = documentService.isDocumentInfected(input)
-            if (!isInfected) {
-                render text: [message: "File is clean"] as JSON, contentType: "application/json", status: HttpStatus.SC_OK
-                return
-            }
-            else {
-                render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+            try {
+                ScanResult result = documentService.isDocumentInfected(input)
+                if (result == ScanResult.OK.INSTANCE) {
+                    render text: [message: "File is clean"] as JSON, contentType: "application/json", status: HttpStatus.SC_OK
+                    return
+                }
+                else if (result instanceof ScanResult.VirusFound) {
+                    render text: [message: "File is infected"] as JSON, contentType: "application/json", status: HttpStatus.SC_UNPROCESSABLE_ENTITY
+                    return
+                }
+            } catch (Exception e) {
+                log.error("An error occurred while scanning file, message: ${e.message}", e)
+                render text: [message: "An error occurred while scanning file"] as JSON, contentType: "application/json", status: HttpStatus.SC_INTERNAL_SERVER_ERROR
                 return
             }
         } else {

@@ -2,7 +2,8 @@ package au.org.ala.ecodata.converter
 
 class SpeciesConverter implements RecordFieldConverter {
     List<String> REPLACE_PATTERN = [
-            "(Unmatched taxon)"
+            "(Unmatched taxon)",
+            "<[^>]*>"
     ]
 
     List<Map> convert(Map data, Map metadata = [:], Map context = [:]) {
@@ -17,9 +18,9 @@ class SpeciesConverter implements RecordFieldConverter {
         }
 
         record.scientificNameID = record.guid = data[metadata.name]?.guid
-        record.scientificName = getScientificName(data, metadata)
-        record.vernacularName = data[metadata.name]?.commonName
-        record.name = record.scientificName ?: record.vernacularName
+        record.scientificName = cleanName(getScientificName(data, metadata))
+        record.vernacularName = cleanName(data[metadata.name]?.commonName)
+        record.name = cleanName(record.scientificName ?: record.vernacularName)
 
         // Force outputSpeciesId generation if not coming in the original data
         if(data[metadata.name] && !data[metadata.name]?.outputSpeciesId) {
@@ -40,7 +41,7 @@ class SpeciesConverter implements RecordFieldConverter {
      * @return
      */
     String getScientificName(Map data, Map metadata) {
-        data[metadata.name]?.scientificName ?: cleanName(data[metadata.name]?.name)
+        data[metadata.name]?.scientificName ?: data[metadata.name]?.name
     }
 
     String cleanName (String name) {

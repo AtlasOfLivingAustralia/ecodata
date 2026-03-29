@@ -57,6 +57,11 @@ class HubController  {
         }
     }
 
+    def findPWAHubs() {
+        List hubs = hubService.findHubsToShowInPWA()
+        asJson([list: hubs])
+    }
+
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def update(String id) {
         Map props = request.JSON
