@@ -159,7 +159,7 @@ class ProjectQueryController implements DataBinder {
         managementUnitDataLoader.load(project.managementUnitId)
     }
 
-    @SchemaMapping(typeName = "MeritProject", field = "activity")
+    @SchemaMapping(typeName = "Report", field = "activity")
     CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader) {
 
         activityDataLoader.load(report.activityId)
