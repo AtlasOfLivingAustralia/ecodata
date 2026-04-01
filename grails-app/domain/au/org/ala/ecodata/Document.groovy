@@ -96,12 +96,18 @@ class Document {
         identifier?.startsWith(Holders.config.getProperty('imagesService.baseURL'))
     }
 
+    /**
+     * Returns relative URL for indexing,search,etc
+     */
     def getUrl() {
         if (externalUrl) return externalUrl
 
-        return urlFor(filepath, filename)
+        return relativeUrlFor(filepath, filename)
     }
 
+    /**
+     * Returns a relative thumbnail URL
+     */
     def getThumbnailUrl() {
         if (isImage()) {
 
@@ -109,15 +115,40 @@ class Document {
                 return identifier
             }
 
-            return urlFor(filepath, THUMBNAIL_PREFIX + filename)
+            return relativeUrlFor(filepath, THUMBNAIL_PREFIX + filename)
         }
         return ''
     }
 
     /**
-     * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
+     * Returns an absolute URL that explicitly need hostname included
      */
-    private String urlFor(path, name) {
+    String getFullyResolvedUrl() {
+        if (externalUrl) {
+            return externalUrl
+        }
+
+        return resolvedUrlFor(filepath, filename)
+    }
+
+    /**
+     * Returns an absolute thumbnail URL that explicitly need hostname included
+     */
+    String getFullyResolvedThumbnailUrl() {
+        if (isImage()) {
+            if (isImageHostedOnPublicServer()) {
+                return identifier
+            }
+
+            return resolvedUrlFor(filepath, THUMBNAIL_PREFIX + filename)
+        }
+        return ''
+    }
+
+    /**
+     * Returns a relative URL
+     */
+    private String relativeUrlFor(path, name) {
         if (!name) {
             return ''
         }
@@ -130,7 +161,30 @@ class Document {
             return identifier
         }
 
-        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?: ""
+        path = path ? path + '/' : ''
+        def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
+        URI uri = new URI(Holders.config.getProperty('app.uploads.url') + path + encodedFileName)
+        return uri.toString()
+    }
+
+    /**
+     * Returns an absolute URL
+     */
+    private String resolvedUrlFor(path, name) {
+        if (!name) {
+            return ''
+        }
+
+        if (imageId) {
+            return getImageURL()
+        }
+
+        if (isImageHostedOnPublicServer()) {
+            return identifier
+        }
+
+        String hostName = DocumentHostInterceptor.documentHostUrlPrefix.get() ?:
+            Holders.config.getProperty('grails.serverURL') ?: ""
         path = path?path+'/':''
 
         def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
