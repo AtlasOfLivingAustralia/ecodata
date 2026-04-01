@@ -29,14 +29,25 @@ class DocumentSpec extends Specification implements DomainUnitTest<Document>, Co
         config.imagesService.baseURL = 'https://ala.org.au/abc/'
     }}
 
-    def "document should create url with host name"() {
-        def url
+    def "document should create relative url by default"() {
         given:
         def document = new Document(filepath: "2021-04", filename: "1.jpeg")
         DocumentHostInterceptor.documentHostUrlPrefix.set('https://xyz.com')
 
         when:
-        url = document.getUrl()
+        def url = document.getUrl()
+
+        then:
+        url == "/dir1/2021-04/1.jpeg"
+    }
+
+    def "document should create fully resolved url with host name"() {
+        given:
+        def document = new Document(filepath: "2021-04", filename: "1.jpeg")
+        DocumentHostInterceptor.documentHostUrlPrefix.set('https://xyz.com')
+
+        when:
+        def url = document.getFullyResolvedUrl()
 
         then:
         url == "https://xyz.com/dir1/2021-04/1.jpeg"
