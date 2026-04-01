@@ -1679,7 +1679,7 @@ if (!darwinCore.termsGroupedByClass) {
                                     if (mediaRecord.documentId) {
                                         Document document = Document.findByDocumentIdAndStatusNotEqual(mediaRecord.documentId, DELETED)
                                         if (document) {
-                                            String identifier =  document.getUrl()
+                                            String identifier = document.getFullyResolvedUrl()
                                             return [
                                                     "eventID"     : params?.activity?.activityId,
                                                     "occurrenceID": record?.occurrenceID ,
