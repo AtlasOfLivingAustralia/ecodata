@@ -169,7 +169,6 @@ class AdminController {
      */
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def reIndexAll() {
-        DocumentHostInterceptor.clearDocumentHostUrlPrefix()
         def resp = elasticSearchService.indexAll()
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
@@ -177,7 +176,6 @@ class AdminController {
 
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
     def reindexProjects() {
-        DocumentHostInterceptor.clearDocumentHostUrlPrefix()
         Map params = request.JSON
         int count = elasticSearchService.indexProjectsWithCriteria(params)
         Map resp = [indexedCount:count]

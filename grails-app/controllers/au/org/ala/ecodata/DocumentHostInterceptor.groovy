@@ -8,10 +8,6 @@ import org.springframework.web.context.request.RequestAttributes
 class DocumentHostInterceptor {
     static ThreadLocal<String> documentHostUrlPrefix = new ThreadLocal<String>()
 
-    static void clearDocumentHostUrlPrefix() {
-        documentHostUrlPrefix.remove()
-    }
-
     HubService hubService
     DocumentHostInterceptor () {
         matchAll()
