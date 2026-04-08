@@ -472,15 +472,17 @@ class DocumentService {
     }
 
     void deleteDocument(String documentId, boolean destroy = false) {
-        Document document = Document.findByDocumentId(documentId)
-        if (document) {
-            if (destroy) {
-                document.delete()
-                deleteFile(document)
-            } else {
-                document.status = DELETED
-                archiveFile(document)
-                document.save(flush: true)
+        synchronized (FILE_LOCK) {
+            Document document = Document.findByDocumentId(documentId)
+            if (document) {
+                if (destroy) {
+                    document.delete()
+                    deleteFile(document)
+                } else {
+                    document.status = DELETED
+                    archiveFile(document)
+                    document.save(flush: true)
+                }
             }
         }
     }
