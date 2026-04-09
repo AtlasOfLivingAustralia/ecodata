@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
+import org.apache.http.HttpStatus
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -102,8 +103,9 @@ class MetadataController {
         def model
         if (activityFormName) {
             ActivityForm form = activityFormService.findActivityForm(activityFormName, activityFormVersion)
-            model = form?.sections?.find{it.name == outputName}
-            OutputMetadata metadata = new OutputMetadata(model?.template)
+            FormSection formSection = form?.sections?.find{it.name == outputName}
+            model = formSection?.template
+            OutputMetadata metadata = new OutputMetadata(model)
             annotatedModel = metadata.annotateDataModel()
         }
         else {
@@ -136,7 +138,6 @@ class MetadataController {
             editMode = Boolean.valueOf(json.editMode)
             allowExtraRows = Boolean.valueOf(json.allowExtraRows)
             autosizeColumns = json.autosizeColumns != null ? Boolean.valueOf(json.autosizeColumns) : true
-            includeDataPathHeader = json.includeDataPathHeader != null ? Boolean.valueOf(json.includeDataPathHeader) : false
             data = json.data ? JSON.parse(json.data) : null
             expandList = json.expandList
             hints = json.hints ? JSON.parse(json.hints) : [:]
@@ -149,10 +150,10 @@ class MetadataController {
             editMode = params.getBoolean('editMode', false)
             allowExtraRows = params.getBoolean('allowExtraRows', false)
             autosizeColumns = params.getBoolean('autosizeColumns', true)
-            includeDataPathHeader = params.getBoolean('includeDataPathHeader', false)
             activityForm = params.activityForm
             formVersion = params.getInt('formVersion', null)
             hints = params.hint ? JSON.parse(params.hint) : [:]
+            data = null
         }
 
 
@@ -176,37 +177,28 @@ class MetadataController {
         if (listName) {
             OutputMetadata outputMetadata = new OutputMetadata([dataModel:annotatedModel])
             Map listModel = outputMetadata.findDataModelItemByName(listName)
-            annotatedModel = listModel?.columns
+            annotatedModel = [listModel]
         }
 
 
         OutputUploadTemplateBuilder builder
-        if (expandList && expandList == 'true') {
 
-            def listModel = annotatedModel.grep{it.dataType == 'list'}
+        def listModel = annotatedModel.grep { it.dataType == 'list' }
 
-            listModel.each {
-                def nestedListName = it.name
-                def listColumns = it.columns
-                listColumns.each {
-                    it.header = nestedListName
-                    it.path = nestedListName + '.' + it.name
-                    annotatedModel.add(it)
-                }
+        listModel.each {
+            def nestedListName = it.name
+            def listColumns = it.columns
+            listColumns.each {
+                it.header = nestedListName
+                it.path = nestedListName + '.' + it.name
+                annotatedModel.add(it)
             }
-            annotatedModel = annotatedModel.grep{it.dataType != 'list'}
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns)
-            builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
-            if(includeDataPathHeader) {
-                builder.buildDataPathHeaderList()
-            }
-            else {
-                builder.buildGroupHeaderList()
-            }
-        } else {
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns, false, hints)
-            builder.build()
         }
+        annotatedModel = annotatedModel.grep { it.dataType != 'list' && !it.computed }
+        builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns, false, hints)
+        builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
+
+        builder.buildDataPathHeaderList()
 
         builder.setResponseHeaders(response)
 
@@ -235,18 +227,40 @@ class MetadataController {
         }
         String outputName = params.type
         String listName = params.listName
+        String activityForm = params.activityForm
+        Integer formVersion = params.getInt('formVersion', null)
 
-        if (file && outputName) {
+        // Backwards compatibility for BioCollect which only supplies the output name
+        // to this endpoint.
+        if (!activityForm) {
+            List<ActivityForm> forms = metadataService.findByOutputName(outputName)
+            if (forms) {
+                if (forms.size() > 1) {
+                    log.warn("More than one form defines a form section with name ${activityForm}, defaulting to the first form returned by the database which is ${activityForm}.  To avoid this warning, specify the activityForm parameter to identify which form to use.")
+                }
+                activityForm = forms[0].name
+            }
+        }
 
-            def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, listName)
+        if (file && activityForm && outputName) {
+
+            def data = metadataService.excelWorkbookToMap(file.inputStream, activityForm, outputName, listName, formVersion)
 
             def result
-            if (!data) {
+            if (!data.success) {
                 response.status = 400
                 result = [status:400, error:'No data was found that matched the output description identified by the type parameter, please check the template you used to upload the data. ']
             }
             else {
-                result = [status: 200, data:data]
+                // The metadataService.excelWorkbookToMap method can support creation of
+                // multiple activities, each with multiple form sections.  This method takes
+                // a single activity and form section as input, so we can simplify the output format to
+                // match this use case.
+                def outputData = data.success?.first()?.find{it.outputName == outputName}?.data ?: [:]
+                if (listName) {
+                    outputData = outputData[listName] ?: []
+                }
+                result = [status: 200, data:outputData]
             }
             render result as JSON
 
@@ -266,11 +280,14 @@ class MetadataController {
         if (request.respondsTo('getFile')) {
             file = request.getFile('data')
         }
-        String outputName = params.type
+        String activityType = params.type
+        String outputName = params.outputName
+        String listName = params.listName
 
-        if (file && outputName) {
+        Integer formVersion = params.getInt('formVersion', null)
+        if (file && activityType) {
 
-            def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, true)
+            def data = metadataService.excelWorkbookToMap(file.inputStream, activityType, outputName, listName, formVersion)
             def status = 200
 
             def result

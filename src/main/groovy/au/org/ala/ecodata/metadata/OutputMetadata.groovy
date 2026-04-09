@@ -28,14 +28,18 @@ class OutputMetadata {
         annotateNodes(metadata.dataModel)
     }
 
-    def annotateNodes(nodes) {
+    def annotateNodes(nodes, List parentViewNodes = null) {
         def annotatedNodes = []
+        if (!parentViewNodes) {
+            parentViewNodes = metadata.viewModel
+        }
         nodes.each { node->
             def annotatedNode = [:]
             annotatedNode.putAll(node)
             if (isNestedDataModelType(node)) {
 
-                annotatedNode.columns = annotateNodes(getNestedDataModelNodes(node))
+                Map nodeView = findViewByName(node.name, parentViewNodes)
+                annotatedNode.columns = annotateNodes(getNestedDataModelNodes(node), nodeView ? getNestedViewNodes(nodeView) : null)
 
             }
             else {
@@ -56,9 +60,9 @@ class OutputMetadata {
         }
 
         // Sort the nodes based on the order they appear in the view model for consistency.
-        if (metadata.viewModel) {
+        if (parentViewNodes) {
             annotatedNodes.sort { node ->
-                metadata.viewModel.findIndexOf{it.source == node.name}
+                parentViewNodes.findIndexOf{it.source == node.name}
             }
         }
         annotatedNodes
@@ -71,14 +75,15 @@ class OutputMetadata {
             context = metadata.viewModel
         }
         return context.findResult { node ->
+            if (node.source == name) {
+                return node
+            }
             if (isNestedViewModelType(node)) {
                 def nested = getNestedViewNodes(node)
 
                 return findViewByName(name, nested)
             }
-            else {
-                return (node.source == name)?node:null
-            }
+            return null
         }
     }
 
@@ -233,17 +238,17 @@ class OutputMetadata {
     }
 
 
-    def getNestedViewNodes(node) {
+    static List getNestedViewNodes(node) {
         return (node.type in ['table', 'photoPoints', 'grid'] ) ? node.columns: node.items
     }
-    def getNestedDataModelNodes(node) {
+    static List getNestedDataModelNodes(node) {
         return node.columns
     }
 
-    def isNestedDataModelType(node) {
+    static boolean isNestedDataModelType(node) {
         return ((node.columns != null) && (node.columns.size() != 0) && node.dataType != "geoMap")
     }
-    def isNestedViewModelType(node) {
+    static boolean isNestedViewModelType(node) {
         return (node.items != null || node.columns != null)
     }
 

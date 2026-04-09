@@ -102,8 +102,21 @@ class ExcelImportService {
         Map result = [:]
         columnMap.each {k, name ->
             Object value = getCellValue(row, k, evaluator)
-            result[name] = value
-
+            // If there is already a value for an element with the same name, it is a multi-select - convert the
+            // result to a List then add the value.
+            if (result[name] && !(result[name] instanceof List)) {
+                result[name] = [result[name]]
+            }
+            if (result[name] instanceof List) {
+                // Don't add blank cells to the list, the way the spreadsheet is setup there is a column per
+                // distinct value for a multi-select.
+                if (value) {
+                    result[name] << value
+                }
+            }
+            else {
+                result[name] = value
+            }
         }
         result
     }

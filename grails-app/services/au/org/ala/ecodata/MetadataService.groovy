@@ -233,11 +233,13 @@ class MetadataService implements DataBinder {
         JSON.parse(((template ?: [:]) as JSON).toString())
     }
 
+    @Deprecated
     def getOutputDataModelByName(name) {
         def outputModel = activitiesModel().outputs.find{it.name == name}
         return getOutputDataModel(outputModel?.template)
     }
 
+    @Deprecated
     def getOutputDataByActivityName(name) {
         def outputList = activitiesModel().activities.find{it.name == name}?.outputs
         if (outputList && outputList.size() > 0) {
@@ -246,6 +248,23 @@ class MetadataService implements DataBinder {
         return null
     }
 
+    /**
+     * Legacy support to find an ActivityForm based on the name of an output template.
+     * This is to temporarily replace using the activityModel() to find outputs where
+     * output names were guaranteed unique.
+     * @param name the name of the output / form section.
+     * @return The first ActivityForm found that has a section with the supplied name.
+     */
+    List<ActivityForm> findByOutputName(String outputName) {
+        List<ActivityForm> forms = ActivityForm.where {
+            sections {
+                name == outputName
+            }
+        }.list()
+        forms
+    }
+
+    @Deprecated
     Map getOutputNameAndDataModelForAnActivityName(name) {
         def outputList = activitiesModel().activities.find { it.name == name }?.outputs
         if (outputList && outputList.size() > 0) {
@@ -707,39 +726,7 @@ class MetadataService implements DataBinder {
         sites
     }
 
-    /**
-     * Accepts an Excel workbook containing output data and returns a Map containing output data formatted
-     * as it would be stored in the Output entity.
-     *
-     * Note that no type conversion or validation is performed.
-     *
-     * @param excelWorkbookIn an InputStream containing the contents of the Excel workbook.
-     * @param outputName the name of the output definition that describes the data in the workbook.
-     * @param listName (optional) the name of a list typed attribute in the output model.  If specified, the
-     * data in the workbook will be expected to contain the contents of that list.
-     *
-     * @return the output data contained in the workbook in a Map.
-     */
-    List<Map> excelWorkbookToMap(InputStream excelWorkbookIn, String outputName, String listName = null) {
-        List model = annotatedOutputDataModel(outputName)
-        if (listName) {
-            model = model.find { it.name == listName }?.columns
-        }
-        int index = 0;
-        def columnMap = model.collectEntries {
-            def colString = CellReference.convertNumToColString(index++)
-            [(colString):it.name]
-        }
-        def config = [
-                sheet:XlsExporter.sheetName(outputName),
-                startRow:1,
-                columnMap:columnMap
-        ]
-        Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
-        excelImportService.mapSheet(workbook, config)
-    }
-
-    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, Boolean normalise, Integer formVersion = null) {
+    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, String outputName, String listName, Integer formVersion = null) {
         List result = []
         List errors = []
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
@@ -747,9 +734,22 @@ class MetadataService implements DataBinder {
         form?.sections?.each { FormSection section ->
             try {
                 String sectionName = section.name
-                List model = annotatedOutputDataModel(sectionName)
+                if (outputName && !outputName.equals(sectionName)) {
+                    return
+                }
+                OutputMetadata outputMetadata = new OutputMetadata(section.template)
+                List model = outputMetadata.annotateDataModel()
+                if (listName) {
+                    Map listModel = outputMetadata.findDataModelItemByName(listName)
+                    model = [listModel]
+                }
+
                 String sheetName = XlsExporter.sheetName(sectionName)
                 Sheet sheet = workbook.getSheet(sheetName)
+                if (!sheet) {
+                    log.warn("No sheet found for section ${sectionName} with expected name ${sheetName}, skipping import of this section")
+                    return
+                }
                 def columnMap = excelImportService.getDataHeaders(sheet)
                 def config = [
                         sheet:sheetName,
@@ -758,39 +758,39 @@ class MetadataService implements DataBinder {
                 ]
                 List data = excelImportService.mapSheet(workbook, config)
                 List normalisedData = []
-                if(normalise) {
-                    data.collect { Map row ->
-                        def normalisedRow = [:]
-                        try {
-                            row.each { cell ->
-                                excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
-                                excelImportService.removeEmptyObjects(normalisedRow)
-                            }
 
-                            addOutputSpeciesIdToSpeciesData(normalisedRow, model)
-                            normalisedData << normalisedRow
+                data.collect { Map row ->
+                    def normalisedRow = [:]
+                    try {
+                        row.each { cell ->
+                            excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
+                            excelImportService.removeEmptyObjects(normalisedRow)
                         }
-                        catch (Exception ex) {
-                            errors << [message:  messageSource.getMessage('bulkimport.conversionToObjectError', [row.serial].toArray(), '', Locale.default), error: ex.message]
-                        }
+
+                        addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                        normalisedData << normalisedRow
+                    }
+                    catch (Exception ex) {
+                        errors << [message:  messageSource.getMessage('bulkimport.conversionToObjectError', [row.serial].toArray(), '', Locale.default), error: ex.message]
                     }
                 }
 
-
                 List rollUpData = []
-                Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]}
-                groupedBySerial.each {  key, List rows ->
+                Map groupedBySerial = normalisedData.groupBy {it[OutputUploadTemplateBuilder.SERIAL_NUMBER_DATA]?:1}
+
+                groupedBySerial.each { key, List rows ->
                     try {
                         rollUpData << rollUpDataIntoSingleElement(rows, model)
                     }
                     catch (Exception ex) {
-                        errors << [message:  messageSource.getMessage('bulkimport.errorGroupBySerialNumber', [key].toArray(), '', Locale.default), error: ex.message]
+                        errors << [message: messageSource.getMessage('bulkimport.errorGroupBySerialNumber', [key].toArray(), '', Locale.default), error: ex.message]
                     }
                 }
 
                 result.addAll(rollUpData.collect {
-                    [[outputName: activityFormName, data: it]]
+                    [[outputName: sectionName, data: it]]
                 })
+
             }
             catch (Exception ex) {
                 errors << [message:  messageSource.getMessage('bulkimport.conversionToFormSectionError', [section.name].toArray(), '', Locale.default), error: ex.message]

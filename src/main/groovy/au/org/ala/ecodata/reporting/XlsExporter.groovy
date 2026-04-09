@@ -45,42 +45,40 @@ class XlsExporter extends XlsxExporter {
             sheet.fillHeader(dataPathHeader)
             sheet.fillRow(headers, 1)
 
-            def lastHeader = ""
+            String lastHeader = ""
             def groupNumber = 0
             int fromCol = 0
-            dataPathHeader.eachWithIndex { item, index ->
-                if (item != "" && lastHeader != item) {
-                    styleRowCells(sheet, 0, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
-                    styleRowCells(sheet, 1, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
-                    groupNumber ++
-                    fromCol = index
+
+
+            // If no group headers are provided, use the number of dots in the data path header to determine groupings.
+            // That way each level of nesting in the form gets a distinct header style.
+            if (!groupHeaders) {
+                groupHeaders = dataPathHeader.collect { String header ->
+                    Integer.toString(header.count('.'))
                 }
             }
 
-            styleRowCells(sheet, 0, fromCol, dataPathHeader.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
-            styleRowCells(sheet, 1, fromCol, dataPathHeader.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
+            // Apply a new style each time the group header changes.
+            CellStyle cellStyle = headerStyle(getWorkbook())
+            lastHeader = groupHeaders?[0] ?: ""
+            dataPathHeader.eachWithIndex { item, index ->
+                String groupHeader = groupHeaders ? groupHeaders[index] : item
+                if (item != "" && groupHeader != "" && lastHeader != groupHeader) {
+                    styleRowCells(sheet, 0, fromCol, index-1, cellStyle)
+                    styleRowCells(sheet, 1, fromCol, index-1, cellStyle)
+                    groupNumber ++
+                    fromCol = index
+                    cellStyle = customHeaderStyle(getWorkbook(), groupNumber)
+
+                }
+                lastHeader = groupHeader
+            }
+
+            styleRowCells(sheet, 0, fromCol, dataPathHeader.size()-1, cellStyle)
+            styleRowCells(sheet, 1, fromCol, dataPathHeader.size()-1, cellStyle)
 
         }
-        else if (groupHeaders != null) {
-            sheet.fillHeader(groupHeaders)
-            sheet.fillRow(headers, 1)
-
-            def lastHeader = ""
-            def groupNumber = 0
-            int fromCol = 0
-            groupHeaders.eachWithIndex { item, index ->
-                if (item != "" && lastHeader != item) {
-                    styleRowCells(sheet, 0, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
-                    styleRowCells(sheet, 1, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
-                    groupNumber ++
-                    fromCol = index
-                }
-            }
-
-            styleRowCells(sheet, 0, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
-            styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
-
-        } else {
+        else {
             if (headers) {
                 if (!(headers[0] instanceof List)) {
                     headers = [headers]
@@ -121,19 +119,48 @@ class XlsExporter extends XlsxExporter {
 
     CellStyle customHeaderStyle(Workbook workbook, int i) {
 
+        i = i % 10
         def backgroundColorIndex
+        def foregroundColorIndex = HSSFColor.HSSFColorPredefined.BLACK.index
         switch (i) {
-            case 0: backgroundColorIndex = IndexedColors.LIGHT_TURQUOISE.index; break;
-            case 1: backgroundColorIndex = IndexedColors.LEMON_CHIFFON.index; break;
-            case 2: backgroundColorIndex = IndexedColors.LIGHT_BLUE.index; break;
-            case 3: backgroundColorIndex = IndexedColors.LIGHT_ORANGE.index; break;
-            case 4: backgroundColorIndex = IndexedColors.LIGHT_GREEN.index; break;
-            case 5: backgroundColorIndex = IndexedColors.LIGHT_CORNFLOWER_BLUE.index; break;
-            case 6: backgroundColorIndex = IndexedColors.LIGHT_YELLOW.index; break;
-            case 7: backgroundColorIndex = IndexedColors.PALE_BLUE.index; break;
-            case 8: backgroundColorIndex = IndexedColors.TAN.index; break;
-            case 9: backgroundColorIndex = IndexedColors.ORCHID.index; break;
-            default: backgroundColorIndex = IndexedColors.GREY_50_PERCENT.index; break;
+            case 0:
+                backgroundColorIndex = IndexedColors.BLACK.index
+                foregroundColorIndex = IndexedColors.WHITE.index
+                break
+            case 1:
+                backgroundColorIndex = IndexedColors.LEMON_CHIFFON.index
+                break
+            case 2:
+                backgroundColorIndex = IndexedColors.LIGHT_BLUE.index
+                foregroundColorIndex = IndexedColors.WHITE.index
+                break
+            case 3:
+                backgroundColorIndex = IndexedColors.LIGHT_ORANGE.index
+                foregroundColorIndex = IndexedColors.WHITE.index
+                break
+            case 4:
+                backgroundColorIndex = IndexedColors.LIGHT_GREEN.index
+                break
+            case 5:
+                backgroundColorIndex = IndexedColors.LIGHT_CORNFLOWER_BLUE.index
+                break
+            case 6:
+                backgroundColorIndex = IndexedColors.LIGHT_YELLOW.index
+                break
+            case 7:
+                backgroundColorIndex = IndexedColors.PALE_BLUE.index
+                break
+            case 8:
+                backgroundColorIndex = IndexedColors.TAN.index
+                foregroundColorIndex = IndexedColors.WHITE.index
+                break;
+            case 9:
+                backgroundColorIndex = IndexedColors.ORCHID.index
+                break
+            default:
+                backgroundColorIndex = IndexedColors.GREY_50_PERCENT.index
+                foregroundColorIndex = IndexedColors.WHITE.index
+                break
         }
 
         CellStyle headerStyle = workbook.createCellStyle();
@@ -142,7 +169,7 @@ class XlsExporter extends XlsxExporter {
         headerStyle.setFillForegroundColor(backgroundColorIndex);
         Font font = workbook.createFont();
         font.setBold(true)
-        font.setColor(HSSFColor.HSSFColorPredefined.BLACK.index)
+        font.setColor(foregroundColorIndex)
         headerStyle.setFont(font);
         return headerStyle
     }

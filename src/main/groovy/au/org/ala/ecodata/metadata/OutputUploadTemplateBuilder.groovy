@@ -87,37 +87,50 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         finalise(outputSheet)
     }
 
-    public void buildGroupHeaderList() {
-
-        def groupHeaders = []
-        def lastHeader = ""
-        boolean fillHeader = false
-
-        def headers = model.collect {
-                if (it.header && it.header != lastHeader) {
-                    groupHeaders.add(it.header)
-                    lastHeader = it.header
-                    fillHeader = true
-                } else {
-                    groupHeaders.add("")
+    /**
+     * When building an output template, if any of the fields are multiselect
+     * we allow each value to be added in a new column.
+     * When data has been supplied to be included in the template, we need
+     * to ensure that there are at least enough columns for each multiselect field
+     * to be able to include all of the supplied data.
+     * e.g. if the supplied data for a multi-select field includes 4 selections for one row,
+     * we need to have at least 4 columns for that field in the template to be able to include all of the supplied data.
+     */
+    private void modifyMultiselectHintsBasedOnData() {
+        model.each {
+            if (OutputModelProcessor.isMultiSelect(it)) {
+                // If data has been supplied for the multi-select field, we need to create enough columns to cover the maximum number of selections
+                // across all rows.
+                int maxSelections = DEFAULT_NUMBER_OF_COLUMNS_FOR_MULTISELECT
+                if (data) {
+                    data.each { row ->
+                        def value = row[it.name]
+                        if (!value instanceof List) {
+                            return
+                        }
+                        maxSelections = Math.max(maxSelections, value.size())
+                    }
                 }
-
-                def label = it.label ?: it.name
-                if (it.dataType == 'species') {
-                    label += ' (Scientific Name Only)'
+                if (!hints[it.name]) {
+                    hints[it.name] = [:]
                 }
-                label
+                hints[it.name].numColumns = maxSelections
+            }
         }
+    }
 
-        if (!fillHeader) groupHeaders = null
+    private static String processNodeHeaders(String path, Map node, String lastHeader, List headers, List dataPathHeader, List groupHeaders, List augmentedModel, int startIndex) {
+        if (node.header && node.header != lastHeader) {
+            groupHeaders.add(node.header)
+            lastHeader = node.header
+        } else {
+            groupHeaders.add("")
+        }
+        dataPathHeader.add(path + '.' + node.name)
+        headers.add(node.label ?: node.name)
+        augmentedModel.add(startIndex, node)
 
-        AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders)
-
-        new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
-
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
-
-        finalise()
+        lastHeader
     }
 
     void buildDataPathHeaderList() {
@@ -127,88 +140,80 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         def headers = []
         def lastHeader = ""
         boolean fillHeader = false
-        int startIndex = 1
-        List augmentedModel = [[
-            name: SERIAL_NUMBER_DATA,
-            label: SERIAL_NUMBER_NAME,
-            dataType: 'number',
-            required: true
-       ]]
 
+        List augmentedModel = []
         if (includeDataPathHeader){
             headers.add(SERIAL_NUMBER_NAME)
             dataPathHeader.add(SERIAL_NUMBER_DATA)
+            augmentedModel << [
+                   name: SERIAL_NUMBER_DATA,
+                   label: SERIAL_NUMBER_NAME,
+                   dataType: 'number',
+                   required: true
+           ]
         }
+        else {
+            augmentedModel = []
+        }
+        int startIndex = augmentedModel.size()
 
-
+        modifyMultiselectHintsBasedOnData()
         model.eachWithIndex { it, index ->
             def path
-            if (it.header && it.header != lastHeader) {
-                groupHeaders.add(it.header)
-                lastHeader = it.header
-                fillHeader = true
-            } else {
-                groupHeaders.add("")
-            }
 
-
-
-            def label = it.label ?: it.name
             path = it.path ? it.path : it.name
             switch (it.dataType) {
                 case 'species':
                     additionalFieldsForDataTypes?.species.fields.each {
-                        dataPathHeader.add(path + '.' + it.name)
-                        headers.add(it.label)
-                        augmentedModel.add(startIndex, it)
-                        startIndex ++
+                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                        startIndex++
                     }
                     break
                 case 'image':
                     additionalFieldsForDataTypes?.image.fields.each {
-                        dataPathHeader.add(path + '.' + it.name)
-                        headers.add(it.label)
-                        augmentedModel.add(startIndex, it)
+                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                         startIndex ++
                     }
                     break
                 case 'geoMap':
                     additionalFieldsForDataTypes?.geoMap.fields.each {
-                        dataPathHeader.add(path + it.name)
-                        headers.add(it.label)
-                        augmentedModel.add(startIndex, it)
+                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                         startIndex ++
                     }
                     break
+                case 'stringList':
+                case 'text':
+                    int numColumns = hints[it.name]?.numColumns ?: 1
+                    for (int i=0; i<numColumns; i++) {
+                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                        startIndex ++
+                    }
+                    break;
                 default:
-                    dataPathHeader.add(path)
-                    headers.add(label)
-                    augmentedModel.add(startIndex, it)
+                    lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                     startIndex ++
                     break
             }
-
-
         }
 
         if (!fillHeader) groupHeaders = null
 
         AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders, dataPathHeader)
 
-        // todo: re-enable validation for data path header
         if (!includeDataPathHeader) {
-            new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+            Row firstRow = outputSheet.sheet.getRow(0)
+            if (firstRow) {
+                firstRow.setZeroHeight(true)
+            }
         }
-        else {
-            new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(2)
-        }
+        final int firstDataRow = 2
+        new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(firstDataRow)
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process(firstDataRow)
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
-
-        finalise()
+        finalise(outputSheet)
     }
 
-    private int widthFromString(String widthString, int defaultWidth) {
+    private static int widthFromString(String widthString, int defaultWidth) {
         int width = defaultWidth
 
         // Strip non-numerics to allow for trailing '%' / 'px' / 'em', if the model
@@ -312,14 +317,14 @@ class OutputDataProcessor {
         }
     }
 
-    public void process() {
+    public void process(int firstRow = 1) {
 
         if (editMode) {
             protectSheet()
         }
 
         data?.eachWithIndex { rowValue, rowCount ->
-            Row row = sheet.createRow((rowCount+1))
+            Row row = sheet.createRow((rowCount+firstRow))
 
             def dataType, value, rowHeader
             int columnIndex = 0
@@ -514,12 +519,14 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
      */
     private static List buildConstraintList(Map node, ExcelValidationContext context, Map hints) {
         List constraints = []
-        if (node.constraints instanceof Map && node.constraints.type == 'computed') {
-            constraints = node.constraints.options?.collect { it.value }?.flatten()?.unique()
+        if (node.constraints instanceof Map) {
+            if (node.constraints.type == 'computed') {
+                constraints = node.constraints.options?.collect { it.value }?.flatten()?.unique()
             // Pre-populated constraints are complex and can depend on form rendering context (e.g. the project) so we use hints supplied by the caller to populate constraints
-        } else if (node.constraints.type == 'pre-populated') {
-            if (hints[node.name]?.constraints) {
-                constraints = hints[node.name].constraints
+            } else if (node.constraints.type == 'pre-populated') {
+                if (hints[node.name]?.constraints) {
+                    constraints = hints[node.name].constraints
+                }
             }
         } else {
             constraints = node.constraints
