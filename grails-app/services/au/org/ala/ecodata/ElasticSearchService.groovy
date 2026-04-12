@@ -1497,27 +1497,32 @@ class ElasticSearchService {
     }
 
     private Map prepareDocumentForIndexing(Map document) {
-        if (!document?.projectId)
-            return
+        if (!document?.projectId) {
+            return null
+        }
 
         document["className"] = Document.class.getName()
 
         Map project = projectService.get(document.projectId, ProjectService.FLAT) ?: [:]
-        if(project.isMERIT)
-            return
-
-        if (DOCUMENT_TYPES_TO_EXCLUDE_REINDEXING.contains(document?.type))
-            return
-
-        if (document) {
-            // overwrite any project properties that has same name as document properties.
-            project.remove('description') // to avoid overwriting of document description by project description
-            addYearAndMonthToEntity(document, document)
-            project.putAll(document)
-            document = project
-
-            document
+        if (project.isMERIT) {
+            return null
         }
+
+        if (DOCUMENT_TYPES_TO_EXCLUDE_REINDEXING.contains(document?.type)) {
+            return null
+        }
+
+        addYearAndMonthToEntity(document, document)
+
+        document.projectName = project.name
+        document.projectDescription = project.description
+        document.projectStatus = project.status
+        document.projectType = project.projectType
+        document.projectExternalId = project.externalId
+        document.projectGrantId = project.grantId
+        document.projectOrganisationId = project.organisationId
+
+        return document
     }
 
     /**
