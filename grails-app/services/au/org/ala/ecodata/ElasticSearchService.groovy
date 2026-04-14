@@ -1522,6 +1522,10 @@ class ElasticSearchService {
         document.projectGrantId = project.grantId
         document.projectOrganisationId = project.organisationId
 
+        project.remove('description') // to avoid overwriting of document description by project description
+        project.putAll(document)
+        document = project
+
         return document
     }
 
