@@ -94,6 +94,17 @@ class ProjectQueryController implements DataBinder {
         }
     }
 
+    @SchemaMapping(typeName = "MeritProject", field = "startDate")
+    Date startDate(Project project) {
+        project.plannedStartDate
+    }
+
+    @SchemaMapping(typeName = "MeritProject", field = "endDate")
+    Date endDate(Project project) {
+        project.plannedEndDate
+    }
+
+
     @SchemaMapping(typeName = "DataSetSummary", field = "service")
     Service service(DataSetSummary dataSetSummary) {
         Service service = null
@@ -337,7 +348,7 @@ class ProjectQueryController implements DataBinder {
          primaryElectorate: statesAndElectorates.primaryelect,
          otherStates: statesAndElectorates.otherStates,
          otherElectorates: statesAndElectorates.otherElectorates,
-         manualOverrideUsed: statesAndElectorates.geographicRangeOverridden
+         geographicRangeOverridden: statesAndElectorates.geographicRangeOverridden
         ]
     }
 
