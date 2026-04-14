@@ -292,6 +292,8 @@ type Program {
 interface Project {
     dateCreated: DateTime
     lastUpdated: DateTime
+    startDate: Date
+    endDate: Date
     status: Status
     name: String
     description: String
@@ -305,6 +307,11 @@ type MeritProject implements Project {
     dateCreated: DateTime
     lastUpdated: DateTime
     status: Status
+    terminationReason: String
+    "The date project activities begin"
+    startDate: Date
+    "The date project activities end"
+    endDate: Date
     meritProjectID: String
     "A list of organisations that have a relationship with this Project.  "
     associatedOrgs: [AssociatedOrg]
@@ -388,7 +395,7 @@ type StatesAndElectorates {
     primaryElectorate: String
     otherStates: [String]
     otherElectorates: [String]
-    manualOverrideUsed: Boolean
+    geographicRangeOverridden: Boolean
 }
 
 enum SitePurpose {
