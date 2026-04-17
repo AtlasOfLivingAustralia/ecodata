@@ -276,8 +276,7 @@ class S3Service implements StorageService {
     String nextUniqueFileName(String path, String filename) {
         int counter = 0
         String newFilename = filename
-        List files = listFiles(path)
-        while (fileExistsInPrefix(files, newFilename)) {
+        while (fileExists(path, newFilename)) {
             newFilename = "${counter}_${filename}"
             counter++
         }
