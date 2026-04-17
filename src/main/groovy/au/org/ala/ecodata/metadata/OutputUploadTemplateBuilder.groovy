@@ -18,20 +18,13 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     boolean editMode = false
     boolean extraRowsEditable = true
     boolean autoSizeColumns = true
-    boolean includeDataPathHeader = false
-    def additionalFieldsForDataTypes
+    boolean includeSerialNumber = false
+
+    Map additionalFieldsForDataTypes
     Map hints = [:]
     static final int DEFAULT_NUMBER_OF_COLUMNS_FOR_MULTISELECT = 3
 
-    public OutputUploadTemplateBuilder(filename, outputName, model) {
-        super(filename)
-        this.outputName = outputName
-        this.model = model.findAll{!it.computed}
-        this.editMode = false
-        this.autoSizeColumns = true
-    }
-
-    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeDataPathHeader, Map hints = [:]) {
+    OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true, boolean includeSerialNumber, Map hints = [:], Map additionalFieldsForDataTypes = [:]) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
@@ -39,52 +32,9 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
         this.autoSizeColumns = autoSizeColumns
-        this.includeDataPathHeader = includeDataPathHeader
+        this.includeSerialNumber = includeSerialNumber
         this.hints = hints
-    }
-
-    public void build() {
-
-        List headers = []
-
-        model.each {
-            if (OutputModelProcessor.isMultiSelect(it)) {
-                // If data has been supplied for the multi-select field, we need to create enough columns to cover the maximum number of selections
-                // across all rows.
-                int maxSelections = DEFAULT_NUMBER_OF_COLUMNS_FOR_MULTISELECT
-                if (data) {
-                    data.each { row ->
-                        def value = row[it.name]
-                        if (!value instanceof List) {
-                            return
-                        }
-                        maxSelections = Math.max(maxSelections, value.size())
-                    }
-                }
-                if (!hints[it.name]) {
-                    hints[it.name] = [:]
-                }
-                hints[it.name].numColumns = maxSelections
-            }
-        }
-
-        model.each {
-            def label = it.label ?: it.name
-            if (it.dataType == 'species') {
-                label += ' (Scientific Name Only)'
-            }
-            int numColumns = hints[it.name]?.numColumns ?: 1
-            for (int i=0; i<numColumns; i++) {
-                headers << label
-            }
-        }
-        AdditionalSheet outputSheet = addSheet(outputName, headers)
-
-        new ValidationProcessor(getWorkbook(), outputSheet.sheet, model, hints).process()
-
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable, hints).process()
-
-        finalise(outputSheet)
+        this.additionalFieldsForDataTypes = additionalFieldsForDataTypes
     }
 
     /**
@@ -120,31 +70,39 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     }
 
     private static String processNodeHeaders(String path, Map node, String lastHeader, List headers, List dataPathHeader, List groupHeaders, List augmentedModel, int startIndex) {
-        if (node.header && node.header != lastHeader) {
-            groupHeaders.add(node.header)
-            lastHeader = node.header
-        } else {
-            groupHeaders.add("")
+        String fullPath = path ? path + '.' + node.name : node.name
+        // Use the parent path as the group identifier so columns under the
+        // same parent share a style, while a change in parent (or nesting
+        // level) triggers a new style.  For multi-column fields (e.g.
+        // multiselect), use a distinct group so all columns for that field
+        // are visually grouped together and stand out from neighbours.
+        String parentPath = path ?: "root"
+        String groupHeader = parentPath
+        if (OutputModelProcessor.isMultiSelect(node)) {
+            groupHeader = "multi:"+parentPath
         }
-        dataPathHeader.add(path + '.' + node.name)
+        groupHeaders.add(groupHeader)
+        lastHeader = parentPath
+
+        dataPathHeader.add(fullPath)
         headers.add(node.label ?: node.name)
         augmentedModel.add(startIndex, node)
 
         lastHeader
     }
 
-    void buildDataPathHeaderList() {
+    void build() {
 
         def groupHeaders = []
         def dataPathHeader = []
         def headers = []
         def lastHeader = ""
-        boolean fillHeader = false
 
         List augmentedModel = []
-        if (includeDataPathHeader){
+        if (includeSerialNumber){
             headers.add(SERIAL_NUMBER_NAME)
             dataPathHeader.add(SERIAL_NUMBER_DATA)
+            groupHeaders.add(SERIAL_NUMBER_DATA)
             augmentedModel << [
                    name: SERIAL_NUMBER_DATA,
                    label: SERIAL_NUMBER_NAME,
@@ -159,48 +117,46 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         modifyMultiselectHintsBasedOnData()
         model.eachWithIndex { it, index ->
-            def path
-
-            path = it.path ? it.path : it.name
             switch (it.dataType) {
                 case 'species':
-                    additionalFieldsForDataTypes?.species.fields.each {
-                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                    List fields = additionalFieldsForDataTypes[it.dataType]?.fields
+                    if (!fields) {
+                        Map speciesNode = it + [label: it.label + " (Scientific Name Only)"]
+                        processNodeHeaders(it.path, speciesNode, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                         startIndex++
+                        break
                     }
-                    break
+                    // If there are additional fields, fall through to the next case as they are handled the same.
                 case 'image':
-                    additionalFieldsForDataTypes?.image.fields.each {
-                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
-                        startIndex ++
-                    }
-                    break
                 case 'geoMap':
-                    additionalFieldsForDataTypes?.geoMap.fields.each {
-                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
-                        startIndex ++
+                    List fields = additionalFieldsForDataTypes[it.dataType]?.fields
+                    if (fields) {
+                        String path = it.path ? it.path + '.' + it.name : it.name
+                        fields.each {
+                            lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                            startIndex++
+                        }
                     }
                     break
                 case 'stringList':
                 case 'text':
                     int numColumns = hints[it.name]?.numColumns ?: 1
                     for (int i=0; i<numColumns; i++) {
-                        lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                        lastHeader = processNodeHeaders(it.path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                         startIndex ++
                     }
                     break;
                 default:
-                    lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                    lastHeader = processNodeHeaders(it.path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                     startIndex ++
                     break
             }
         }
 
-        if (!fillHeader) groupHeaders = null
 
         AdditionalSheet outputSheet = addSheet(outputName, headers, groupHeaders, dataPathHeader)
 
-        if (!includeDataPathHeader) {
+        if (!includeSerialNumber) {
             Row firstRow = outputSheet.sheet.getRow(0)
             if (firstRow) {
                 firstRow.setZeroHeight(true)
@@ -208,7 +164,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         }
         final int firstDataRow = 2
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(firstDataRow)
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process(firstDataRow)
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable, hints).process(firstDataRow)
 
         finalise(outputSheet)
     }
@@ -472,13 +428,13 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
         ClientAnchor anchor = factory.createClientAnchor()
         anchor.setCol1(column)
         anchor.setCol2(column + 3)
-        anchor.setRow1(0)
-        anchor.setRow2(4)
+        anchor.setRow1(1)
+        anchor.setRow2(6)
         Comment comment = drawing.createCellComment(anchor)
         RichTextString str = factory.createRichTextString(message)
         comment.setString(str)
-        Cell headerCell = sheet.getRow(0).getCell(column)
-        headerCell.setCellComment(comment);
+        Cell headerCell = sheet.getRow(1).getCell(column)
+        headerCell.setCellComment(comment)
 
     }
 

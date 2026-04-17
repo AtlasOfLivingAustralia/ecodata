@@ -726,7 +726,7 @@ class MetadataService implements DataBinder {
         sites
     }
 
-    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, String outputName, String listName, Integer formVersion = null) {
+    Map excelWorkbookToMap(InputStream excelWorkbookIn, String activityFormName, String outputName, String listName, Integer formVersion = null, boolean addOutputSpeciesId = false) {
         List result = []
         List errors = []
         Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
@@ -766,8 +766,10 @@ class MetadataService implements DataBinder {
                             excelImportService.convertDotNotationToObject(normalisedRow, cell.key, cell.value)
                             excelImportService.removeEmptyObjects(normalisedRow)
                         }
+                        if (addOutputSpeciesId) {
+                            addOutputSpeciesIdToSpeciesData(normalisedRow, model)
+                        }
 
-                        addOutputSpeciesIdToSpeciesData(normalisedRow, model)
                         normalisedData << normalisedRow
                     }
                     catch (Exception ex) {

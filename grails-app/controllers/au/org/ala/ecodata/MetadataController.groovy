@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
-import org.apache.http.HttpStatus
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
@@ -126,7 +125,10 @@ class MetadataController {
     def excelOutputTemplate() {
 
         def outputName, listName, data, expandList, hints
-        boolean editMode, allowExtraRows, autosizeColumns, includeDataPathHeader
+        boolean editMode, allowExtraRows, autosizeColumns
+        boolean includeExtraColumnsForDataTypes
+
+
         String activityForm
         Integer formVersion
         def json = request.getJSON()
@@ -138,6 +140,7 @@ class MetadataController {
             editMode = Boolean.valueOf(json.editMode)
             allowExtraRows = Boolean.valueOf(json.allowExtraRows)
             autosizeColumns = json.autosizeColumns != null ? Boolean.valueOf(json.autosizeColumns) : true
+            includeExtraColumnsForDataTypes = json.includeDataPathHeader != null ? Boolean.valueOf(json.includeDataPathHeader) : false
             data = json.data ? JSON.parse(json.data) : null
             expandList = json.expandList
             hints = json.hints ? JSON.parse(json.hints) : [:]
@@ -150,12 +153,16 @@ class MetadataController {
             editMode = params.getBoolean('editMode', false)
             allowExtraRows = params.getBoolean('allowExtraRows', false)
             autosizeColumns = params.getBoolean('autosizeColumns', true)
+            // We now always include the path data header but for backwards compatibilty with BioCollect
+            // we use the includeDataPathHeader parameter to control whether we also include the additional columns for data types
+            // and serial numbers for multiple activity bulk upload
+            includeExtraColumnsForDataTypes = params.getBoolean('includeDataPathHeader', false)
             activityForm = params.activityForm
             formVersion = params.getInt('formVersion', null)
             hints = params.hint ? JSON.parse(params.hint) : [:]
             data = null
         }
-
+        boolean includeSerialNumbers = includeExtraColumnsForDataTypes
 
         if (!outputName) {
             def result = [status:400, error:'type is a required parameter']
@@ -190,15 +197,18 @@ class MetadataController {
             def listColumns = it.columns
             listColumns.each {
                 it.header = nestedListName
-                it.path = nestedListName + '.' + it.name
+                it.path = nestedListName
                 annotatedModel.add(it)
             }
         }
         annotatedModel = annotatedModel.grep { it.dataType != 'list' && !it.computed }
-        builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns, false, hints)
-        builder.additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
+        Map additionalFieldsForDataTypes = [:]
+        if (includeExtraColumnsForDataTypes) {
+            additionalFieldsForDataTypes = grailsApplication.config.getProperty('additionalFieldsForDataTypes', Map)
+        }
+        builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns, includeSerialNumbers, hints, additionalFieldsForDataTypes)
 
-        builder.buildDataPathHeaderList()
+        builder.build()
 
         builder.setResponseHeaders(response)
 
@@ -244,7 +254,7 @@ class MetadataController {
 
         if (file && activityForm && outputName) {
 
-            def data = metadataService.excelWorkbookToMap(file.inputStream, activityForm, outputName, listName, formVersion)
+            def data = metadataService.excelWorkbookToMap(file.inputStream, activityForm, outputName, listName, formVersion, false)
 
             def result
             if (!data.success) {
@@ -287,7 +297,7 @@ class MetadataController {
         Integer formVersion = params.getInt('formVersion', null)
         if (file && activityType) {
 
-            def data = metadataService.excelWorkbookToMap(file.inputStream, activityType, outputName, listName, formVersion)
+            def data = metadataService.excelWorkbookToMap(file.inputStream, activityType, outputName, listName, formVersion, true)
             def status = 200
 
             def result
@@ -312,52 +322,6 @@ class MetadataController {
             render result as JSON
         }
 
-    }
-
-    /**
-     * Returns an Excel template with data that can be populated  and uploaded.
-     */
-    def excelBulkActivityTemplate() {
-        def props = request.JSON
-        def activityType = props?.type
-        List activityIds = props?.ids?.split(',')
-
-        if (!activityType || !activityIds)  {
-            def result = [status:400, error:'type and ids are required']
-            render result as JSON
-            return null
-        }
-
-        def activityModel = metadataService.activitiesModel().activities.find { it.name == activityType }
-        def outputModels = activityModel.outputs?.collect {
-            [name:it, annotatedModel:metadataService.annotatedOutputDataModel(it), dataModel:metadataService.getDataModelFromOutputName(it)]
-        }
-
-        def activities = activityIds?.collect{act-> activityService.getAll(activityIds).find{it.activityId == act}}
-        def outputData = []
-        activities?.each { val ->
-            def project = projectService.get(val.projectId)
-            def data = [projectName: project.name,grantId:project.grantId]
-            if(val.outputs?.size() > 0) {
-                val.outputs?.each{ content ->
-                    outputData.add( data << content.data)
-                }
-            }
-            else {
-                outputData.add(data)
-            }
-        }
-
-        def model = [[name:"projectName", label:"Project Name",dataType:"text",description:"Project Description",rowHeader:true],
-                     [name:"grantId", label:"Project",dataType:"text",description:"Grant Id",rowHeader:true]]
-        outputModels?.first().annotatedModel.collect { model.add(it) }
-
-        def outputName = "${outputModels?.first().name}"
-        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, outputName, model, outputData)
-        builder.build()
-        builder.setResponseHeaders(response)
-        builder.save(response.outputStream)
-        return null
     }
 
     def getLocationMetadataForPoint(double lat, double lng) {

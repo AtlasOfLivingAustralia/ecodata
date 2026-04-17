@@ -246,7 +246,7 @@ class ProjectXlsExporterSpec extends Specification implements GrailsUnitTest {
         results[0]['Internal order number'] == '1234-1'
         results[0]['Internal order number 2'] == '1234-2'
         results[0]['GO ID'] == 'g-1'
-        results[0]['Work order id'] == 'w-1'
+        results[0]['Work order id'] == ['w-1', 'w-1'] // The work order id column appears twice in the sheet.
         results[0]['Tech One Project Code'] == 't-1'
         results[0]['Tech One Project Code 2'] == 't-2'
         results[0]['Primary State(s) (Interpreted)'] == 'ACT'

@@ -47,7 +47,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         outStream.setBytes(response.contentAsByteArray)
         Workbook workbook = ExportTestUtils.readWorkbook(outputFile)
         Sheet sheet = workbook.getSheet(outputName)
-        sheet.physicalNumberOfRows == 1 //header row
+        sheet.physicalNumberOfRows == 2 //data path and label based header rows
         sheet.head().getPhysicalNumberOfCells() == 1 //one field
         sheet.head().getCell(0).toString() == 'testField'
 
