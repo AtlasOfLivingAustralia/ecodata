@@ -114,6 +114,20 @@ class ProjectQueryController implements DataBinder {
         service
     }
 
+    @SchemaMapping(typeName = "MeritProject", field = "blog")
+    List<BlogEntry> blog(Project project) {
+        project.getBlog()
+    }
+
+    @SchemaMapping(typeName = "BlogEntry", field = "image")
+    CompletableFuture<Document> blogImage(BlogEntry blogEntry, DataLoader<String, Document> documentDataLoader) {
+        if (blogEntry.imageId) {
+            documentDataLoader.load(blogEntry.imageId)
+        } else {
+            CompletableFuture.completedFuture(null)
+        }
+    }
+
 
     @SchemaMapping(typeName = "MeritProject", field = "reports")
     DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Pagination pagination) {
@@ -302,10 +316,18 @@ class ProjectQueryController implements DataBinder {
 
     }
 
-    @SchemaMapping(typeName = "MeritProject", field = "deliveredAgainstTargets")
-    List<DeliveredAgainstTarget> deliveredAgainstTargets(Project project) {
+    @SchemaMapping(typeName = "MeritProject", field = "reportedDeliveredAgainstTargets")
+    List<DeliveredAgainstTarget> reportedDeliveredAgainstTargets(Project project) {
+        deliveredAgainstProjectTargets(project, false)
+    }
 
-        boolean approvedOnly = true
+    @SchemaMapping(typeName = "MeritProject", field = "approvedDeliveredAgainstTargets")
+    List<DeliveredAgainstTarget> approvedDeliveredAgainstTargets(Project project) {
+        deliveredAgainstProjectTargets(project, true)
+    }
+
+
+    private List<DeliveredAgainstTarget> deliveredAgainstProjectTargets(Project project, boolean approvedOnly) {
         List scoreIds = []
         project.outputTargets?.each {
             scoreIds << it.scoreId
@@ -315,7 +337,6 @@ class ProjectQueryController implements DataBinder {
         }
         List<Map> metrics = (List<Map>)projectService.projectMetrics(project.projectId, false, approvedOnly, scoreIds, null, true, true)
         metrics.collect { new DeliveredAgainstTarget(it) }
-
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "statesAndElectorates")
