@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.converters.JSON
 import org.apache.http.HttpStatus
@@ -85,6 +86,11 @@ class DataSetSummaryController {
         Map dataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
 
         if (project && dataSet) {
+
+            // Setup the context for role checking
+            ParatooInvocationContext context = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion: "v2")
+            ParatooInvocationContext.setCurrent(context)
+
             ParatooCollectionId paratooCollectionId = ParatooCollectionId.fromMap(dataSet.surveyId)
             String protocolId = paratooCollectionId.getProtocolId()
             if (!protocolId || !paratooService.protocolCheck(userId, projectId, protocolId, Permission.WRITE)) {
