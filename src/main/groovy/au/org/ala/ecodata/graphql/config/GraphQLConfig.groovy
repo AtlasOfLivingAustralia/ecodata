@@ -165,6 +165,13 @@ class GraphQLConfig {
             Mono.just(outputs)
         })
 
+        registry.forTypePair(String, Document).registerMappedBatchLoader( (documentIds, env) -> {
+            Map<String, Document> documents = Document.findAllByDocumentIdInList(new ArrayList(documentIds)).collectEntries { Document document ->
+                [(document.documentId): document]
+            }
+            Mono.just(documents)
+        })
+
         registry.forTypePair(String, TargetMeasure).registerMappedBatchLoader ( (scoreIds, env) -> {
             Map<String, TargetMeasure> targetMeasures = Score.findAllByScoreIdInList(new ArrayList(scoreIds)).collectEntries { Score score ->
                 TargetMeasure targetMeasure = new TargetMeasure(
