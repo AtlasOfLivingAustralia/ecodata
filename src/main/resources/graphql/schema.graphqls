@@ -48,6 +48,8 @@ type Query {
         startDate: DateRange
         "Specifies a range of values which the project end date must fall into"
         endDate: DateRange
+        "Specifies the department managing the project.  Current values are Agriculture, Environment, Both"
+        portfolio: [String]
         "Species a range of values the project last updated date must fall into.  Different entities in MERIT (Project, Site, Report, Activity) have different last updated dates.   This field will always include the project last updated date, if the selection set includes reports, the report (and any associated data) will be included and if the selection set includes sites the site last updated date will also be checked"
         lastUpdated: DateRange
 
