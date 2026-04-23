@@ -210,6 +210,8 @@ type Partnership {
     partnerName: String
     description: String
     partnerOrganisationType: String
+    "If partnerOrganisationType is \"Other\", this field contains the type"
+    otherOrganisationType: String
 }
 
 type KeyThreat {
