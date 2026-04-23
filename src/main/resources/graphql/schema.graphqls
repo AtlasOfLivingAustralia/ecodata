@@ -175,7 +175,7 @@ type MeriPlan {
     approach: String
 
     conservationAndManagementPlans:[ManagementPlan]
-
+    permissionForCaseStudy: Boolean
 
 }
 
