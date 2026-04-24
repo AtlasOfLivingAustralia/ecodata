@@ -17,7 +17,8 @@ class SearchMeritProjects implements Validateable {
             managementUnit: "muFacet",
             managementUnitId: "managementUnitId",
             organisation: "organisationFacet",
-            organisationId: "organisationId"
+            organisationId: "organisationId",
+            portfolio: "portfolio"
     ]
 
     ReportQuery reports
@@ -31,6 +32,7 @@ class SearchMeritProjects implements Validateable {
     List<String> managementUnitId
     List<String> organisation
     List<String> organisationId
+    List<String> portfolio
 
     DateRange startDate
     DateRange endDate

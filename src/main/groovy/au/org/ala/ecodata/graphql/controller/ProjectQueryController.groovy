@@ -113,6 +113,14 @@ class ProjectQueryController implements DataBinder {
         }
         service
     }
+    @SchemaMapping(typeName = "DataSetSummary", field = "site")
+    CompletableFuture<Site> dataSetSite(DataSetSummary dataSetSummary, DataLoader<String, Site> siteLoader) {
+        if (dataSetSummary.siteId) {
+            siteLoader.load(dataSetSummary.siteId)
+        } else {
+            CompletableFuture.completedFuture(null)
+        }
+    }
 
     @SchemaMapping(typeName = "MeritProject", field = "blog")
     List<BlogEntry> blog(Project project) {

@@ -190,6 +190,12 @@ class GraphQLConfig {
                 [(service.legacyId): service]
             })
         })
+
+        registry.forTypePair(String, Site).registerMappedBatchLoader ( (siteIds, env) -> {
+            Mono.just(Site.findAllBySiteIdInList(new ArrayList(siteIds)).collectEntries { Site site ->
+                [(site.siteId): site]
+            })
+        })
     }
 
     /** Here we transform the schema to add descriptions from the DataDescription collection. */
