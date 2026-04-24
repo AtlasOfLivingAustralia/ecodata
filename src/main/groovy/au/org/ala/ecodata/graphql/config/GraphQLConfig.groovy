@@ -191,6 +191,12 @@ class GraphQLConfig {
             })
         })
 
+        registry.forTypePair(String, Site).registerMappedBatchLoader ( (siteIds, env) -> {
+            Mono.just(Site.findAllBySiteIdInList(new ArrayList(siteIds)).collectEntries { Site site ->
+                [(site.siteId): site]
+            })
+        })
+
         registry.forTypePair(String, InvestmentPriority).withName("assets").registerMappedBatchLoader((investmentPriorityIds, env) -> {
             Mono.just(InvestmentPriority.findAllByInvestmentPriorityIdInListAndStatusNotEqual(new ArrayList(investmentPriorityIds), Status.DELETED).collectEntries {[(it.investmentPriorityId):it] })
         })

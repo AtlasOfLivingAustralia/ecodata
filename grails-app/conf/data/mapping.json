@@ -232,6 +232,9 @@
         "projectStateFacet": {
           "type": "keyword"
         },
+        "portfolio": {
+          "type": "keyword"
+        },
         "extent":{
           "properties": {
             "geometry": {
