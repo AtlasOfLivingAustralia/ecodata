@@ -18,7 +18,20 @@ class SearchMeritProjects implements Validateable {
             managementUnitId: "managementUnitId",
             organisation: "organisationFacet",
             organisationId: "organisationId",
-            portfolio: "portfolio"
+            portfolio: "portfolio",
+            status:"status"
+    ]
+
+    static Map namedParameterToDatabaseMap = [
+            projectId:"projectId",
+            meritProjectID:"grantId",
+            programId: "programId",
+            program: "associatedProgram",
+            subProgram: "associatedSubProgram",
+            managementUnitId: "managementUnitId",
+            organisationId: "organisationId",
+            portfolio: "portfolio",
+            status:"status"
     ]
 
     ReportQuery reports
@@ -33,6 +46,7 @@ class SearchMeritProjects implements Validateable {
     List<String> organisation
     List<String> organisationId
     List<String> portfolio
+    String status
 
     DateRange startDate
     DateRange endDate
@@ -60,6 +74,16 @@ class SearchMeritProjects implements Validateable {
 
         params.putAll(Pagination.asMap(pagination))
         params
+    }
+
+    Map buildDatabaseQueryParameters() {
+        Map databaseQueryParams = [:]
+        namedParameterToDatabaseMap.each { String property, String databaseProperty ->
+            if (this[property]) {
+                databaseQueryParams[databaseProperty] = this[property]
+            }
+        }
+        databaseQueryParams
     }
 
     List buildFacetFilters() {

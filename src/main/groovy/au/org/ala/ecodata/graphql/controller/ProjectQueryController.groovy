@@ -65,7 +65,13 @@ class ProjectQueryController implements DataBinder {
         SearchMeritProjects searchParams = new SearchMeritProjects(env)
         bindData(searchParams, env.getArguments())
 
-        projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        // Searches for deleted projects are special case
+        if (searchParams.status == Status.DELETED) {
+            projectsFetcher.queryDeletedProjects(env, searchParams.buildDatabaseQueryParameters(), Pagination.asMap(searchParams.pagination))
+        }
+        else {
+            projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        }
     }
 
     @QueryMapping
