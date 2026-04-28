@@ -186,6 +186,30 @@ class ParatooController {
         respond([statusCode: HttpStatus.SC_OK])
     }
 
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/pdp/v2/{projectId}/{protocolId}/{operationType}")
+    @Operation(
+            method = "GET",
+            description = "Checks that a user has permissions for the particular project and protocol",
+            parameters = [
+                    @Parameter(name = "projectId", description = "The project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface",
+            summary = "For authorizing with the PDP which checks read permissions"
+    )
+    def pdpCheck(String projectId, String protocolId, String operationType) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
+            Permission permission = Permission.fromString(operationType)
+            paratooService.protocolCheck(userId, prjId, proId, permission)
+        })
+    }
+
+
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
     @Path("/pdp/{projectId}/{protocolId}/read")

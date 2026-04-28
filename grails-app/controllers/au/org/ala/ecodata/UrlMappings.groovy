@@ -254,7 +254,7 @@ class UrlMappings {
 
         "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/$operationType" {
             controller = 'paratoo'
-            action = 'hasReadAccess'
+            action = 'pdpCheck'
         }
         "/ws/paratoo/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'
