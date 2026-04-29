@@ -237,7 +237,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     }
 
-    void "The call to find data set"() {
+    void "The call to /status will return true if the data set has a non-null value for coreSubmitTime (which is set during the /collection call)"() {
         setup:
         String userId = 'u1'
 
@@ -248,7 +248,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, 'c1') >> [dataSet:[progress:Activity.STARTED]]
+        1 * paratooService.findDataSet(userId, 'c1') >> [dataSet:[surveyId:[coreSubmitTime:"2024-01-01T12:00:00.000Z"]]]
 
         and:
         response.status == HttpStatus.SC_OK

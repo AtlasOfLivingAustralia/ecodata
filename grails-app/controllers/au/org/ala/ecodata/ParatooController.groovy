@@ -376,7 +376,7 @@ class ParatooController {
             return
         }
 
-        respond([isSubmitted: (matchingDataSet.dataSet.progress == Activity.STARTED)])
+        respond([isSubmitted: (matchingDataSet.dataSet.surveyId?.coreSubmitTime != null)])
     }
 
     @POST
