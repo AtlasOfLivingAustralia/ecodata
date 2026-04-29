@@ -322,27 +322,39 @@ class ParatooController {
     )
     def submitCollection(@RequestBody(description = "The event time for this request is not the same as the one for minting identifiers. An identifier's event time denotes when the collection was made, this event time denotes when the collection was submitted to the server.",
             required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollection.class))) ParatooCollection collection) {
-
+        ParatooInvocationContext ctx = ParatooInvocationContext.getCurrent()
         if (log.isDebugEnabled()) {
             log.debug("ParatooController::submitCollection")
         }
         if (collection.hasErrors()) {
             error(collection.errors)
         } else {
-            String userId = userService.currentUserDetails.userId
+            String userId = ctx.userId
             Map dataSet = paratooService.findDataSet(userId, collection.orgMintedUUID)
-            if (dataSet?.dataSet?.surveyId) {
+            if (dataSet?.dataSet?.surveyId?.coreSubmitTime) {
+                log.warn("Duplicate submission attempt for orgMintedUUID=${collection.orgMintedUUID} by user ${userId}")
+                error(HttpStatus.SC_BAD_REQUEST, "A collection with this identifier has already been submitted")
+            }
+            else if (dataSet?.dataSet?.surveyId) {
                 ParatooCollectionId collectionId = ParatooCollectionId.fromMap(dataSet.dataSet.surveyId)
-                boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
-                if (hasProtocol) {
-                    Map result = paratooService.submitCollection(collection, dataSet.project)
-                    if (!result.updateResult.error) {
-                        respond([success: true])
+
+                if (ctx.requiresSurveyDetailsInSubmission() && collectionId.survey_metadata.survey_details != collection.survey_details) {
+                    log.warn("Collection details do not match for orgMintedUUID=${collection.orgMintedUUID} by user ${userId}")
+                    error(HttpStatus.SC_BAD_REQUEST, "Collection details do not match those associated with the identifier")
+                }
+                else {
+                    boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
+                    if (hasProtocol) {
+                        collectionId.survey_metadata.survey_details
+                        Map result = paratooService.submitCollection(collection, dataSet.project)
+                        if (!result.updateResult.error) {
+                            respond([success: true])
+                        } else {
+                            error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
+                        }
                     } else {
-                        error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
+                        error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
                     }
-                } else {
-                    error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
                 }
 
             } else {
