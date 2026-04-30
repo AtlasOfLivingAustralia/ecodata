@@ -79,6 +79,7 @@ class ParatooController {
     static allowedMethods = [
             userProjects       : 'GET',
             hasReadAccess      : 'GET',
+            pdpCheck           : 'GET',
             hasWriteAccess     : 'GET',
             validateToken      : 'POST',
             mintCollectionId   : 'POST',
@@ -187,20 +188,21 @@ class ParatooController {
     }
 
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
-    @Path("/pdp/v2/{projectId}/{protocolId}/{operationType}")
+    @Path("/v2/pdp/{projectId}/{protocolId}/{operationType}")
     @Operation(
             method = "GET",
             description = "Checks that a user has permissions for the particular project and protocol",
             parameters = [
                     @Parameter(name = "projectId", description = "The project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
-                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "operationType", description = "The type of operation to check permissions for", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string", allowableValues = ["read", "write"]))
             ],
             responses = [
                     @ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
                     @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")
             ],
             tags = "Org Interface",
-            summary = "For authorizing with the PDP which checks read permissions"
+            summary = "For authorizing with the PDP which checks permissions based on the supplied operation type (e.g. read or write).  This is a more flexible version of the hasReadAccess and hasWriteAccess endpoints which can be used for any permission type supported by the PDP without needing to add new endpoints."
     )
     def pdpCheck(String projectId, String protocolId, String operationType) {
         protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
@@ -345,7 +347,6 @@ class ParatooController {
                 else {
                     boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
                     if (hasProtocol) {
-                        collectionId.survey_metadata.survey_details
                         Map result = paratooService.submitCollection(collection, dataSet.project)
                         if (!result.updateResult.error) {
                             respond([success: true])

@@ -27,6 +27,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     }
 
     def cleanup() {
+        ParatooInvocationContext.removeCurrent()
     }
 
     void "The user projects call delegates to the ParatooService"() {
