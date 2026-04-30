@@ -37,11 +37,11 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                    ],[
                     id:"p2", name:"Project 2", grantID:"g2", protocols:[], plot_selections:[],
                     project_area:[type:"Polygon", coordinates: DUMMY_POLYGON[0].collect{[lat:it[1], lng:it[0]]}],
-                    roles:["authenticated"]
+                    roles:["collector"]
                   ],[
                      id:"p3", name:"Project 3", grantID:"g3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area:null, plot_selections:[], roles:['authenticated']
+                     ], project_area:null, plot_selections:[], roles:['collector']
                   ]
                 ]]
 

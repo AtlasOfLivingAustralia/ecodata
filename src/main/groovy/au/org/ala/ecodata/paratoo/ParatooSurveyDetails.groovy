@@ -1,5 +1,8 @@
 package au.org.ala.ecodata.paratoo
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode(includes = ['survey_model', 'time', 'uuid', 'project_id', 'protocol_id', 'protocol_version'])
 class ParatooSurveyDetails {
     String survey_model
     /** ISO time, stored as a String as we don't need to use it as a Date */

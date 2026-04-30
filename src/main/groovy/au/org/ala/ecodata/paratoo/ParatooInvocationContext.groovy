@@ -16,6 +16,7 @@ class ParatooInvocationContext {
         current.remove()
     }
 
+    static final String API_VERSION_1 = "v1"
     String userId
     String apiVersion
     /**
@@ -26,20 +27,27 @@ class ParatooInvocationContext {
      */
     Permission operationType = Permission.WRITE
 
+    private boolean isApiVersion1() {
+        return !apiVersion || apiVersion == API_VERSION_1
+    }
 
     void filterRoles(List roles) {
         // The Determiner role was only introduced in v2 of the API, so if we're running in v1 mode we need to remove it from the list of roles
-        if (apiVersion != "v2") {
+        if (isApiVersion1()) {
             roles.remove(ParatooService.DETERMINER)
         }
     }
 
     boolean supportsMultipleRoles() {
-        return apiVersion && apiVersion != "v1"
+        return !isApiVersion1()
     }
 
     boolean supportsClientMeta() {
-        return apiVersion && apiVersion != "v1" && operationType == Permission.WRITE
+        return !isApiVersion1() && operationType == Permission.WRITE
+    }
+
+    boolean requiresSurveyDetailsInSubmission() {
+        return !isApiVersion1()
     }
 
 }

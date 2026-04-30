@@ -1,5 +1,5 @@
 {
-  "authenticated": {
+  "collector": {
     "read": {
       "plot-selection-guid": true,
       "guid-2": true,
