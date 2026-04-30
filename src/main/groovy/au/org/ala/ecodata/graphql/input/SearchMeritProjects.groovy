@@ -50,7 +50,7 @@ class SearchMeritProjects implements Validateable {
 
     DateRange startDate
     DateRange endDate
-    DateRange lastUpdated
+    DateTimeRange lastUpdated
 
     String query = "*:*"
     List<String> facetFilters
@@ -124,7 +124,7 @@ class SearchMeritProjects implements Validateable {
 
     }
 
-    private String buildLastUpdatedQueryFilter(DateRange lastUpdated) {
+    private String buildLastUpdatedQueryFilter(DateTimeRange lastUpdated) {
         List lastUpdatedFields = ["lastUpdated"]
         DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet()
         if (selectionSet.contains("results/reports")) {
@@ -138,7 +138,7 @@ class SearchMeritProjects implements Validateable {
         }
 
         String lastUpdatedQuery = lastUpdatedFields.collect {
-            buildDateRangeFilterQuery(it, lastUpdated)
+            buildDateTimeRangeFilterQuery(it, lastUpdated)
         }.join(" OR ")
 
         "(" + lastUpdatedQuery + ")"
@@ -147,6 +147,13 @@ class SearchMeritProjects implements Validateable {
     private static String buildDateRangeFilterQuery(String field, DateRange dateRange) {
         String from = dateRange.from ? DateUtil.formatAsDisplayDate(dateRange.from): "*"
         String to = dateRange.to ? DateUtil.formatAsDisplayDate(dateRange.to): "*"
+
+        "${field}:[${from} TO ${to}]"
+    }
+
+    private static String buildDateTimeRangeFilterQuery(String field, DateTimeRange dateRange) {
+        String from = dateRange.from ? DateUtil.format(dateRange.from): "*"
+        String to = dateRange.to ? DateUtil.format(dateRange.to): "*"
 
         "${field}:[${from} TO ${to}]"
     }
