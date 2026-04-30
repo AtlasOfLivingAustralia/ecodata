@@ -302,8 +302,8 @@ interface Project {
     description: String
     projectId: UUID
     hubId: UUID
-    sites(pagination:Pagination): Sites
-    documents(pagination:Pagination): Documents
+    sites(includeDeleted:Boolean, pagination:Pagination): Sites
+    documents(includeDeleted:Boolean, pagination:Pagination): Documents
 }
 
 type MeritProject implements Project {
@@ -339,9 +339,9 @@ type MeritProject implements Project {
     "Unique identifier of a MERIT project"
     projectId: UUID
     "The reports to be completed by this project"
-    reports(pagination: Pagination): Reports
-    sites(pagination: Pagination): Sites
-    documents(pagination: Pagination): Documents
+    reports(includeDeleted:Boolean, pagination: Pagination): Reports
+    sites(includeDeleted:Boolean, pagination: Pagination): Sites
+    documents(includeDeleted:Boolean, pagination: Pagination): Documents
     dataSetSummaries: [DataSetSummary]
     "An array of measures that indicate the progress of the project towards its targets as reported in any report.  This includes data from reports that have not yet been approved so while it may be more up to date, data might still be corrected."
     reportedDeliveredAgainstTargets: [DeliveredAgainstTarget]
@@ -427,6 +427,7 @@ type Site {
     siteId: UUID
     dateCreated: DateTime
     lastUpdated: DateTime
+    status: Status
     name: String
     purposeCode: SitePurpose
     geoJson: GeoJson
@@ -458,6 +459,7 @@ type ProjectOutcome {
 type Report {
     publicationStatus: PublicationStatus
     reportId: UUID
+    status: Status
     "category"
     category: String
     "name"
