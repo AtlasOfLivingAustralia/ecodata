@@ -18,7 +18,20 @@ class SearchMeritProjects implements Validateable {
             managementUnitId: "managementUnitId",
             organisation: "organisationFacet",
             organisationId: "organisationId",
-            portfolio: "portfolio"
+            portfolio: "portfolio",
+            status:"status"
+    ]
+
+    static Map namedParameterToDatabaseMap = [
+            projectId:"projectId",
+            meritProjectID:"grantId",
+            programId: "programId",
+            program: "associatedProgram",
+            subProgram: "associatedSubProgram",
+            managementUnitId: "managementUnitId",
+            organisationId: "organisationId",
+            portfolio: "portfolio",
+            status:"status"
     ]
 
     ReportQuery reports
@@ -33,10 +46,11 @@ class SearchMeritProjects implements Validateable {
     List<String> organisation
     List<String> organisationId
     List<String> portfolio
+    String status
 
     DateRange startDate
     DateRange endDate
-    DateRange lastUpdated
+    DateTimeRange lastUpdated
 
     String query = "*:*"
     List<String> facetFilters
@@ -60,6 +74,16 @@ class SearchMeritProjects implements Validateable {
 
         params.putAll(Pagination.asMap(pagination))
         params
+    }
+
+    Map buildDatabaseQueryParameters() {
+        Map databaseQueryParams = [:]
+        namedParameterToDatabaseMap.each { String property, String databaseProperty ->
+            if (this[property]) {
+                databaseQueryParams[databaseProperty] = this[property]
+            }
+        }
+        databaseQueryParams
     }
 
     List buildFacetFilters() {
@@ -100,7 +124,7 @@ class SearchMeritProjects implements Validateable {
 
     }
 
-    private String buildLastUpdatedQueryFilter(DateRange lastUpdated) {
+    private String buildLastUpdatedQueryFilter(DateTimeRange lastUpdated) {
         List lastUpdatedFields = ["lastUpdated"]
         DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet()
         if (selectionSet.contains("results/reports")) {
@@ -109,9 +133,12 @@ class SearchMeritProjects implements Validateable {
         if ( selectionSet.contains("results/sites")) {
             lastUpdatedFields << "sites.lastUpdated"
         }
+        if (selectionSet.contains("results/documents")) {
+            lastUpdatedFields << "documents.lastUpdated"
+        }
 
         String lastUpdatedQuery = lastUpdatedFields.collect {
-            buildDateRangeFilterQuery(it, lastUpdated)
+            buildDateTimeRangeFilterQuery(it, lastUpdated)
         }.join(" OR ")
 
         "(" + lastUpdatedQuery + ")"
@@ -120,6 +147,13 @@ class SearchMeritProjects implements Validateable {
     private static String buildDateRangeFilterQuery(String field, DateRange dateRange) {
         String from = dateRange.from ? DateUtil.formatAsDisplayDate(dateRange.from): "*"
         String to = dateRange.to ? DateUtil.formatAsDisplayDate(dateRange.to): "*"
+
+        "${field}:[${from} TO ${to}]"
+    }
+
+    private static String buildDateTimeRangeFilterQuery(String field, DateTimeRange dateRange) {
+        String from = dateRange.from ? DateUtil.format(dateRange.from): "*"
+        String to = dateRange.to ? DateUtil.format(dateRange.to): "*"
 
         "${field}:[${from} TO ${to}]"
     }

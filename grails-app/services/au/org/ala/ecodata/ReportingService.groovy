@@ -320,7 +320,10 @@ class ReportingService {
 
         def criteria = Report.createCriteria()
         def reports = criteria.list(paginationParams) {
-            ne("status", "deleted")
+            if (!searchCriteria["status"]) {
+                ne("status", Status.DELETED)
+            }
+
             searchCriteria.each { prop,value ->
 
                 if (value instanceof List) {

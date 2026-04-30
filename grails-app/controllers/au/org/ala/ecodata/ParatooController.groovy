@@ -79,6 +79,7 @@ class ParatooController {
     static allowedMethods = [
             userProjects       : 'GET',
             hasReadAccess      : 'GET',
+            pdpCheck           : 'GET',
             hasWriteAccess     : 'GET',
             validateToken      : 'POST',
             mintCollectionId   : 'POST',
@@ -185,6 +186,31 @@ class ParatooController {
     def noop() {
         respond([statusCode: HttpStatus.SC_OK])
     }
+
+    @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
+    @Path("/v2/pdp/{projectId}/{protocolId}/{operationType}")
+    @Operation(
+            method = "GET",
+            description = "Checks that a user has permissions for the particular project and protocol",
+            parameters = [
+                    @Parameter(name = "projectId", description = "The project id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "protocolId", description = "The protocol id", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "operationType", description = "The type of operation to check permissions for", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string", allowableValues = ["read", "write"]))
+            ],
+            responses = [
+                    @ApiResponse(responseCode = "200", description = "Returns if user has read permission for supplied project and protocol", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"), @ApiResponse(responseCode = "404", description = "Not found")
+            ],
+            tags = "Org Interface",
+            summary = "For authorizing with the PDP which checks permissions based on the supplied operation type (e.g. read or write).  This is a more flexible version of the hasReadAccess and hasWriteAccess endpoints which can be used for any permission type supported by the PDP without needing to add new endpoints."
+    )
+    def pdpCheck(String projectId, String protocolId, String operationType) {
+        protocolCheck(projectId, protocolId, { String userId, String prjId, String proId ->
+            Permission permission = Permission.fromString(operationType)
+            paratooService.protocolCheck(userId, prjId, proId, permission)
+        })
+    }
+
 
     @GET
     @SecurityRequirements([@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = "openIdConnect"), @SecurityRequirement(name = "oauth")])
@@ -298,27 +324,38 @@ class ParatooController {
     )
     def submitCollection(@RequestBody(description = "The event time for this request is not the same as the one for minting identifiers. An identifier's event time denotes when the collection was made, this event time denotes when the collection was submitted to the server.",
             required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParatooCollection.class))) ParatooCollection collection) {
-
+        ParatooInvocationContext ctx = ParatooInvocationContext.getCurrent()
         if (log.isDebugEnabled()) {
             log.debug("ParatooController::submitCollection")
         }
         if (collection.hasErrors()) {
             error(collection.errors)
         } else {
-            String userId = userService.currentUserDetails.userId
+            String userId = ctx.userId
             Map dataSet = paratooService.findDataSet(userId, collection.orgMintedUUID)
-            if (dataSet?.dataSet?.surveyId) {
+            if (dataSet?.dataSet?.surveyId?.coreSubmitTime) {
+                log.warn("Duplicate submission attempt for orgMintedUUID=${collection.orgMintedUUID} by user ${userId}")
+                error(HttpStatus.SC_BAD_REQUEST, "A collection with this identifier has already been submitted")
+            }
+            else if (dataSet?.dataSet?.surveyId) {
                 ParatooCollectionId collectionId = ParatooCollectionId.fromMap(dataSet.dataSet.surveyId)
-                boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
-                if (hasProtocol) {
-                    Map result = paratooService.submitCollection(collection, dataSet.project)
-                    if (!result.updateResult.error) {
-                        respond([success: true])
+
+                if (ctx.requiresSurveyDetailsInSubmission() && collectionId.survey_metadata.survey_details != collection.survey_details) {
+                    log.warn("Collection details do not match for orgMintedUUID=${collection.orgMintedUUID} by user ${userId}")
+                    error(HttpStatus.SC_BAD_REQUEST, "Collection details do not match those associated with the identifier")
+                }
+                else {
+                    boolean hasProtocol = paratooService.protocolCheck(userId, dataSet.project.id, collectionId.protocolId, Permission.WRITE)
+                    if (hasProtocol) {
+                        Map result = paratooService.submitCollection(collection, dataSet.project)
+                        if (!result.updateResult.error) {
+                            respond([success: true])
+                        } else {
+                            error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
+                        }
                     } else {
-                        error(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.updateResult.error)
+                        error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
                     }
-                } else {
-                    error(HttpStatus.SC_FORBIDDEN, "Project / protocol combination not available")
                 }
 
             } else {
@@ -352,7 +389,7 @@ class ParatooController {
             return
         }
 
-        respond([isSubmitted: (matchingDataSet.dataSet.progress == Activity.STARTED)])
+        respond([isSubmitted: (matchingDataSet.dataSet.surveyId?.coreSubmitTime != null)])
     }
 
     @POST

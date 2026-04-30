@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.ISODateBindingConverter
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.testing.web.controllers.ControllerUnitTest
 import groovy.json.JsonSlurper
@@ -26,6 +27,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
     }
 
     def cleanup() {
+        ParatooInvocationContext.removeCurrent()
     }
 
     void "The user projects call delegates to the ParatooService"() {
@@ -167,7 +169,8 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
         collectionId.userId = 'system'
         Map dataSet = [surveyId:collectionId]
-
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v1")
+        ParatooInvocationContext.setCurrent(ctx)
 
         when:
         request.method = "POST"
@@ -175,7 +178,6 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         controller.submitCollection()
 
         then:
-        1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
         1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> false
 
@@ -193,6 +195,8 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
         collectionId.userId = 'system'
         Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v1")
+        ParatooInvocationContext.setCurrent(ctx)
 
         when:
         request.method = "POST"
@@ -200,7 +204,6 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         controller.submitCollection()
 
         then:
-        1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
         1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [:], promise: null]
@@ -219,6 +222,8 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
         collectionId.userId = 'system'
         Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v1")
+        ParatooInvocationContext.setCurrent(ctx)
 
         when:
         request.method = "POST"
@@ -226,7 +231,6 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
         controller.submitCollection()
 
         then:
-        1 * userService.currentUserDetails >> [userId:userId]
         1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
         1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
         1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [error:"Error"], promise: null]
@@ -237,7 +241,88 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
     }
 
-    void "The call to find data set"() {
+    void "A duplicate submission returns a 400 error"() {
+        setup:
+        String userId = 'u1'
+        Map collection = buildCollectionJson()
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        collectionId.coreSubmitTime = DateUtil.formatWithMilliseconds(new Date())
+        Map dataSet = [surveyId:collectionId]
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v2")
+        ParatooInvocationContext.setCurrent(ctx)
+
+        when:
+        request.method = "POST"
+        request.json = collection
+        controller.submitCollection()
+
+        then:
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
+        0 * paratooService.protocolCheck(_, _, _, _)
+        0 * paratooService.submitCollection(_, _)
+
+        and:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.message == "A collection with this identifier has already been submitted"
+    }
+
+    void "Survey details mismatch returns a 400 error for v2 API"() {
+        setup:
+        String userId = 'u1'
+        Map collection = buildCollectionJson()
+        collection.survey_details = [survey_model: "different-model", time: "2024-03-18T20:00:25.365Z", uuid: "different-uuid", project_id: "p1", protocol_id: "guid-1", protocol_version: 1]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map dataSet = [surveyId:collectionId]
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v2")
+        ParatooInvocationContext.setCurrent(ctx)
+
+        when:
+        request.method = "POST"
+        request.json = collection
+        controller.submitCollection()
+
+        then:
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> [project:new ParatooProject(id:'p1'), dataSet:dataSet]
+        0 * paratooService.protocolCheck(_, _, _, _)
+        0 * paratooService.submitCollection(_, _)
+
+        and:
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.message == "Collection details do not match those associated with the identifier"
+    }
+
+    void "Survey details mismatch is ignored for v1 API and submission proceeds"() {
+        setup:
+        String userId = 'u1'
+        Map collection = buildCollectionJson()
+        collection.survey_details = [survey_model: "different-model", time: "2024-03-18T20:00:25.365Z", uuid: "different-uuid", project_id: "p1", protocol_id: "guid-1", protocol_version: 1]
+        Map collectionId = buildCollectionIdJson()
+        collectionId.eventTime = DateUtil.formatWithMilliseconds(new Date())
+        collectionId.userId = 'system'
+        Map searchResults = [project:new ParatooProject(id:'p1'), dataSet:[surveyId:collectionId]]
+        ParatooInvocationContext ctx = new ParatooInvocationContext(userId:userId, operationType:Permission.WRITE, apiVersion:"v1")
+        ParatooInvocationContext.setCurrent(ctx)
+
+        when:
+        request.method = "POST"
+        request.json = collection
+        controller.submitCollection()
+
+        then:
+        1 * paratooService.findDataSet(userId, collection.orgMintedUUID) >> searchResults
+        1 * paratooService.protocolCheck(userId, 'p1', "guid-1", Permission.WRITE) >> true
+        1 * paratooService.submitCollection({it.orgMintedUUID == "c1"}, searchResults.project) >> [updateResult: [:], promise: null]
+
+        and:
+        response.status == HttpStatus.SC_OK
+        response.json == [success:true]
+    }
+
+    void "The call to /status will return true if the data set has a non-null value for coreSubmitTime (which is set during the /collection call)"() {
         setup:
         String userId = 'u1'
 
@@ -248,7 +333,7 @@ class ParatooControllerSpec extends Specification implements ControllerUnitTest<
 
         then:
         1 * userService.currentUserDetails >> [userId:userId]
-        1 * paratooService.findDataSet(userId, 'c1') >> [dataSet:[progress:Activity.STARTED]]
+        1 * paratooService.findDataSet(userId, 'c1') >> [dataSet:[surveyId:[coreSubmitTime:"2024-01-01T12:00:00.000Z"]]]
 
         and:
         response.status == HttpStatus.SC_OK

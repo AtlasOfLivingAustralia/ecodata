@@ -63,15 +63,6 @@ class GraphQLConfig {
              GraphQLScalarType.newScalar().name("DateTime").description("Date and time").coercing(new DateTimeFormatting()).build(),
              GraphQLScalarType.newScalar().name("GeoJson").description("GeoJSON object").coercing(new GeoJsonConverter(siteService)).build()
         ]
-        GraphQLEnumType statusEnum = GraphQLEnumType.newEnum()
-                .name("Status")
-                .description("Project status")
-                .value("ACTIVE", Status.ACTIVE, "Active project")
-                .value("COMPLETED", Status.COMPLETED, "Inactive project")
-                .value("APPLICATION", Status.APPLICATION, "Pending approval")
-                .value("TERMINATED", Status.TERMINATED, "Project terminated")
-                .value("DELETED", Status.DELETED, "Project deleted")
-                .build();
 
         Map<String, String> statusEnumValues = [
                 "ACTIVE":Status.ACTIVE,

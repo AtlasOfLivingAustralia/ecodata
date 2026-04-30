@@ -255,7 +255,10 @@ class UrlMappings {
 
         "/ws/paratoo/$apiVersion/pdp/$projectId/$protocolId/$operationType" {
             controller = 'paratoo'
-            action = 'hasReadAccess'
+            action = 'pdpCheck'
+            constraints {
+                apiVersion(matches: /v1|v2/)
+            }
         }
         "/ws/paratoo/pdp/$projectId/$protocolId/read" {
             controller = 'paratoo'

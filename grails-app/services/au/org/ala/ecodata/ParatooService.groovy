@@ -66,7 +66,7 @@ class ParatooService {
     static final String PARATOO_DATAMODEL_PLOT_LAYOUT = "plot_layout"
     static final String PARATOO_DATAMODEL_PLOT_SELECTION = "plot_selection"
     static final String PARATOO_DATAMODEL_PLOT_VISIT = "plot_visit"
-    static String EDITOR = 'authenticated'
+    static String EDITOR = 'collector'
     static String ADMIN = 'project_admin'
     static String PUBLIC = 'public'
     static String DETERMINER = 'determiner'
