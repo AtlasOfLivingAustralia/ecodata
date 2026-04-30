@@ -3,6 +3,8 @@ package au.org.ala.ecodata.graphql.fetchers
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.EcodataGraphQLContextBuilder
 import au.org.ala.ecodata.graphql.enums.ProjectStatus
+import au.org.ala.ecodata.graphql.input.SearchMeritProjects
+import grails.gorm.PagedResultList
 import grails.util.Holders
 import graphql.GraphQLException
 import graphql.schema.DataFetcher
@@ -42,6 +44,14 @@ class ProjectsFetcher implements DataFetcher<Map<Integer, List<Project>>> {
 
         String query = environment.arguments.term ?:"*:*"
         return queryElasticSearch(environment, query, [include:'projectId'])
+    }
+
+    Map<String, Object> queryDeletedProjects(DataFetchingEnvironment environment, Map params, Map paginationParams) {
+
+        Map hub = (Map)environment.graphQlContext.get("hub")
+        params.hubId = hub.hubId
+        PagedResultList<Project> results = projectService.search(params, paginationParams)
+        [totalCount: results.totalCount, results:results]
     }
 
     Map<String, Object> queryElasticSearch(DataFetchingEnvironment environment, String queryString, Map params) {

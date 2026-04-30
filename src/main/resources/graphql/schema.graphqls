@@ -42,8 +42,8 @@ type Query {
         organisationId: [UUID]
         "The name of an organisation associated with the project.  Projects can be associated with one or more organisations.  This criteria behaves the same as the Organisation facet of the Project Explorer"
         organisation: [String]
-        "Filters projects by their current status (e.g. APPLICATION , ACTIVE)"
-        status: [Status]
+        "Filters projects by their current status (e.g. APPLICATION , ACTIVE).  If DELETED is specified as the status the query falls back into mode to return only deleted projects.  The only parameters supported alongside status=DELETED are lastUpdated, program, subProgram, programId, managementUnitId and portfolio.  Other parameters will be ignored."
+        status: Status
         "Specifies a range of values which the project start date must fall into"
         startDate: DateRange
         "Specifies a range of values which the project end date must fall into"
@@ -51,8 +51,7 @@ type Query {
         "Specifies the department managing the project.  Current values are Agriculture, Environment, Both"
         portfolio: [String]
         "Species a range of values the project last updated date must fall into.  Different entities in MERIT (Project, Site, Report, Activity) have different last updated dates.   This field will always include the project last updated date, if the selection set includes reports, the report (and any associated data) will be included and if the selection set includes sites the site last updated date will also be checked"
-        lastUpdated: DateRange
-
+        lastUpdated: DateTimeRange
         "A lucene query string to use to filter the results.  This field behaves the same as the MERIT search field"
         query: String
         "This criteria accepts a list of facets in the form name:value to use to filter the project.  The name is best found by using the Project Explorer facet and examining the URL for the fq parameter"
@@ -303,8 +302,8 @@ interface Project {
     description: String
     projectId: UUID
     hubId: UUID
-    sites(pagination:Pagination): Sites
-    documents(pagination:Pagination): Documents
+    sites(includeDeleted:Boolean, pagination:Pagination): Sites
+    documents(includeDeleted:Boolean, pagination:Pagination): Documents
 }
 
 type MeritProject implements Project {
@@ -340,9 +339,9 @@ type MeritProject implements Project {
     "Unique identifier of a MERIT project"
     projectId: UUID
     "The reports to be completed by this project"
-    reports(pagination: Pagination): Reports
-    sites(pagination: Pagination): Sites
-    documents(pagination: Pagination): Documents
+    reports(includeDeleted:Boolean, pagination: Pagination): Reports
+    sites(includeDeleted:Boolean, pagination: Pagination): Sites
+    documents(includeDeleted:Boolean, pagination: Pagination): Documents
     dataSetSummaries: [DataSetSummary]
     "An array of measures that indicate the progress of the project towards its targets as reported in any report.  This includes data from reports that have not yet been approved so while it may be more up to date, data might still be corrected."
     reportedDeliveredAgainstTargets: [DeliveredAgainstTarget]
@@ -428,6 +427,7 @@ type Site {
     siteId: UUID
     dateCreated: DateTime
     lastUpdated: DateTime
+    status: Status
     name: String
     purposeCode: SitePurpose
     geoJson: GeoJson
@@ -459,6 +459,7 @@ type ProjectOutcome {
 type Report {
     publicationStatus: PublicationStatus
     reportId: UUID
+    status: Status
     "category"
     category: String
     "name"
@@ -600,6 +601,11 @@ input ReportQuery {
 input DateRange {
     from: Date
     to: Date
+}
+
+input DateTimeRange {
+    from: DateTime
+    to: DateTime
 }
 
 input Pagination {
