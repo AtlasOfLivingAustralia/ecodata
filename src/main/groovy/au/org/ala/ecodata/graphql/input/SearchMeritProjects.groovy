@@ -133,6 +133,9 @@ class SearchMeritProjects implements Validateable {
         if ( selectionSet.contains("results/sites")) {
             lastUpdatedFields << "sites.lastUpdated"
         }
+        if (selectionSet.contains("results/documents")) {
+            lastUpdatedFields << "documents.lastUpdated"
+        }
 
         String lastUpdatedQuery = lastUpdatedFields.collect {
             buildDateRangeFilterQuery(it, lastUpdated)
