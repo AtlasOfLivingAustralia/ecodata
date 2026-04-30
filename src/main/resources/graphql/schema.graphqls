@@ -48,6 +48,8 @@ type Query {
         startDate: DateRange
         "Specifies a range of values which the project end date must fall into"
         endDate: DateRange
+        "Specifies the department managing the project.  Current values are Agriculture, Environment, Both"
+        portfolio: [String]
         "Species a range of values the project last updated date must fall into.  Different entities in MERIT (Project, Site, Report, Activity) have different last updated dates.   This field will always include the project last updated date, if the selection set includes reports, the report (and any associated data) will be included and if the selection set includes sites the site last updated date will also be checked"
         lastUpdated: DateRange
 
@@ -175,7 +177,7 @@ type MeriPlan {
     approach: String
 
     conservationAndManagementPlans:[ManagementPlan]
-
+    permissionForCaseStudy: Boolean
 
 }
 
@@ -210,6 +212,8 @@ type Partnership {
     partnerName: String
     description: String
     partnerOrganisationType: String
+    "If partnerOrganisationType is \"Other\", this field contains the type"
+    otherOrganisationType: String
 }
 
 type KeyThreat {
@@ -335,12 +339,16 @@ type MeritProject implements Project {
     program: Program
     "Unique identifier of a MERIT project"
     projectId: UUID
-    "Has reports"
+    "The reports to be completed by this project"
     reports(pagination: Pagination): Reports
     sites(pagination: Pagination): Sites
     documents(pagination: Pagination): Documents
     dataSetSummaries: [DataSetSummary]
-    deliveredAgainstTargets: [DeliveredAgainstTarget]
+    "An array of measures that indicate the progress of the project towards its targets as reported in any report.  This includes data from reports that have not yet been approved so while it may be more up to date, data might still be corrected."
+    reportedDeliveredAgainstTargets: [DeliveredAgainstTarget]
+    "An array of measures that indicate the progress of the project towards its targets from approved reports.  Data reported but not yet approved (even if the report has been submitted) is not included in this result"
+    approvedDeliveredAgainstTargets: [DeliveredAgainstTarget]
+    blog: [BlogEntry]
 
     funding: Float
     fundingType: String
@@ -384,10 +392,22 @@ type DataSetSummary {
     publicationUrl: String
     threatenedSpeciesIndex: String
     threatenedSpeciesIndexUploadDate: Date
+    sizeInKB: Float
     sizeUnknown: Boolean
     protocol: String
     collectionApp: String
     orgMintedIdentifier: String
+    site: Site
+    location: String
+}
+
+type BlogEntry {
+    title: String
+    viewMoreUrl: String
+    date: Date
+    type: String,
+    content: String
+    image: Document
 }
 
 type StatesAndElectorates {

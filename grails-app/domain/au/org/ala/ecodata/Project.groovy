@@ -123,10 +123,12 @@ class Project {
 
     List<OutputTarget> outputTargets
 
+    List<BlogEntry> blog
+
     /** Container to allow program config overrides for an individual Project */
     Map config
 
-    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets', 'customMetadata']
+    static embedded = ['associatedOrgs', 'fundings', 'mapLayersConfig', 'config', 'risks', 'geographicInfo', 'externalIds', 'outputTargets', 'customMetadata', 'blog']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks', 'tempArgs', 'monitoringProtocolCategories']
 

@@ -165,6 +165,13 @@ class GraphQLConfig {
             Mono.just(outputs)
         })
 
+        registry.forTypePair(String, Document).registerMappedBatchLoader( (documentIds, env) -> {
+            Map<String, Document> documents = Document.findAllByDocumentIdInList(new ArrayList(documentIds)).collectEntries { Document document ->
+                [(document.documentId): document]
+            }
+            Mono.just(documents)
+        })
+
         registry.forTypePair(String, TargetMeasure).registerMappedBatchLoader ( (scoreIds, env) -> {
             Map<String, TargetMeasure> targetMeasures = Score.findAllByScoreIdInList(new ArrayList(scoreIds)).collectEntries { Score score ->
                 TargetMeasure targetMeasure = new TargetMeasure(
@@ -181,6 +188,12 @@ class GraphQLConfig {
         registry.forTypePair(Integer, Service).registerMappedBatchLoader ( (serviceIds, env) -> {
             Mono.just(Service.findAllByLegacyIdInList(new ArrayList(serviceIds)).collectEntries { Service service ->
                 [(service.legacyId): service]
+            })
+        })
+
+        registry.forTypePair(String, Site).registerMappedBatchLoader ( (siteIds, env) -> {
+            Mono.just(Site.findAllBySiteIdInList(new ArrayList(siteIds)).collectEntries { Site site ->
+                [(site.siteId): site]
             })
         })
     }
