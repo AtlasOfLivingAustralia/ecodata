@@ -8,4 +8,11 @@ class ParatooCollection implements Validateable {
 
     String orgMintedUUID
     Map coreProvenance
+    ParatooSurveyDetails survey_details
+
+    static constraints = {
+        orgMintedUUID nullable: false
+        coreProvenance nullable: false
+        survey_details nullable: true
+    }
 }
