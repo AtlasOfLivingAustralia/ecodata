@@ -7,6 +7,8 @@ import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.ss.util.CellReference
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
+import java.text.ParseException
+
 @Slf4j
 class OutputUploadTemplateBuilder extends XlsExporter {
     static final String SERIAL_NUMBER_NAME = 'Serial Number'
@@ -228,6 +230,7 @@ class OutputDataProcessor {
     boolean editMode
     boolean extraRowsEditable
     CellStyle unlockedCellStyle
+    CellStyle dateCellStyle
     Map hints
 
     /**
@@ -252,9 +255,14 @@ class OutputDataProcessor {
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
 
+        // Apply date format after other style overrides to ensure it is not lost
+        dateCellStyle = workbook.createCellStyle()
+        short formatId = (short) BuiltinFormats.getBuiltinFormat("m/d/yy") // Localised date format
+        dateCellStyle.setDataFormat(formatId)
         if (editMode) {
-            unlockedCellStyle =  workbook.createCellStyle();
-            unlockedCellStyle.setLocked(false);
+            unlockedCellStyle =  workbook.createCellStyle()
+            unlockedCellStyle.setLocked(false)
+            dateCellStyle.setLocked(false)
         }
     }
 
@@ -266,11 +274,28 @@ class OutputDataProcessor {
         // If we allow extra rows to be added, by default make editable columns editable for the whole sheet.
         if (extraRowsEditable) {
             model.eachWithIndex { modelVal, i ->
-                if (!modelVal.readOnly)  {
+                if (!modelVal.readOnly && modelVal.dataType != 'date')  {
                     sheet.setDefaultColumnStyle(i, unlockedCellStyle)
                 }
             }
         }
+    }
+
+    private static Date parseDate(value) {
+        Date dateValue = null
+        if (value instanceof Date) {
+            dateValue = value
+        }
+        else if (value instanceof String) {
+            try {
+                dateValue = au.org.ala.ecodata.DateUtil.parse(value)
+            }
+            catch (ParseException e) {
+                log.info("Unable to parse date value ${value} in output template upload, leaving cell blank")
+            }
+
+        }
+        return dateValue
     }
 
     public void process(int firstRow = 1) {
@@ -327,6 +352,17 @@ class OutputDataProcessor {
                             cell.setCellValue("")
                             break
                         case 'date':
+                            if (value instanceof Number) {
+                                cell.setCellValue(value.doubleValue())
+                            }
+                            else {
+                                Date dateValue = parseDate(value)
+                                if (dateValue) {
+                                    cell.setCellValue(dateValue)
+                                }
+                            }
+                            cell.setCellStyle(dateCellStyle)
+                            break
                         case 'text':
                         default:
                             cell.setCellValue(value.toString())
@@ -335,7 +371,7 @@ class OutputDataProcessor {
                     if (rowHeader) {
                         cell.setCellStyle(rowHeaderStyle)
                     }
-                    if (editMode) {
+                    if (editMode && dataType != 'date') {
                         if (!modelVal.readOnly) {
                             cell.setCellStyle(unlockedCellStyle)
                         }
@@ -522,7 +558,27 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def date(Object node, ExcelValidationContext context) {
+        DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper()
+        OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)
 
+        def max = rules.max()
+        def min = rules.min()
+        if (!min) {
+            min = '2013-01-01'
+        }
+        def operator = max ? DataValidationConstraint.OperatorType.BETWEEN : DataValidationConstraint.OperatorType.GREATER_OR_EQUAL
+
+        DataValidationConstraint dvConstraint =
+                dvHelper.createDateConstraint(operator, min, max?max.toString():"", "yyyy-MM-dd")
+
+        addValidation(node, context, dvConstraint)
+
+        // Apply date format after other style overrides to ensure it is not lost
+        CellStyle dateCellStyle = context.currentSheet.workbook.createCellStyle()
+        short formatId = (short) BuiltinFormats.getBuiltinFormat("m/d/yy") // Localised date format
+        dateCellStyle.setDataFormat(formatId)
+
+        context.currentSheet.setDefaultColumnStyle(context.currentColumn, dateCellStyle)
     }
 
     @Override
