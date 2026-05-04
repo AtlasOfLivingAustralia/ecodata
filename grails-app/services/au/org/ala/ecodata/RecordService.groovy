@@ -54,6 +54,7 @@ class RecordService {
     MapService mapService
     AuthService authService
     WebService webService
+    ActivityFormService activityFormService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -385,11 +386,18 @@ class RecordService {
         def project = Project.findByProjectId(record.projectId)
         record.dataResourceUid = project.dataResourceId
 
+        ActivityForm form = activity ? activityFormService.findActivityForm(activity.type, activity.formVersion) : null
+        boolean embargoMultimedia = form?.sections?.any { it.embargoMultimedia == true } ?: false
+
         //clear current imageMetadata references on the record
         record.multimedia = []
 
+        if (embargoMultimedia && (json.multimedia || imageMap)) {
+            log.debug("Skipping multimedia upload for record ${record.occurrenceID} because embargoMultimedia is enabled for activity form ${activity?.type} v${activity?.formVersion}")
+        }
+
         //persist any supplied images into imageMetadata service
-        if (json.multimedia) {
+        if (!embargoMultimedia && json.multimedia) {
             try {
                 json.multimedia.eachWithIndex { image, idx ->
 
@@ -467,7 +475,7 @@ class RecordService {
                 log.error("Error uploading image to ${grailsApplication.config.getProperty('imagesService.baseURL')} -${ex.message}")
             }
 
-        } else if (imageMap) {
+        } else if (!embargoMultimedia && imageMap) {
             //upload the images supplied as bytes
             def idx = 0
             imageMap.each { imageFileName, imageInBytes ->
