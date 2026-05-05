@@ -386,8 +386,7 @@ class RecordService {
         def project = Project.findByProjectId(record.projectId)
         record.dataResourceUid = project.dataResourceId
 
-        ActivityForm form = activity ? activityFormService.findActivityForm(activity.type, activity.formVersion) : null
-        boolean embargoMultimedia = form?.sections?.any { it.embargoMultimedia == true } ?: false
+        boolean embargoMultimedia = isMultimediaEmbargoed(activity)
 
         //clear current imageMetadata references on the record
         record.multimedia = []
@@ -1458,7 +1457,11 @@ class RecordService {
                 }
                 break
             case DWC_MEDIA:
-                (currentZipEntry, isMediaHeaderWritten, mediaCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaHeaders, attributes, mediaUniqueness, result, dwcClass, mediaCsvWriter)
+                if (!isMultimediaEmbargoed(projectActivity)) {
+                    (currentZipEntry, isMediaHeaderWritten, mediaCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaHeaders, attributes, mediaUniqueness, result, dwcClass, mediaCsvWriter)
+                } else {
+                    log.debug("Skipping media export for project activity ${projectActivity?.projectActivityId} because embargoMultimedia is enabled")
+                }
                 break
             case DWC_MEASUREMENT:
                 (currentZipEntry, isMeasurementHeaderWritten, measurementCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMeasurementHeaderWritten, measurementHeaders, attributes, measurementUniqueness, result, dwcClass, measurementCsvWriter)
@@ -1991,5 +1994,31 @@ class RecordService {
     Date getCreatedTime(File file) {
         BasicFileAttributes attrs = Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class)
         new Date(attrs.creationTime().toMillis())
+    }
+
+    /**
+     * Checks whether multimedia should be excluded for this project activity.
+     * The embargoMultimedia flag is configured on ActivityForm sections.
+     * When enabled, record image uploads are skipped in updateRecord
+     * and Media rows are excluded from the Darwin Core Archive export.
+     */
+    private boolean isMultimediaEmbargoed(def activityOrProjectActivity) {
+        if (!activityOrProjectActivity) return false
+
+        String formName
+        Integer formVersion
+
+        if (activityOrProjectActivity instanceof ProjectActivity) {
+            formName = activityOrProjectActivity.pActivityFormName
+        } else {
+            formName = activityOrProjectActivity.type
+            formVersion = activityOrProjectActivity.formVersion
+        }
+
+        if (!formName) return false
+
+        ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
+
+        form?.sections?.any { it.embargoMultimedia == true } ?: false
     }
 }
