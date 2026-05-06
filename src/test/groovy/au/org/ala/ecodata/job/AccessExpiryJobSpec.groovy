@@ -48,7 +48,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
     def "The access expiry job will remove all access for users who have not logged in for a specified amount of time"() {
         setup:
         ZonedDateTime processTime = ZonedDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
-        List<User> users = (1..12).collect{new User(userId:'u'+it, userHubs: [new UserHub(hubId:merit.hubId)])}
+        List<User> users = (1..14).collect{new User(userId:'u'+it, userHubs: [new UserHub(hubId:merit.hubId)])}
         int maxEmailsToSend = 11
 
         when:
@@ -61,6 +61,12 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
         and: "Because we reached the email limit we don't process the warnings"
         0 * userService.findUsersWhoLastLoggedInToHubBetween("h1", _, _, _) >> []
 
+        and: "Two of the users don't have permissions in the MERI hub (and should be skipped)"
+        1 * permissionService.countUserPermissionsByHub('u3', merit.hubId) >> 0
+        1 * permissionService.countUserPermissionsByHub('u4', merit.hubId) >> 0
+
+        and: "We only send emails to 11 users because of the max email limit, so only 11 users have their permissions removed and receive an email"
+        11 * permissionService.countUserPermissionsByHub(_, merit.hubId) >> 1
         11 * permissionService.deleteUserPermissionByUserId(_, merit.hubId) >> [status: HttpStatus.SC_OK]
         11 * userService.lookupUserDetails(_) >> [email:'test@test.com']
         11 * emailService.sendTemplatedEmail(
@@ -72,6 +78,7 @@ class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
                 [],
                 merit.emailReplyToAddress,
                 merit.emailFromAddress)
+
         users.each { it.getUserHub(merit.hubId).accessExpiredDate == Date.from(processTime.toInstant()) }
         users.each {it.getUserHub(merit.hubId).accessExpired() }
         emailsSent == maxEmailsToSend
