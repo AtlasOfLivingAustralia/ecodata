@@ -164,6 +164,9 @@ class ExcelImportService {
                 value = null
                 break
         }
+        if (value instanceof String) {
+            value = value.trim()
+        }
         value
     }
 

@@ -558,6 +558,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def date(Object node, ExcelValidationContext context) {
+        addHeaderComment(context, "Please use the format dd/mm/yyyy for dates")
         DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper()
         OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)
 

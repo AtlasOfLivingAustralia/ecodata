@@ -824,7 +824,7 @@ class MetadataService implements DataBinder {
         }
         else if (stringListMembers) {
             // at least one of the string list members should have a value
-            return ! stringListMembers?.any { it.value != null && it.value != "" }
+            return stringListMembers?.any { it.value != null && it.value != "" }
         }
 
         return false
@@ -841,21 +841,26 @@ class MetadataService implements DataBinder {
             listData?.each { key, value ->
                 Map model = models?.find { it.name == key }
                 if ((row == firstRow) && !(firstRow[key] instanceof List)) {
-                    if (!areDataEmpty(firstRow[key]))
+                    if (!areDataEmpty(firstRow[key])) {
                         firstRow[key] = [firstRow[key]]
-                    else
+                    }
+                    else {
                         firstRow[key] = []
+                    }
                 }
 
                 switch (model.dataType) {
                     case DataTypes.LIST:
                         if (isRowValidNextMemberOfArray(value, model.columns)) {
-                            if (!firstRow[key].contains(value))
+                            if (!firstRow[key].contains(value)) {
                                 firstRow[key].add(value)
+                            }
+
                         }
 
-                        if (firstRow[key])
+                        if (firstRow[key]) {
                             rollUpDataIntoSingleElement([value], model.columns, firstRow[key].last())
+                        }
                         break
                     case DataTypes.IMAGE:
                     case DataTypes.PHOTOPOINTS:
@@ -866,15 +871,6 @@ class MetadataService implements DataBinder {
                 }
             }
 
-            Map stringListData = row.subMap(DataTypes.getModelsWithStringListData(models).collect {it.name})
-            stringListData?.each { key, value ->
-                if (!(firstRow[key] instanceof List)) {
-                    firstRow[key] = [firstRow[key]]
-                }
-
-                if (!firstRow[key].contains(value))
-                    firstRow[key].add(value)
-            }
         }
 
         firstRow

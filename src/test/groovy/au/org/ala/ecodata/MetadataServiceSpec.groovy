@@ -306,7 +306,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         content[0][0].data.get("d")[0].f.outputSpeciesId != null
         content[0][0].data.get("d")[1].e == null
         content[0][0].data.get("d")[1].f.name == "sci name 2 (com name 2)"
-        content[0][0].data.get("g").size() == 2
+        content[0][0].data.get("g").size() == 3
         content[0][0].data.get("g")[0].h.size() == 2
         content[0][0].data.get("g")[0].h[0] == "test gh 1"
         content[0][0].data.get("g")[0].h[1] == "test gh 2"
@@ -316,11 +316,13 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         content[0][0].data.get("g")[0].i.guid == "gi1"
         content[0][0].data.get("g")[0].i.outputSpeciesId != null
         content[0][0].data.get("g")[1].h[0] == "test gh 3"
-        content[0][0].data.get("g")[1].i.name == "sci name 3 (com name 3)"
-        content[0][0].data.get("g")[1].i.scientificName == "sci name 3"
-        content[0][0].data.get("g")[1].i.commonName == "com name 3"
-        content[0][0].data.get("g")[1].i.guid == "gi3"
-        content[0][0].data.get("g")[1].i.outputSpeciesId != null
+        content[0][0].data.get("g")[1].i == null
+        content[0][0].data.get("g")[2].h == null
+        content[0][0].data.get("g")[2].i.name == "sci name 3 (com name 3)"
+        content[0][0].data.get("g")[2].i.scientificName == "sci name 3"
+        content[0][0].data.get("g")[2].i.commonName == "com name 3"
+        content[0][0].data.get("g")[2].i.guid == "gi3"
+        content[0][0].data.get("g")[2].i.outputSpeciesId != null
 
 
         content[1][0].data.get("serial") == 2.0
@@ -333,14 +335,14 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         content[1][0].data.get("d")[0].f.guid == "id4"
         content[1][0].data.get("d")[0].f.outputSpeciesId != null
         content[1][0].data.get("g").size() == 2
-        content[1][0].data.get("g")[0].h.size() == 1
-        content[1][0].data.get("g")[0].h[0] == "test gh 4"
+        content[1][0].data.get("g")[0].h.size() == 2
+        content[1][0].data.get("g")[0].h == ["test gh 4", "test gh 5"]
         content[1][0].data.get("g")[0].i.name == "sci name 4 (com name 4)"
         content[1][0].data.get("g")[0].i.scientificName == "sci name 4"
         content[1][0].data.get("g")[0].i.commonName == "com name 4"
         content[1][0].data.get("g")[0].i.guid == "gi4"
         content[1][0].data.get("g")[0].i.outputSpeciesId != null
-        content[1][0].data.get("g")[1].h[0] == "test gh 5"
+        content[1][0].data.get("g")[1].h == null
         content[1][0].data.get("g")[1].i.name == "sci name 5 (com name 5)"
         content[1][0].data.get("g")[1].i.scientificName == "sci name 5"
         content[1][0].data.get("g")[1].i.commonName == "com name 5"
