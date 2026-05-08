@@ -12,7 +12,6 @@ class FormSection {
         optionalQuestionText nullable: true
         description nullable: true
         collapsibleHeading nullable: true
-        embargoMultimedia nullable: true
     }
 
     String name
@@ -34,7 +33,6 @@ class FormSection {
     String optionalQuestionText
     boolean optional = false
     boolean collapsedByDefault = false
-    boolean embargoMultimedia = false
 
     SectionTemplate getSectionTemplate() {
         SectionTemplate outputData = new SectionTemplate()

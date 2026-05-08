@@ -31,6 +31,7 @@ class ActivityForm {
         minOptionalSectionsCompleted nullable: true
         description nullable: true
         externalIds nullable: true
+        embargoMultimedia nullable: true
     }
 
     static mapping = {
@@ -59,6 +60,9 @@ class ActivityForm {
 
     /** Flags whether this form should collect photo point information */
     boolean supportsPhotoPoints
+
+    /** Flags whether multimedia should be excluded from upload and DwC-A export for this form */
+    Boolean embargoMultimedia = false
 
     /** Legacy field for mapping the data in this form with the DoEE grants management system (now decomissioned) */
     String gmsId
