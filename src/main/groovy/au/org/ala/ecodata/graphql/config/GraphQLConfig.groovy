@@ -65,11 +65,11 @@ class GraphQLConfig {
         ]
 
         Map<String, String> statusEnumValues = [
-                "ACTIVE":Status.ACTIVE,
-                "COMPLETED":Status.COMPLETED,
-                "APPLICATION":Status.APPLICATION,
-                "TERMINATED":Status.TERMINATED,
-                "DELETED":Status.DELETED
+                "ACTIVE":Status.ACTIVE.capitalize(),
+                "COMPLETED":Status.COMPLETED.capitalize(),
+                "APPLICATION":Status.APPLICATION.capitalize(),
+                "TERMINATED":Status.TERMINATED.capitalize(),
+                "DELETED":Status.DELETED // Not capitalised
         ]
         Map<String, String> publicationStatusValues = [
                 "DRAFT": PublicationStatus.DRAFT,
