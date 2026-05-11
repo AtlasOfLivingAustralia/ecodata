@@ -1123,7 +1123,7 @@ class ProjectService {
         results?.documents?.collect{
             def data = documentService.readJsonDocument(it)
             StatusChange doc
-            if (!data.error) {
+            if (data && !data.error) {
                 String approvedBy = data.approvedBy
                 if (lookupUserDetails) {
                     approvedBy = userService.lookupUserDetails(data.approvedBy)?.displayName ?: 'Unknown'
