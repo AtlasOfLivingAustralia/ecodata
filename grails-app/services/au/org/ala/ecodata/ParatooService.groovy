@@ -665,12 +665,8 @@ class ParatooService {
             List features = geoJson?.features ?: []
             geoJson.remove('features')
             siteProps.features = features
-            if (features) {
-                siteProps.type = Site.TYPE_COMPOUND
-            }
-            else {
-                siteProps.type = Site.TYPE_SURVEY_AREA
-            }
+            // Features are supported in survey area.
+            siteProps.type = Site.TYPE_COMPOUND
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
             String externalId = geoJson.properties?.externalId

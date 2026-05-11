@@ -3,6 +3,8 @@ import au.org.ala.ecodata.reporting.ShapefileBuilder
 import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
 import org.apache.http.HttpStatus
+import static au.org.ala.ecodata.SpatialService.INTERSECTION_AREA
+
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SiteController {
 
@@ -248,7 +250,9 @@ class SiteController {
 
     def lookupLocationMetadataForSite() {
         def site = request.JSON
-        render siteService.lookupGeographicFacetsForSite(site) as JSON
+        def result = siteService.lookupGeographicFacetsForSite(site)
+        result[INTERSECTION_AREA] = result[INTERSECTION_AREA]?.asImmutable()
+        render result as JSON
     }
 
     def lookupLocationMetadataForSiteById(String id) {
