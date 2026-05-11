@@ -202,6 +202,7 @@ class SiteService {
 
         Map properties = [
                 id:site.siteId,
+                siteId:site.siteId,
                 name:site.name,
                 type:site.type,
                 notes:site.notes,
@@ -209,6 +210,12 @@ class SiteService {
         Map geojson
 
         if (site.features) {
+            // add siteId to each feature
+            site.features.eachWithIndex { feature, index ->
+                feature.properties = feature.properties ?: [:]
+                feature.properties.siteId = site.siteId
+            }
+
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
@@ -694,12 +701,10 @@ class SiteService {
     def populateLocationMetadataForSite(Map site, List<String> fids = null) {
 
         Map siteGeom
-        if (site.type == Site.TYPE_COMPOUND) {
+        if (site.features?.size() >= 1) {
             siteGeom = [
                     type:'GeometryCollection',
-                    geometries: [
-                            site.features.collect{it.geometry}
-                    ]
+                    geometries: site.features.collect{it.geometry}
             ]
         }
         else {
@@ -961,11 +966,15 @@ class SiteService {
                 break
             default:
                 Map geom
-                if (site.type == Site.TYPE_COMPOUND) {
+                if (site.features) {
                     geom = [
                             'type':'GeometryCollection',
-                            'geometries': site.features.collect{it.geometry} ?: []
-
+                            'geometries': site.features.collect {
+                                if (it?.properties?.pid)
+                                    return geometryForPid(it.properties.pid)
+                                else
+                                    return it.geometry
+                            } ?: []
                     ]
                 }
                 else {
