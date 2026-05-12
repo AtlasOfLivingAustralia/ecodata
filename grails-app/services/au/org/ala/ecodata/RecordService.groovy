@@ -2030,7 +2030,6 @@ class RecordService {
         if (!formName) return false
 
         ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
-        form.embargoMultimedia
 
         form?.embargoMultimedia ?: false
     }
