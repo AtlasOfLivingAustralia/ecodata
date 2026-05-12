@@ -54,6 +54,7 @@ class RecordService {
     MapService mapService
     AuthService authService
     WebService webService
+    StorageService storageService
     ActivityFormService activityFormService
 
     final def ignores = ["action", "controller", "associatedMedia"]
@@ -426,11 +427,18 @@ class RecordService {
                             log.debug "Uploading imageMetadata - ${image.identifier}"
                             File downloadedFile
                             boolean toDelete = false
-                            if (document.filepath && document.filename) {
-                                downloadedFile = new File(documentService.fullPath(document.filepath, document.filename))
+                            if (storageService.fileExists(document.filepath, document.filename)) {
+                                downloadedFile = File.createTempFile("record-image-${record.occurrenceID}-${idx}-", document.filename.tokenize(".")[-1])
+                                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
+                                    downloadedFile.withOutputStream { output ->
+                                        output << inputStream
+                                    }
+                                }
+
+                                toDelete = true
                             }
 
-                            if (!downloadedFile.exists() && image.identifier) {
+                            if (!storageService.fileExists(document.filepath, document.filename) && image.identifier) {
                                 downloadedFile = download(record.occurrenceID, idx, image.identifier)
                                 toDelete = true
                             }
@@ -2022,6 +2030,7 @@ class RecordService {
         if (!formName) return false
 
         ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
+        form.embargoMultimedia
 
         form?.embargoMultimedia ?: false
     }
