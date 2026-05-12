@@ -2014,23 +2014,15 @@ class RecordService {
      * When enabled, record image uploads are skipped in updateRecord
      * and Media rows are excluded from the Darwin Core Archive export.
      */
-    private boolean isMultimediaEmbargoed(def activityOrProjectActivity) {
-        if (!activityOrProjectActivity) return false
+    private boolean isMultimediaEmbargoed(def projectActivity) {
+        if (!projectActivity) return false
 
         String formName
-        Integer formVersion
+        formName = projectActivity.pActivityFormName
+        if (!formName)
+            return false
 
-        if (activityOrProjectActivity instanceof ProjectActivity) {
-            formName = activityOrProjectActivity.pActivityFormName
-        } else {
-            formName = activityOrProjectActivity.type
-            formVersion = activityOrProjectActivity.formVersion
-        }
-
-        if (!formName) return false
-
-        ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
-
+        ActivityForm form = activityFormService.findActivityForm(formName)
         form?.embargoMultimedia ?: false
     }
 }
