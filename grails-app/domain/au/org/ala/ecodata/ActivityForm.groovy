@@ -13,7 +13,7 @@ class ActivityForm {
     static String SITE_TAG = "site"
 
     /** The list of properties to be used when binding request data to an ActivityForm */
-    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections', 'description']
+    static bindingProperties = ['type', 'version', 'category', 'supportsSites', 'supportsPhotoPoints', 'embargoMultimedia', 'gmsId', 'minOptionalSectionsCompleted', 'activationDate', 'sections', 'description']
 
     static mapWith = "mongo"
 

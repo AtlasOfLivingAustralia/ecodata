@@ -2002,7 +2002,7 @@ class RecordService {
 
     /**
      * Checks whether multimedia should be excluded for this project activity.
-     * The embargoMultimedia flag is configured on ActivityForm sections.
+     * The embargoMultimedia flag is configured on ActivityForm.
      * When enabled, record image uploads are skipped in updateRecord
      * and Media rows are excluded from the Darwin Core Archive export.
      */
@@ -2023,6 +2023,6 @@ class RecordService {
 
         ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
 
-        form?.sections?.any { it.embargoMultimedia == true } ?: false
+        form?.embargoMultimedia ?: false
     }
 }
