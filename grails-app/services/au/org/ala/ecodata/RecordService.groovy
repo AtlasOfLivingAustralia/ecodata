@@ -54,6 +54,8 @@ class RecordService {
     MapService mapService
     AuthService authService
     WebService webService
+    StorageService storageService
+    ActivityFormService activityFormService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -385,105 +387,122 @@ class RecordService {
         def project = Project.findByProjectId(record.projectId)
         record.dataResourceUid = project.dataResourceId
 
-        //clear current imageMetadata references on the record
-        record.multimedia = []
+        boolean embargoMultimedia = isMultimediaEmbargoed(activity)
 
-        //persist any supplied images into imageMetadata service
-        if (json.multimedia) {
-            try {
-                json.multimedia.eachWithIndex { image, idx ->
-
-                    record.multimedia[idx] = [:]
-
-                    // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
-                    record.multimedia[idx].documentId = image.documentId
-
-                    // reconcile new with old images...
-                    // Only upload images that are NOT already in images.ala.org.au
-                    if (!image.creator) {
-                        image.creator = userDetails.displayName
-                    }
-
-                    if (!image.rightsHolder) {
-                        image.rightsHolder = userDetails.displayName
-                    }
-
-                    def alreadyLoaded = false
-
-                    def document = documentService.get(image.documentId)
-
-                    // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
-                    if (!document.imageId) {
-                        log.debug "Uploading imageMetadata - ${image.identifier}"
-                        File downloadedFile
-                        boolean toDelete = false
-                        if (document.filepath && document.filename) {
-                            downloadedFile = new File(documentService.fullPath(document.filepath, document.filename))
-                        }
-
-                        if (!downloadedFile.exists() && image.identifier) {
-                            downloadedFile = download(record.occurrenceID, idx, image.identifier)
-                            toDelete = true
-                        }
-
-                        if(downloadedFile) {
-                            def imageId = uploadImage(record, downloadedFile, image)
-                            if (imageId) {
-                                // successfully uploaded image to server
-                                record.multimedia[idx].imageId = imageId
-                                record.multimedia[idx].identifier = getImageUrl(imageId)
-                                document.imageId = imageId
-                                documentService.update(document, document.documentId)
-                            }
-                            else {
-                                // use document
-                                record.multimedia[idx].identifier = document.url
-                            }
-
-                            if (toDelete) {
-                                downloadedFile.delete()
-                            }
-                        }
-                    } else {
-                        alreadyLoaded = true
-                        //re-use the existing imageId rather than upload again
-                        log.debug "Image already uploaded - ${document.imageId}"
-                        record.multimedia[idx].imageId = document.imageId
-                        record.multimedia[idx].identifier = getImageUrl(document.imageId)
-                        if (record.multimedia[idx].identifier != document.identifier) {
-                            documentService.update([identifier: record.multimedia[idx].identifier], document.documentId)
-                        }
-                    }
-
-                    setDCTerms(image, record.multimedia[idx])
-
-                    if (alreadyLoaded) {
-                        log.debug "Refreshing metadata - ${image.identifier}"
-                        //refresh metadata in imageMetadata service
-                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
-                    }
-                }
-            } catch (Exception ex) {
-                log.error("Error uploading image to ${grailsApplication.config.getProperty('imagesService.baseURL')} -${ex.message}")
+        if (embargoMultimedia) {
+            if (json.multimedia || imageMap) {
+                log.debug("Skipping multimedia upload for record ${record.occurrenceID} because embargoMultimedia is enabled for activity form ${activity?.type} v${activity?.formVersion}")
             }
+        } else {
 
-        } else if (imageMap) {
-            //upload the images supplied as bytes
-            def idx = 0
-            imageMap.each { imageFileName, imageInBytes ->
-                def metadata = [
+            //clear current imageMetadata references on the record
+            record.multimedia = []
+
+            //persist any supplied images into imageMetadata service
+            if (json.multimedia) {
+                try {
+                    json.multimedia.eachWithIndex { image, idx ->
+
+                        record.multimedia[idx] = [:]
+
+                        // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
+                        record.multimedia[idx].documentId = image.documentId
+
+                        // reconcile new with old images...
+                        // Only upload images that are NOT already in images.ala.org.au
+                        if (!image.creator) {
+                            image.creator = userDetails.displayName
+                        }
+
+                        if (!image.rightsHolder) {
+                            image.rightsHolder = userDetails.displayName
+                        }
+
+                        def alreadyLoaded = false
+
+                        def document = documentService.get(image.documentId)
+
+                        // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
+                        if (!document.imageId) {
+                            log.debug "Uploading imageMetadata - ${image.identifier}"
+                            File downloadedFile
+                            boolean toDelete = false
+                            if (storageService.fileExists(document.filepath, document.filename)) {
+                                downloadedFile = File.createTempFile("record-image-${record.occurrenceID}-${idx}-", document.filename.tokenize(".")[-1])
+                                try (InputStream inputStream = storageService.getFile(document.filepath, document.filename)) {
+                                    downloadedFile.withOutputStream { output ->
+                                        output << inputStream
+                                    }
+                                }
+
+                                toDelete = true
+                            }
+
+                            if (!storageService.fileExists(document.filepath, document.filename) && image.identifier) {
+                                downloadedFile = download(record.occurrenceID, idx, image.identifier)
+                                toDelete = true
+                            }
+
+                            if(downloadedFile) {
+                                def imageId = uploadImage(record, downloadedFile, image)
+                                if (imageId) {
+                                    // successfully uploaded image to server
+                                    record.multimedia[idx].imageId = imageId
+                                    record.multimedia[idx].identifier = getImageUrl(imageId)
+                                    document.imageId = imageId
+                                    documentService.update(document, document.documentId)
+                                }
+                                else {
+                                    // use document
+                                    record.multimedia[idx].identifier = document.url
+                                }
+
+                                if (toDelete) {
+                                    downloadedFile.delete()
+                                }
+                            }
+                        } else {
+                            alreadyLoaded = true
+                            //re-use the existing imageId rather than upload again
+                            log.debug "Image already uploaded - ${document.imageId}"
+                            record.multimedia[idx].imageId = document.imageId
+                            record.multimedia[idx].identifier = getImageUrl(document.imageId)
+                            if (record.multimedia[idx].identifier != document.identifier) {
+                                documentService.update([identifier: record.multimedia[idx].identifier], document.documentId)
+                            }
+                        }
+
+                        setDCTerms(image, record.multimedia[idx])
+
+                        if (alreadyLoaded) {
+                            log.debug "Refreshing metadata - ${image.identifier}"
+                            //refresh metadata in imageMetadata service
+                            updateImageMetadata(image.imageId, record, record.multimedia[idx])
+                        }
+                    }
+                } catch (Exception ex) {
+                    log.error("Error uploading image to ${grailsApplication.config.getProperty('imagesService.baseURL')} -${ex.message}")
+                }
+
+            } else if (imageMap) {
+                //upload the images supplied as bytes
+                def idx = 0
+                imageMap.each { imageFileName, imageInBytes ->
+                    def metadata = [
                         title  : imageFileName,
                         creator: userDetails.displayName
-                ]
-                def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
-                record.multimedia[idx] = [:]
-                record.multimedia[idx].imageId = imageId
-                record.multimedia[idx].identifier = getImageUrl(imageId)
-                //we only support one set of metadata for all images for this method
-                setDCTerms(json, record.multimedia[idx])
-                idx++
+                    ]
+                    def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
+                    record.multimedia[idx] = [:]
+                    record.multimedia[idx].imageId = imageId
+                    record.multimedia[idx].identifier = getImageUrl(imageId)
+                    //we only support one set of metadata for all images for this method
+                    setDCTerms(json, record.multimedia[idx])
+                    idx++
+                }
             }
         }
+
         record.save(flush: true)
         // we do not want to alert users every time admin regenerates records
         !doNotAlert && recordAlertService.alertSubscribers(record)
@@ -1450,7 +1469,11 @@ class RecordService {
                 }
                 break
             case DWC_MEDIA:
-                (currentZipEntry, isMediaHeaderWritten, mediaCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaHeaders, attributes, mediaUniqueness, result, dwcClass, mediaCsvWriter)
+                if (!isMultimediaEmbargoed(projectActivity)) {
+                    (currentZipEntry, isMediaHeaderWritten, mediaCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMediaHeaderWritten, mediaHeaders, attributes, mediaUniqueness, result, dwcClass, mediaCsvWriter)
+                } else {
+                    log.debug("Skipping media export for project activity ${projectActivity?.projectActivityId} because embargoMultimedia is enabled")
+                }
                 break
             case DWC_MEASUREMENT:
                 (currentZipEntry, isMeasurementHeaderWritten, measurementCsvWriter) = writeToCsvIfUnique(currentZipEntry, zip, tmpCsvWriter, isMeasurementHeaderWritten, measurementHeaders, attributes, measurementUniqueness, result, dwcClass, measurementCsvWriter)
@@ -1983,5 +2006,31 @@ class RecordService {
     Date getCreatedTime(File file) {
         BasicFileAttributes attrs = Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class)
         new Date(attrs.creationTime().toMillis())
+    }
+
+    /**
+     * Checks whether multimedia should be excluded for this project activity.
+     * The embargoMultimedia flag is configured on ActivityForm.
+     * When enabled, record image uploads are skipped in updateRecord
+     * and Media rows are excluded from the Darwin Core Archive export.
+     */
+    private boolean isMultimediaEmbargoed(def activityOrProjectActivity) {
+        if (!activityOrProjectActivity) return false
+
+        String formName
+        Integer formVersion
+
+        if (activityOrProjectActivity instanceof ProjectActivity) {
+            formName = activityOrProjectActivity.pActivityFormName
+        } else {
+            formName = activityOrProjectActivity.type
+            formVersion = activityOrProjectActivity.formVersion
+        }
+
+        if (!formName) return false
+
+        ActivityForm form = formVersion ? activityFormService.findActivityForm(formName, formVersion) : activityFormService.findActivityForm(formName)
+
+        form?.embargoMultimedia ?: false
     }
 }

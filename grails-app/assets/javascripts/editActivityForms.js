@@ -15,6 +15,7 @@ var ActivityFormViewModel = function (act, model) {
     self.gmsId = ko.observable(act.gmsId);
     self.supportsSites = ko.observable(act.supportsSites);
     self.supportsPhotoPoints = ko.observable(act.supportsPhotoPoints);
+    self.embargoMultimedia = ko.observable(act.embargoMultimedia || false);
     self.minOptionalSectionsCompleted = ko.observable(act.minOptionalSectionsCompleted || 1);
 
     self.enabled.subscribe(function (enabled) {

@@ -162,6 +162,14 @@
     </div>
 
     <div class="row">
+        <label class="col-md-3 col-form-label form-check-label">Embargo multimedia?:</label>
+
+        <div class="col-md-9">
+            <input type="checkbox" class="form-check-input" data-bind="checked:embargoMultimedia">
+        </div>
+    </div>
+
+    <div class="row">
         <label class="col-md-3 col-form-label">Min. optional sections:</label>
 
         <div class="col-md-9">
