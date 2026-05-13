@@ -1525,7 +1525,6 @@ class ElasticSearchService {
 
         document.projectName = project.name
         document.projectDescription = project.description
-        document.projectStatus = project.status
         document.projectType = project.projectType
         document.projectExternalId = project.externalId
         document.projectGrantId = project.grantId
