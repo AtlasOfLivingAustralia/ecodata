@@ -19,9 +19,6 @@
         "projLifecycleStatus" : {
           "type" : "keyword"
         },
-        "projectStatus" : {
-          "enabled" : false
-        },
         "managementUnitId" : {
           "type" : "keyword"
         },
