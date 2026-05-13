@@ -19,6 +19,10 @@
         "projLifecycleStatus" : {
           "type" : "keyword"
         },
+        "projectStatus" : {
+          "type" : "keyword",
+          "ignore_malformed": true
+        },
         "managementUnitId" : {
           "type" : "keyword"
         },
