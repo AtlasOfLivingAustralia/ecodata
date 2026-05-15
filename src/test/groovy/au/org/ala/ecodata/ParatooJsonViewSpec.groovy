@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
+import au.org.ala.ecodata.paratoo.ParatooProtocol
 import grails.plugin.json.view.test.JsonRenderResult
 import grails.plugin.json.view.test.JsonViewTest
 import grails.plugin.json.view.test.TestRequestConfigurer
@@ -11,15 +13,22 @@ import spock.lang.Specification
 class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
     static List DUMMY_POLYGON = [[[1,2], [2,2], [2, 1], [1,1], [1,2]]]
+
+    def cleanup() {
+        ParatooInvocationContext.removeCurrent()
+    }
+
     def "The /user-projects v2 response is rendered correctly"() {
         setup:
-        int[][] projectSpec = [[3, 1, 0], [0, 0, 1], [1, 0, 0]] as int[][]
+        ParatooInvocationContext context = new ParatooInvocationContext(userId:"user1", apiVersion:"v2")
+        ParatooInvocationContext.setCurrent(context)
+        List projectSpec = [[3, 1, false, true], [0, 0, true, false], [1, 0, false, false]]
         Map expectedResult = [
                 projects: [[
                     id:"p1", name:"Project 1", grantID:"g1", protocols: [
-                        [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1"],
-                        [id:2, identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2"],
-                        [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3"]],
+                        [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: "module-1", client_meta: [allow_ui_data_collection: true]],
+                        [id:2, identifier: "guid-2", name: "Protocol 2", version: 1, module: "module-2", client_meta: [allow_ui_data_collection: true]],
+                        [id:3, identifier: "guid-3", name: "Protocol 3", version: 1, module: "module-3", client_meta: [allow_ui_data_collection: true]]],
                     project_area:null,
                     plot_selections:[
                        [uuid:'s1', name:"Site 1"]
@@ -28,21 +37,40 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
                    ],[
                     id:"p2", name:"Project 2", grantID:"g2", protocols:[], plot_selections:[],
                     project_area:[type:"Polygon", coordinates: DUMMY_POLYGON[0].collect{[lat:it[1], lng:it[0]]}],
-                    roles:["authenticated"]
+                    roles:["collector"]
                   ],[
                      id:"p3", name:"Project 3", grantID:"g3", protocols:[
                         [id:1, identifier: "guid-1", name: "Protocol 1", version: 1, module: 'module-1']
-                     ], project_area:null, plot_selections:[], roles:['authenticated']
+                     ], project_area:null, plot_selections:[], roles:['collector']
                   ]
                 ]]
 
-        when: "The results of /paratoo/user-projects is rendered from an apiVersion v2 request"
+        when: "The results of /paratoo/user-projects is rendered from an apiVersion v2 request, including the clientMeta for a write operation"
 
         List projects = buildProjectsForRendering(projectSpec)
         projects[1].roles = [ParatooService.EDITOR]
         projects[2].roles = [ParatooService.EDITOR]
         def result = render([view: "/paratoo/userProjects", model:[projects:projects]], {
-            params(apiVersion:"v2")
+            params(apiVersion:"v2", operationType:"write")
+        })
+
+        then:"The json is correct"
+        result.json.projects.size() == expectedResult.projects.size()
+        result.json.projects[0] == expectedResult.projects[0]
+        result.json.projects[1] == expectedResult.projects[1]
+        result.json.projects[2] == expectedResult.projects[2]
+
+        when: "The clientMeta is not included for a read operation"
+        projectSpec = [[3, 1, false, false], [0, 0, true, false], [1, 0, false, false]]
+        projects = buildProjectsForRendering(projectSpec)
+        projects[1].roles = [ParatooService.EDITOR]
+        projects[2].roles = [ParatooService.EDITOR]
+        expectedResult.projects[0].protocols.each { Map protocol ->
+            protocol.remove("client_meta")
+        }
+        context.operationType = Permission.READ
+        result = render([view: "/paratoo/userProjects", model:[projects:projects]], {
+            params(apiVersion:"v2", operationType:"read")
         })
 
         then:"The json is correct"
@@ -52,6 +80,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[2] == expectedResult.projects[2]
 
         when: "The results of /paratoo/user-projects is rendered from an apiVersion v1 request"
+        context.apiVersion = "v1"
         expectedResult.projects.each{ Map project ->
             List roles = project.remove('roles')
             project.role = roles[0]
@@ -67,6 +96,7 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         result.json.projects[2] == expectedResult.projects[2]
 
         when: "The results of /paratoo/user-projects is rendered from a request with no apiVersion"
+        context.apiVersion = null
         result = render([view: "/paratoo/userProjects", model:[projects:projects]])
 
         then:"The view defaults to v1 of the API"
@@ -77,19 +107,19 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
 
     }
 
-    private List<ParatooProject> buildProjectsForRendering(int[][] projectSpec) {
+    private List<ParatooProject> buildProjectsForRendering(List projectSpec) {
 
         List projects = []
-        for (int i=0; i<projectSpec.length; i++) {
-            projects << buildProject(i+1, projectSpec[i][0], projectSpec[i][1], projectSpec[i][2] as boolean)
+        projectSpec.eachWithIndex { List spec, int i ->
+            projects << buildProject(i+1, spec[0], spec[1], spec[2], spec[3] )
         }
         projects
     }
 
-    private ParatooProject buildProject(int projectIndex, int numberOfProtocols, int numberOfPlots, boolean includeProjectArea) {
+    private ParatooProject buildProject(int projectIndex, int numberOfProtocols, int numberOfPlots, boolean includeProjectArea, boolean includeClientMeta) {
         List protocols = []
         for (int i = 0; i<numberOfProtocols; i++) {
-            protocols << buildActivityForm(i+1)
+            protocols << buildParatooProtocol(i+1, includeClientMeta)
         }
         List plots = []
         for (int i=0; i<numberOfPlots; i++) {
@@ -103,8 +133,9 @@ class ParatooJsonViewSpec extends Specification implements JsonViewTest {
         new ParatooProject(id:"p$projectIndex", name:"Project $projectIndex", grantID:"g$projectIndex", protocols: protocols, projectArea: projectArea, plots:plots, roles: [ParatooService.ADMIN])
     }
 
-    private ActivityForm buildActivityForm(int i) {
-        new ActivityForm(externalIds: [new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"guid-$i"), new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId:i)], name:"Protocol $i", formVersion: 1, category: "module-$i")
+    private ParatooProtocol buildParatooProtocol(int i, boolean includeClientMeta = false) {
+        ActivityForm activityForm = new ActivityForm(externalIds: [new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_GUID, externalId:"guid-$i"), new ExternalId(idType:ExternalId.IdType.MONITOR_PROTOCOL_INTERNAL_ID, externalId:i)], name:"Protocol $i", formVersion: 1, category: "module-$i")
+        new ParatooProtocol(activityForm, includeClientMeta ? [allowUIDataCollection: true] : null)
     }
 
     private Site buildSite(i) {

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.gorm.PagedResultList
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import org.springframework.context.MessageSource
@@ -394,7 +395,7 @@ class ProjectService {
     // instead of the common service, but that is a bit risky for a quick fix.
     // See https://github.com/AtlasOfLivingAustralia/ecodata/issues/708
     private void bindEmbeddedProperties(Project project, Map properties) {
-        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo', 'outputTargets']
+        List embeddedPropertyNames = ['associatedOrgs', 'externalIds', 'geographicInfo', 'outputTargets', 'blog']
         for (String prop in embeddedPropertyNames) {
             if (properties[prop]) {
                 project.properties = [(prop):properties.remove(prop)]
@@ -735,18 +736,15 @@ class ProjectService {
         matches
     }
 
-    /**
-     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
-     * Multiple properties will be ANDed together when producing results.
-     *
-     * @return a list of the projects that match the supplied criteria
-     */
-    List<Map> search(Map searchCriteria, levelOfDetail = []) {
-
+    PagedResultList<Project> search(Map searchCriteria, Map paginationParams) {
         def criteria = Project.createCriteria()
 
-        def projects = criteria.list {
-            ne("status", DELETED)
+        PagedResultList<Project> projects = criteria.list(paginationParams) {
+            // Allow explict searches for deleted projects
+            if (searchCriteria.status != DELETED) {
+                ne("status", DELETED)
+            }
+
             searchCriteria.each { prop, value ->
                 // Special case for organisationId - also included embedded associatedOrg relationships.
                 if (prop == 'organisationId') {
@@ -777,6 +775,18 @@ class ProjectService {
             }
 
         }
+        projects
+    }
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the projects that match the supplied criteria
+     */
+    List<Map> search(Map searchCriteria, levelOfDetail = [], Map paginationParams = [:]) {
+
+        List<Project> projects = search(searchCriteria, paginationParams)
         projects.collect { toMap(it, levelOfDetail) }
     }
 

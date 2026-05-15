@@ -1,5 +1,5 @@
 {
-  "authenticated": {
+  "collector": {
     "read": {
       "plot-selection-guid": true,
       "guid-2": true,
@@ -8,6 +8,13 @@
       "determinations": true
     },
     "write": {
+      "plot-selection-guid": false,
+      "guid-2": true,
+      "guid-3": true,
+      "guid-4": true,
+      "determinations": false
+    },
+    "create": {
       "plot-selection-guid": false,
       "guid-2": true,
       "guid-3": true,
@@ -29,6 +36,13 @@
       "guid-3": true,
       "guid-4": true,
       "determinations": false
+    },
+    "create": {
+      "plot-selection-guid": true,
+      "guid-2": true,
+      "guid-3": true,
+      "guid-4": true,
+      "determinations": false
     }
   },
   "determiner": {
@@ -40,6 +54,13 @@
       "determinations": true
     },
     "write": {
+      "plot-selection-guid": false,
+      "guid-2": true,
+      "guid-3": false,
+      "guid-4": false,
+      "determinations": true
+    },
+    "create": {
       "plot-selection-guid": false,
       "guid-2": false,
       "guid-3": false,

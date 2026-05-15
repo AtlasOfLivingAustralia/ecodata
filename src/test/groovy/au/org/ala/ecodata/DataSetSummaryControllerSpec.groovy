@@ -121,7 +121,7 @@ class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTe
         controller.resync(projectId, dataSetId)
 
         then:
-        1 * paratooService.protocolWriteCheck('u1', projectId,'p1') >> true
+        1 * paratooService.protocolCheck('u1', projectId,'p1', Permission.WRITE) >> true
         siteService.get('s1') >> site
         1 * projectService.canModifyDataSetSite(site, project) >> true
         1 * paratooService.paratooProjectFromProject(project, null) >> paratooProject

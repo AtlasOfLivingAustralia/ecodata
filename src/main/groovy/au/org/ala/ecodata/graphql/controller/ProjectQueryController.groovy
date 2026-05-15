@@ -2,15 +2,18 @@ package au.org.ala.ecodata.graphql.controller
 
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.graphql.fetchers.ProjectsFetcher
+import au.org.ala.ecodata.graphql.input.Pagination
 import au.org.ala.ecodata.graphql.input.SearchMeritProjects
 import au.org.ala.ecodata.graphql.models.TargetMeasure
 import au.org.ala.ecodata.reporting.GroupedResult
 import grails.compiler.GrailsCompileStatic
+import grails.gorm.PagedResultList
 import grails.web.databinding.DataBinder
 import graphql.GraphQLContext
 import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingFieldSelectionSet
+import groovy.transform.CompileDynamic
 import org.dataloader.DataLoader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
@@ -62,7 +65,13 @@ class ProjectQueryController implements DataBinder {
         SearchMeritProjects searchParams = new SearchMeritProjects(env)
         bindData(searchParams, env.getArguments())
 
-        projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        // Searches for deleted projects are special case
+        if (searchParams.status == Status.DELETED) {
+            projectsFetcher.queryDeletedProjects(env, searchParams.buildDatabaseQueryParameters(), Pagination.asMap(searchParams.pagination))
+        }
+        else {
+            projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        }
     }
 
     @QueryMapping
@@ -91,6 +100,17 @@ class ProjectQueryController implements DataBinder {
         }
     }
 
+    @SchemaMapping(typeName = "MeritProject", field = "startDate")
+    Date startDate(Project project) {
+        project.plannedStartDate
+    }
+
+    @SchemaMapping(typeName = "MeritProject", field = "endDate")
+    Date endDate(Project project) {
+        project.plannedEndDate
+    }
+
+
     @SchemaMapping(typeName = "DataSetSummary", field = "service")
     Service service(DataSetSummary dataSetSummary) {
         Service service = null
@@ -99,15 +119,37 @@ class ProjectQueryController implements DataBinder {
         }
         service
     }
+    @SchemaMapping(typeName = "DataSetSummary", field = "site")
+    CompletableFuture<Site> dataSetSite(DataSetSummary dataSetSummary, DataLoader<String, Site> siteLoader) {
+        if (dataSetSummary.siteId) {
+            siteLoader.load(dataSetSummary.siteId)
+        } else {
+            CompletableFuture.completedFuture(null)
+        }
+    }
+
+    @SchemaMapping(typeName = "MeritProject", field = "blog")
+    List<BlogEntry> blog(Project project) {
+        project.getBlog()
+    }
+
+    @SchemaMapping(typeName = "BlogEntry", field = "image")
+    CompletableFuture<Document> blogImage(BlogEntry blogEntry, DataLoader<String, Document> documentDataLoader) {
+        if (blogEntry.imageId) {
+            documentDataLoader.load(blogEntry.imageId)
+        } else {
+            CompletableFuture.completedFuture(null)
+        }
+    }
 
 
     @SchemaMapping(typeName = "MeritProject", field = "reports")
-    DataFetcherResult<List<Report>> reports(Project project, DataFetchingFieldSelectionSet selectionSet) {
+    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Boolean includedDeleted, @Argument Pagination pagination) {
         // Create a new local context and store the author value
         GraphQLContext localContext = GraphQLContext.getDefault()
                 .put("project", project);
 
-        if (selectionSet.contains("deliveredAgainstTargets")) {
+        if (selectionSet.contains("results/deliveredAgainstTargets")) {
             Map<String, List> deliveredByActivityId = [:]
             List<String> scoreIds = project.outputTargets?.collect {it.scoreId}
             if (scoreIds) {
@@ -122,18 +164,34 @@ class ProjectQueryController implements DataBinder {
 
         }
 
-        DataFetcherResult.Builder<List<Report>> resultBuilder = DataFetcherResult.newResult()
+        DataFetcherResult.Builder<Map> resultBuilder = DataFetcherResult.newResult()
 
-        List<Report> resultList = (List<Report>)reportingService.search(projectId:project.projectId, [max:100, offset:0, sort:'dateCreated', order:'desc'])
+        Map paginationParams = pagination ? pagination.properties : new Pagination().properties
+        Map searchParams = [projectId: project.projectId]
+        if (includedDeleted) {
+            searchParams.status = Status.DELETED
+        }
+        PagedResultList resultList = (PagedResultList)reportingService.search(searchParams, paginationParams)
+        Map result = [results:resultList, totalCount: resultList.totalCount]
         return resultBuilder
-                .data(resultList)
+                .data(result)
                 .localContext(localContext)
                 .build()
+
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "documents")
-    List<Document> documents(Project project) {
-        Document.findAllByProjectIdAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'desc'])
+    @CompileDynamic
+    Map documents(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
+
+        Map paginationParams = Pagination.asMap(pagination)
+        PagedResultList documents = Document.createCriteria().list(paginationParams) {
+            eq("projectId", project.projectId)
+            if (!includeDeleted) {
+                ne("status", Status.DELETED)
+            }
+        }
+        [totalCount: documents.totalCount, results: documents]
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "program")
@@ -146,7 +204,7 @@ class ProjectQueryController implements DataBinder {
         managementUnitDataLoader.load(project.managementUnitId)
     }
 
-    @SchemaMapping(typeName = "MeritProject", field = "activity")
+    @SchemaMapping(typeName = "Report", field = "activity")
     CompletableFuture<Activity> activity(Report report, DataLoader<String, Activity> activityDataLoader) {
 
         activityDataLoader.load(report.activityId)
@@ -154,10 +212,16 @@ class ProjectQueryController implements DataBinder {
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "sites")
-    List<Site> sites(Project project) {
-
-        Site.findAllByProjectsAndStatusNotEqual(project.projectId, Status.DELETED, [sort: 'dateCreated', order: 'asc'])
-
+    @CompileDynamic
+    Map sites(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
+        Map paginationParams = Pagination.asMap(pagination)
+        PagedResultList sites = Site.createCriteria().list(paginationParams) {
+            eq("projects", project.projectId)
+            if (!includeDeleted) {
+                ne("status", Status.DELETED)
+            }
+        }
+        [totalCount:sites.totalCount, results: sites]
     }
 
     @SchemaMapping(typeName = "Site", field = "geoJson")
@@ -274,10 +338,18 @@ class ProjectQueryController implements DataBinder {
 
     }
 
-    @SchemaMapping(typeName = "MeritProject", field = "deliveredAgainstTargets")
-    List<DeliveredAgainstTarget> deliveredAgainstTargets(Project project) {
+    @SchemaMapping(typeName = "MeritProject", field = "reportedDeliveredAgainstTargets")
+    List<DeliveredAgainstTarget> reportedDeliveredAgainstTargets(Project project) {
+        deliveredAgainstProjectTargets(project, false)
+    }
 
-        boolean approvedOnly = true
+    @SchemaMapping(typeName = "MeritProject", field = "approvedDeliveredAgainstTargets")
+    List<DeliveredAgainstTarget> approvedDeliveredAgainstTargets(Project project) {
+        deliveredAgainstProjectTargets(project, true)
+    }
+
+
+    private List<DeliveredAgainstTarget> deliveredAgainstProjectTargets(Project project, boolean approvedOnly) {
         List scoreIds = []
         project.outputTargets?.each {
             scoreIds << it.scoreId
@@ -287,7 +359,6 @@ class ProjectQueryController implements DataBinder {
         }
         List<Map> metrics = (List<Map>)projectService.projectMetrics(project.projectId, false, approvedOnly, scoreIds, null, true, true)
         metrics.collect { new DeliveredAgainstTarget(it) }
-
     }
 
     @SchemaMapping(typeName = "MeritProject", field = "statesAndElectorates")
@@ -298,7 +369,7 @@ class ProjectQueryController implements DataBinder {
          primaryElectorate: statesAndElectorates.primaryelect,
          otherStates: statesAndElectorates.otherStates,
          otherElectorates: statesAndElectorates.otherElectorates,
-         manualOverrideUsed: statesAndElectorates.geographicRangeOverridden
+         geographicRangeOverridden: statesAndElectorates.geographicRangeOverridden
         ]
     }
 

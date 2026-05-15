@@ -48,6 +48,7 @@ class Partnership {
     String partnerName
     String description
     String partnerOrganisationType
+    String otherOrganisationType
 }
 
 class MonitoringMethodology {
@@ -137,6 +138,7 @@ class MeriPlan {
     String firstNationsPeopleInvolvement
     String evaluationApproach
     String implementationOrDeliveryAssumptions
+    boolean permissionForCaseStudy
 
     MeriPlan(Project project) {
 
@@ -151,6 +153,7 @@ class MeriPlan {
         this.outputTargets = project?.outputTargets ?: []
         this.implementationOrDeliveryAssumptions = details.implementation?.description ?: null
         this.evaluationApproach = details.projectEvaluationApproach
+        this.permissionForCaseStudy = details.caseStudy ?: false
 
     }
 
@@ -226,7 +229,8 @@ class MeriPlan {
             if (partnershipDetails && partnershipDetails.data1) {
                 new Partnership(partnerName: partnershipDetails.data1,
                                 description: partnershipDetails.data2,
-                                partnerOrganisationType: partnershipDetails.data3)
+                                partnerOrganisationType: partnershipDetails.data3,
+                                otherOrganisationType: partnershipDetails.otherOrganisationType)
             }
         }?.findAll { it }
     }

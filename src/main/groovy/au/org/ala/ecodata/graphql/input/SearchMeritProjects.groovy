@@ -17,7 +17,20 @@ class SearchMeritProjects implements Validateable {
             managementUnit: "muFacet",
             managementUnitId: "managementUnitId",
             organisation: "organisationFacet",
-            organisationId: "organisationId"
+            organisationId: "organisationId",
+            portfolio: "portfolio"
+    ]
+
+    static Map namedParameterToDatabaseMap = [
+            projectId:"projectId",
+            meritProjectID:"grantId",
+            programId: "programId",
+            program: "associatedProgram",
+            subProgram: "associatedSubProgram",
+            managementUnitId: "managementUnitId",
+            organisationId: "organisationId",
+            portfolio: "portfolio",
+            status:"status"
     ]
 
     ReportQuery reports
@@ -31,19 +44,17 @@ class SearchMeritProjects implements Validateable {
     List<String> managementUnitId
     List<String> organisation
     List<String> organisationId
+    List<String> portfolio
+    String status
 
     DateRange startDate
     DateRange endDate
-    DateRange lastUpdated
+    DateTimeRange lastUpdated
 
     String query = "*:*"
     List<String> facetFilters
 
-    // Pagination options
-    int max = 10
-    int page = 1
-    String sort = "dateCreated"
-    String order = "desc"
+    Pagination pagination
 
     private DataFetchingEnvironment environment
 
@@ -60,34 +71,38 @@ class SearchMeritProjects implements Validateable {
 
         params.fq = buildFacetFilters()
 
-        params.putAll(getSortAndPagingParams())
+        params.putAll(Pagination.asMap(pagination))
         params
     }
 
-    final int MAX_PAGE_SIZE = 50
-
-    private Map getSortAndPagingParams() {
-        Map params = [:]
-        int max = Math.min(max, MAX_PAGE_SIZE)
-        params["max"] = max
-        int page = Math.max(1, page)
-        params["offset"] = max*(page-1)
-
-        params["sort"] = sort
-        params["order"] = order
-        params
+    Map buildDatabaseQueryParameters() {
+        Map databaseQueryParams = [:]
+        namedParameterToDatabaseMap.each { String property, String databaseProperty ->
+            if (this[property]) {
+                databaseQueryParams[databaseProperty] = this[property]
+            }
+        }
+        databaseQueryParams
     }
-
 
     List buildFacetFilters() {
         List filters = new ArrayList(facetFilters?:[])
 
+        // Status is a special case because the values are capitalized in
+        // elasticsearch but not the database.
+        if (status) {
+            filters << "status:${status.capitalize()}"
+        }
         namedParameterToFacetNameMap.each { String property, String facetName ->
             if (this[property]) {
-                this[property].each {
-                    filters << "${facetName}:${it}"
+                if (this[property] instanceof List) {
+                    this[property].each {
+                        filters << "${facetName}:${it}"
+                    }
                 }
-
+                else {
+                    filters << "${facetName}:${this[property]}"
+                }
             }
         }
 
@@ -117,7 +132,7 @@ class SearchMeritProjects implements Validateable {
 
     }
 
-    private String buildLastUpdatedQueryFilter(DateRange lastUpdated) {
+    private String buildLastUpdatedQueryFilter(DateTimeRange lastUpdated) {
         List lastUpdatedFields = ["lastUpdated"]
         DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet()
         if (selectionSet.contains("results/reports")) {
@@ -126,9 +141,12 @@ class SearchMeritProjects implements Validateable {
         if ( selectionSet.contains("results/sites")) {
             lastUpdatedFields << "sites.lastUpdated"
         }
+        if (selectionSet.contains("results/documents")) {
+            lastUpdatedFields << "documents.lastUpdated"
+        }
 
         String lastUpdatedQuery = lastUpdatedFields.collect {
-            buildDateRangeFilterQuery(it, lastUpdated)
+            buildDateTimeRangeFilterQuery(it, lastUpdated)
         }.join(" OR ")
 
         "(" + lastUpdatedQuery + ")"
@@ -137,6 +155,13 @@ class SearchMeritProjects implements Validateable {
     private static String buildDateRangeFilterQuery(String field, DateRange dateRange) {
         String from = dateRange.from ? DateUtil.formatAsDisplayDate(dateRange.from): "*"
         String to = dateRange.to ? DateUtil.formatAsDisplayDate(dateRange.to): "*"
+
+        "${field}:[${from} TO ${to}]"
+    }
+
+    private static String buildDateTimeRangeFilterQuery(String field, DateTimeRange dateRange) {
+        String from = dateRange.from ? DateUtil.format(dateRange.from): "*"
+        String to = dateRange.to ? DateUtil.format(dateRange.to): "*"
 
         "${field}:[${from} TO ${to}]"
     }

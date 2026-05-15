@@ -49,7 +49,7 @@ class ParatooProject {
     boolean isParatooEnabled() {
         // The Monitor/Paratoo app is "write only" (i.e. there is no view mode for the data), so we don't support
         // the read only role
-        getConfig()?.get(PROGRAM_CONFIG_PARATOO_ITEM) && roles
+        getConfig()?.get(PROGRAM_CONFIG_PARATOO_ITEM)
     }
 
     List<Map> getDataSets() {

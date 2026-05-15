@@ -1,3 +1,5 @@
+import au.org.ala.ecodata.AccessLevel
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 
 model {
@@ -11,5 +13,8 @@ json {
     protocols tmpl.paratooProtocol('protocol', project.protocols)
     project_area project.projectArea ? tmpl.projectArea(projectArea:project.projectArea) : null
     plot_selections tmpl.plot('plot', project.plots)
-    (params.apiVersion && params.apiVersion != "v1") ? (roles project.roles) : (role project.roles[0])
+    // v1 of the API supports a single role, v2 supports multiple roles.  The "determiner" role will be
+    // removed from the context in v1 mode as it's not supported and will filter protocol permissions however
+    // it needs to be returned in the response for v1 clients where the users only role is "determiner".
+    ParatooInvocationContext.getCurrent().supportsMultipleRoles() ? (roles project.roles) : (role project.roles[0] ?: AccessLevel.determiner.name())
 }

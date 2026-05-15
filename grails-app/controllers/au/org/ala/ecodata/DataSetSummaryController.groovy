@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooCollection
 import au.org.ala.ecodata.paratoo.ParatooCollectionId
+import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.converters.JSON
 import org.apache.http.HttpStatus
@@ -85,38 +86,48 @@ class DataSetSummaryController {
         Map dataSet = project?.custom?.dataSets?.find { it.dataSetId == dataSetId }
 
         if (project && dataSet) {
-            ParatooCollectionId paratooCollectionId = ParatooCollectionId.fromMap(dataSet.surveyId)
-            String protocolId = paratooCollectionId.getProtocolId()
-            if (!protocolId || !paratooService.protocolWriteCheck(userId, projectId, protocolId)) {
-                render status: HttpStatus.SC_UNAUTHORIZED
-                return
-            }
 
-            log.info("Resyncing data set $dataSetId in project $projectId by user $userId")
+            try {
+                // Setup the context for role checking
+                ParatooInvocationContext context = new ParatooInvocationContext(userId: userId, operationType: Permission.WRITE, apiVersion: "v2")
+                ParatooInvocationContext.setCurrent(context)
 
-            ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance:  [:])
-            // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
-            // requiring the user to add themselves to the project ACL before being able to resync as it will
-            // be generally be done by high level users such as site admins.
-            ParatooProject paratooProject = paratooService.paratooProjectFromProject(project, null)
-            boolean canModifySite = false
-            if (dataSet.siteId) {
-                ActivityForm form = ActivityForm.findByExternalId(protocolId)
-                // Only allow the site to be modified if we are resyncing a site protocol.
-                // This is to avoid an issue where a data set attached to the wrong site is resynced -
-                // it could update the site with the wrong data.
-                if (form?.getTags()?.contains(ActivityForm.SITE_TAG)) {
-                    Map site = siteService.get(dataSet.siteId)
-                    canModifySite = projectService.canModifyDataSetSite(site, project)
+                ParatooCollectionId paratooCollectionId = ParatooCollectionId.fromMap(dataSet.surveyId)
+                String protocolId = paratooCollectionId.getProtocolId()
+                if (!protocolId || !paratooService.protocolCheck(userId, projectId, protocolId, Permission.WRITE)) {
+                    render status: HttpStatus.SC_UNAUTHORIZED
+                    return
+                }
 
-                    if (!canModifySite) {
-                        render text: [message:"This data set cannot be re-synced"] as JSON, status: HttpStatus.SC_BAD_REQUEST
-                        return
+                log.info("Resyncing data set $dataSetId in project $projectId by user $userId")
+
+                ParatooCollection collection = new ParatooCollection(orgMintedUUID: dataSetId, coreProvenance: [:])
+                // The access level is not required for a resync and has been checked in MERIT.  This is to avoid
+                // requiring the user to add themselves to the project ACL before being able to resync as it will
+                // be generally be done by high level users such as site admins.
+                ParatooProject paratooProject = paratooService.paratooProjectFromProject(project, null)
+                boolean canModifySite = false
+                if (dataSet.siteId) {
+                    ActivityForm form = ActivityForm.findByExternalId(protocolId)
+                    // Only allow the site to be modified if we are resyncing a site protocol.
+                    // This is to avoid an issue where a data set attached to the wrong site is resynced -
+                    // it could update the site with the wrong data.
+                    if (form?.getTags()?.contains(ActivityForm.SITE_TAG)) {
+                        Map site = siteService.get(dataSet.siteId)
+                        canModifySite = projectService.canModifyDataSetSite(site, project)
+
+                        if (!canModifySite) {
+                            render text: [message: "This data set cannot be re-synced"] as JSON, status: HttpStatus.SC_BAD_REQUEST
+                            return
+                        }
                     }
                 }
-            }
 
-            paratooService.submitCollection(collection, paratooProject, userId, canModifySite)
+                paratooService.submitCollection(collection, paratooProject, userId, canModifySite)
+            }
+            finally {
+                ParatooInvocationContext.removeCurrent()
+            }
             render text: [message: "Submitted request to fetch data for dataSet $dataSetId in project $projectId by user $userId"] as JSON, status: HttpStatus.SC_OK, contentType: 'application/json'
         }
         else {
