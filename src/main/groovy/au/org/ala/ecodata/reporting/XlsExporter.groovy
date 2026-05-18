@@ -19,6 +19,11 @@ class XlsExporter extends XlsxExporter {
         this.fileName = fileName
     }
 
+    /** Releases any temporary resources held by the workbook. */
+    void cleanup() {
+        this.workbook.close()
+    }
+
     /**
      * Produces a 31 character sheet name from the supplied string, sanitizing for Excel compatibility.
      */
