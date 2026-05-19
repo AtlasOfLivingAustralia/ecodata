@@ -150,8 +150,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
     List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
 
-    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', 'Invoiced - approved', 'Invoiced - total', "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
-    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', 'invoicedApproved', 'invoicedTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Invoiced - approved', 'Delivered - total', 'Invoiced - total', "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'invoicedApproved', 'deliveredTotal', 'invoicedTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
     List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
     List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "2023/2024", "2024/2025", "Target Date"]
