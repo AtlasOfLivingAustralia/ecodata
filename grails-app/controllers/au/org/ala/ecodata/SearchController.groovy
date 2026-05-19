@@ -503,8 +503,14 @@ class SearchController {
                 xlsExporter = new StreamingXlsExporter(file.name)
                 projectExporter = meritProjectExporter(xlsExporter, params)
             }
-            exportProjectsToXls(ids, projectExporter)
-            xlsExporter.save(outputStream)
+            try {
+                exportProjectsToXls(ids, projectExporter)
+                xlsExporter.save(outputStream)
+            }
+            finally {
+                xlsExporter.cleanup()
+                file.delete()
+            }
         }
         downloadService.downloadProjectDataAsync(params, doDownload)
     }
