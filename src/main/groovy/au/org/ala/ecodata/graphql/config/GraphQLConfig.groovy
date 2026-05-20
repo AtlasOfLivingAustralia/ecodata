@@ -187,6 +187,12 @@ class GraphQLConfig {
                 [(site.siteId): site]
             })
         })
+
+        registry.forTypePair(String, InvestmentPriority).withName("assets").registerMappedBatchLoader((investmentPriorityIds, env) -> {
+
+
+            Mono.just(investmentPriorityIds.collectEntries {[(it):new InvestmentPriority(name:it)] })
+        })
     }
 
     /** Here we transform the schema to add descriptions from the DataDescription collection. */
