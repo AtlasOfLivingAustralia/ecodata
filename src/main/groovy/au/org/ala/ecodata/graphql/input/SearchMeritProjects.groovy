@@ -18,8 +18,7 @@ class SearchMeritProjects implements Validateable {
             managementUnitId: "managementUnitId",
             organisation: "organisationFacet",
             organisationId: "organisationId",
-            portfolio: "portfolio",
-            status:"status"
+            portfolio: "portfolio"
     ]
 
     static Map namedParameterToDatabaseMap = [
@@ -89,12 +88,21 @@ class SearchMeritProjects implements Validateable {
     List buildFacetFilters() {
         List filters = new ArrayList(facetFilters?:[])
 
+        // Status is a special case because the values are capitalized in
+        // elasticsearch but not the database.
+        if (status) {
+            filters << "status:${status.capitalize()}"
+        }
         namedParameterToFacetNameMap.each { String property, String facetName ->
             if (this[property]) {
-                this[property].each {
-                    filters << "${facetName}:${it}"
+                if (this[property] instanceof List) {
+                    this[property].each {
+                        filters << "${facetName}:${it}"
+                    }
                 }
-
+                else {
+                    filters << "${facetName}:${this[property]}"
+                }
             }
         }
 

@@ -125,14 +125,19 @@ class AccessExpiryJob {
             for (User user : users) {
                 UserHub userHub = user.getUserHub(hub.hubId)
                 if (!userHub.accessExpired()) {
-                    log.info("Deleting all permissions for user ${user.userId} in hub ${hub.urlPath}")
-                    Map result = permissionService.deleteUserPermissionByUserId(user.userId, hub.hubId)
+                    if (permissionService.countUserPermissionsByHub(user.userId, hub.hubId) > 0) {
+                        log.info("Deleting all permissions for user ${user.userId} in hub ${hub.urlPath}")
+                        Map result = permissionService.deleteUserPermissionByUserId(user.userId, hub.hubId)
+                        if (result.status == HttpStatus.SC_OK) {
+                            sendEmail(hub, user.userId, ACCESS_EXPIRED_EMAIL_KEY)
+                            emailsSent++
+                        }
+                    }
+                    // Update the userHub record to indicate the access has expired even if there were no permissions to delete
+                    // so that they won't be picked up again by this job and so that we have a record of when their access expired.
                     userHub.accessExpiredDate = processingTime
                     user.save()
-                    if (result.status == HttpStatus.SC_OK) {
-                        sendEmail(hub, user.userId, ACCESS_EXPIRED_EMAIL_KEY)
-                        emailsSent++
-                    }
+
                 }
                 if (emailsSent >= maxEmailsToSend) {
                     break

@@ -1234,24 +1234,26 @@ class MetadataService implements DataBinder {
                     name:service.getNameForProgramId(project.programId),
                     id: service.id,
                     scores: service.scores()?.collect { score ->
-                        [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
+                        [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget, relatedScores:score.relatedScores]
                     }
             ]
         }
         results.each { service ->
             service.scores?.each  { score ->
                 Map target = targets.find {it.scoreId == score.scoreId}
-                if (target){
+                if (target) {
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
                     score.targetDate = target?.targetDate
                     score.relatedOutcomes = target?.outcomeTargets?.relatedOutcomes?.flatten()
-                }else
-                    score.delete = true //prepare for delete
-            }
 
+                } else {
+                    score.noTargetDefined = true
+                }
+            }
+            // Remove all of the services for which no targets have been defined.
             service.scores?.removeAll {
-                it.delete
+                it.noTargetDefined
             }
         }
 
