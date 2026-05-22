@@ -852,7 +852,8 @@ class MetadataService implements DataBinder {
                 switch (model.dataType) {
                     case DataTypes.LIST:
                         if (isRowValidNextMemberOfArray(value, model.columns)) {
-                            if (!firstRow[key].contains(value)) {
+                            boolean hasNestedList = model.columns.find{ it.dataType == DataTypes.LIST } // Allow duplicates for nodes as it can be deliberate.
+                            if (!hasNestedList && row != firstRow || !firstRow[key].contains(value)) {
                                 firstRow[key].add(value)
                             }
 

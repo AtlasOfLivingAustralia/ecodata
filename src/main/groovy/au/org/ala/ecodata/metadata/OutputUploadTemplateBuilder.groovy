@@ -165,7 +165,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
             }
         }
         final int firstDataRow = 2
-        new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel).process(firstDataRow)
+        new ValidationProcessor(getWorkbook(), outputSheet.sheet, augmentedModel, hints).process(firstDataRow)
         new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable, hints).process(firstDataRow)
 
         finalise(outputSheet)
@@ -266,21 +266,6 @@ class OutputDataProcessor {
         }
     }
 
-    private void protectSheet() {
-
-        sheet.protectSheet("")
-        sheet.getCTWorksheet().getSheetProtection().setFormatColumns(false)
-
-        // If we allow extra rows to be added, by default make editable columns editable for the whole sheet.
-        if (extraRowsEditable) {
-            model.eachWithIndex { modelVal, i ->
-                if (!modelVal.readOnly && modelVal.dataType != 'date')  {
-                    sheet.setDefaultColumnStyle(i, unlockedCellStyle)
-                }
-            }
-        }
-    }
-
     private static Date parseDate(value) {
         Date dateValue = null
         if (value instanceof Date) {
@@ -299,10 +284,6 @@ class OutputDataProcessor {
     }
 
     public void process(int firstRow = 1) {
-
-        if (editMode) {
-            protectSheet()
-        }
 
         data?.eachWithIndex { rowValue, rowCount ->
             Row row = sheet.createRow((rowCount+firstRow))
@@ -408,13 +389,9 @@ class ValidationProcessor extends OutputModelProcessor {
         ValidationHandler validationHandler = new ValidationHandler(hints)
         validationHandler.firstRow = firstRow
         int currentColumn = 0
-        model.each{ Map node ->
-            // Special handling for multi-select fields allows multiple columns to be created with the same validation rules.
-            int numberOfColumnsForNode = (hints[node.name]?.numColumns) ?: 1
-            for (int i=0; i<numberOfColumnsForNode; i++) {
-                context.currentColumn = currentColumn++
-                processNode(validationHandler, node, context)
-            }
+        model.each { Map node ->
+            context.currentColumn = currentColumn++
+            processNode(validationHandler, node, context)
         }
     }
 
