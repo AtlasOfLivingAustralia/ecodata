@@ -315,7 +315,9 @@ class OutputDataProcessor {
 
                             break
                         case 'species':
-                            cell.setCellValue(value ? value.name : '')
+                            // Upload expects scientific name only so if we download with data, when we re-upload it
+                            // won't match if we include the common name as well.
+                            cell.setCellValue(value ? (value.scientificName ?: value.name) : '')
                             break
                         case 'stringList':
                             if (value instanceof List) {
