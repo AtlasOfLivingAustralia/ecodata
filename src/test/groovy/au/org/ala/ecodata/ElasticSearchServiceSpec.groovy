@@ -344,6 +344,25 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         then:
         result == mockDate
     }
+
+    def "addFacets will apply single sort order to all the facets"() {
+        given:
+        List facets = service.addFacets(
+            "status,scienceType",
+            null,
+            15,
+            "term"
+        )
+
+        expect:
+        facets.size() == 2
+
+        and:
+        facets[0].toString().contains('"_key":"asc"')
+        facets[1].toString().contains('"_key":"asc"')
+
+    }
+
     /**
      * Creates a minimal version of an Activity that has just the attributes we will be searching.
      */
