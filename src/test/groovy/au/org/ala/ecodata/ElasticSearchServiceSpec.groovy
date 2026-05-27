@@ -350,7 +350,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         List facets = service.addFacets(
             "status,scienceType",
             null,
-            15,
+            10,
             "term"
         )
 
@@ -361,6 +361,35 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         facets[0].toString().contains('"_key":"asc"')
         facets[1].toString().contains('"_key":"asc"')
 
+    }
+
+    def "addFacets will apply per facet sort order"() {
+        given:
+        List facets = service.addFacets(
+            "status,scienceType,stateFacet,nationwideFacet",
+            null,
+            10,
+            "count,term,reverse_count,reverse_term"
+        )
+
+        expect:
+        facets.size() == 4
+
+        and: "status facet sorted by count desc"
+        facets[0].toString().contains('"field":"status"')
+        facets[0].toString().contains('"_count":"desc"')
+
+        and: "scienceType facet sorted alphabetically asc"
+        facets[1].toString().contains('"field":"scienceType"')
+        facets[1].toString().contains('"_key":"asc"')
+
+        and: "stateFacet sorted by count asc"
+        facets[2].toString().contains('"field":"stateFacet"')
+        facets[2].toString().contains('"_count":"asc"')
+
+        and: "nationwideFacet sorted alphabetically desc"
+        facets[3].toString().contains('"field":"nationwideFacet"')
+        facets[3].toString().contains('"_key":"desc"')
     }
 
     /**
