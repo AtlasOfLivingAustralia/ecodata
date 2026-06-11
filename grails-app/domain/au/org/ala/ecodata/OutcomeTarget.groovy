@@ -16,4 +16,6 @@ class OutcomeTarget {
 
     /** The target to be achieved during the period */
     BigDecimal target
+
+    List<PeriodTarget> periodTargets
 }
