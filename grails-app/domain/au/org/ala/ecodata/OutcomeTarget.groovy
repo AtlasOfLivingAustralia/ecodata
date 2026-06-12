@@ -11,6 +11,8 @@ class OutcomeTarget {
     static constraints = {
     }
 
+    static embedded = ['periodTargets']
+
     /** A label that describes the period or milestone date this target is relevant to */
     List<String> relatedOutcomes
 
