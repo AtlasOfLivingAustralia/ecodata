@@ -150,8 +150,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> rdpKeyThreatHeaders =commonProjectHeaders + ['Outcome Statement/s', 'Threats / Threatening processes', 'Description', 'Project service / Target measure/s to address threats', 'Methodology', 'Evidence to be retained']
     List<String> rdpKeyThreatProperties =commonProjectProperties + ['relatedOutcomes', 'threatCode', 'keyThreat','relatedTargetMeasures', 'keyTreatIntervention', 'evidence']
 
-    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
-    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Invoiced - approved', 'Delivered - total', 'Invoiced - total', "Project Outcome/s", "Total to be delivered","2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
+    List<String> rdpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'invoicedApproved', 'deliveredTotal', 'invoicedTotal', "relatedOutcomes", "total", "2023/2024","2024/2025","2025/2026","2026/2027","2027/2028","2028/2029","2029/2030"]
 
     List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", 'deliveredApproved', 'deliveredTotal', "relatedOutcomes", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "targetDate" ]
     List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", 'Delivered - approved', 'Delivered - total', "Project Outcome/s", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023", "2023/2024", "2024/2025", "Target Date"]
@@ -477,8 +477,8 @@ class ProjectXlsExporter extends ProjectExporter {
         if (shouldExport(sheetName)) {
             AdditionalSheet outputTargetsSheet = getSheet(sheetName, outputTargetProperties, outputTargetHeaders)
             if (project.outputTargets) {
-                List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
-                List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
+                List approvedMetrics = projectService.projectMetrics(project.projectId, true, true, null, null, true, true)
+                List totalMetrics = projectService.projectMetrics(project.projectId, true, false, null, null, true, true)
                 List targets = approvedMetrics.findAll{hasTarget(it.target)}.collect{project + [scoreId: it.scoreId, scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
                     target.deliveredTotal = totalMetrics.find{it.scoreId == target.scoreId}?.result?.result
@@ -1181,8 +1181,8 @@ class ProjectXlsExporter extends ProjectExporter {
         AdditionalSheet sheet = getSheet(sheetName, stProperties, stHeaders)
         int row = sheet.getSheet().lastRowNum
         List scoreIds = results?.scores?.scoreId?.flatten()?.unique()
-        List approvedMetrics = projectService.projectMetrics(project.projectId, true, true, scoreIds)
-        List totalMetrics = projectService.projectMetrics(project.projectId, false, false, scoreIds )
+        List approvedMetrics = projectService.projectMetrics(project.projectId, true, true, scoreIds, null, true, true)
+        List totalMetrics = projectService.projectMetrics(project.projectId, false, false, scoreIds, null, true, true)
         List data = []
         results.each { item ->
             def serviceName = item.name
@@ -1199,6 +1199,15 @@ class ProjectXlsExporter extends ProjectExporter {
                 st['deliveredApproved'] = approvedMetric?.result?.result
                 it.periodTargets.each { pt ->
                     st[pt.period] = pt.target
+                }
+
+                if (it.relatedScores) {
+                    it.relatedScores.each { relatedScore ->
+                        if (relatedScore.description == RelatedScore.INVOICED_BY_SCORE_DESCRIPTION) {
+                            st['invoicedTotal'] = totalMetrics?.find { metric -> metric.scoreId == relatedScore.scoreId }?.result?.result
+                            st['invoicedApproved'] = approvedMetrics?.find { metric -> metric.scoreId == relatedScore.scoreId }?.result?.result
+                        }
+                    }
                 }
                 data.add(project+st)
             }
