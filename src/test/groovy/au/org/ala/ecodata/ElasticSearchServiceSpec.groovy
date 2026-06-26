@@ -344,6 +344,51 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         then:
         result == mockDate
     }
+
+    def "buildProjectActivityQuery for projectactivityrecords restricts a non-privileged user to embargoed-free, verified records or records they own"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1', userId: 'user1']
+
+        and: "the user is neither an ALA admin nor an admin/editor of the project"
+        service.permissionService.isUserAlaAdmin(_) >> false
+        service.permissionService.isUserAdminForProject(_, _) >> false
+        service.permissionService.isUserEditorForProject(_, _) >> false
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "records are limited to non-embargoed/verified records OR records owned by the requesting user"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1 AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:"not applicable" OR (NOT _exists_:verificationStatus))) OR userId:user1))'
+    }
+
+    def "buildProjectActivityQuery for projectactivityrecords returns all records for a privileged user"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1', userId: 'user1']
+
+        and: "the user is an ALA admin"
+        service.permissionService.isUserAlaAdmin('user1') >> true
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "no embargo/verification restrictions are applied"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1)'
+    }
+
+    def "buildProjectActivityQuery for projectactivityrecords still owner-restricts when the user is unauthenticated"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1']
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "the userId clause is empty as there is no logged in user"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1 AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:"not applicable" OR (NOT _exists_:verificationStatus))) OR userId:))'
+    }
+
     /**
      * Creates a minimal version of an Activity that has just the attributes we will be searching.
      */
