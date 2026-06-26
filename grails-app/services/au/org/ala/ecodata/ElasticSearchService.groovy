@@ -1776,7 +1776,7 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
                     }
                     else {
-                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     }
                 }
                 break
