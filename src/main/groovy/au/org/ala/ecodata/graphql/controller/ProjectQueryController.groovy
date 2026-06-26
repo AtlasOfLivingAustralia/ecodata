@@ -65,7 +65,13 @@ class ProjectQueryController implements DataBinder {
         SearchMeritProjects searchParams = new SearchMeritProjects(env)
         bindData(searchParams, env.getArguments())
 
-        projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        // Searches for deleted projects are special case
+        if (searchParams.status == Status.DELETED) {
+            projectsFetcher.queryDeletedProjects(env, searchParams.buildDatabaseQueryParameters(), Pagination.asMap(searchParams.pagination))
+        }
+        else {
+            projectsFetcher.queryElasticSearch(env, searchParams.query, searchParams.buildESQueryParameters())
+        }
     }
 
     @QueryMapping
@@ -138,7 +144,7 @@ class ProjectQueryController implements DataBinder {
 
 
     @SchemaMapping(typeName = "MeritProject", field = "reports")
-    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Pagination pagination) {
+    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Boolean includedDeleted, @Argument Pagination pagination) {
         // Create a new local context and store the author value
         GraphQLContext localContext = GraphQLContext.getDefault()
                 .put("project", project);
@@ -161,7 +167,11 @@ class ProjectQueryController implements DataBinder {
         DataFetcherResult.Builder<Map> resultBuilder = DataFetcherResult.newResult()
 
         Map paginationParams = pagination ? pagination.properties : new Pagination().properties
-        PagedResultList resultList = (PagedResultList)reportingService.search(projectId:project.projectId, paginationParams)
+        Map searchParams = [projectId: project.projectId]
+        if (includedDeleted) {
+            searchParams.status = Status.DELETED
+        }
+        PagedResultList resultList = (PagedResultList)reportingService.search(searchParams, paginationParams)
         Map result = [results:resultList, totalCount: resultList.totalCount]
         return resultBuilder
                 .data(result)
@@ -172,12 +182,14 @@ class ProjectQueryController implements DataBinder {
 
     @SchemaMapping(typeName = "MeritProject", field = "documents")
     @CompileDynamic
-    Map documents(Project project, @Argument Pagination pagination) {
+    Map documents(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
 
         Map paginationParams = Pagination.asMap(pagination)
         PagedResultList documents = Document.createCriteria().list(paginationParams) {
             eq("projectId", project.projectId)
-            ne("status", Status.DELETED)
+            if (!includeDeleted) {
+                ne("status", Status.DELETED)
+            }
         }
         [totalCount: documents.totalCount, results: documents]
     }
@@ -201,11 +213,13 @@ class ProjectQueryController implements DataBinder {
 
     @SchemaMapping(typeName = "MeritProject", field = "sites")
     @CompileDynamic
-    Map sites(Project project, @Argument Pagination pagination) {
+    Map sites(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
         Map paginationParams = Pagination.asMap(pagination)
         PagedResultList sites = Site.createCriteria().list(paginationParams) {
             eq("projects", project.projectId)
-            ne("status", Status.DELETED)
+            if (!includeDeleted) {
+                ne("status", Status.DELETED)
+            }
         }
         [totalCount:sites.totalCount, results: sites]
     }
@@ -300,6 +314,28 @@ class ProjectQueryController implements DataBinder {
         dataLoader.load(outputTarget.scoreId)
     }
 
+    @SchemaMapping(typeName = "ProjectOutcome", field = "assets")
+    CompletableFuture<List<InvestmentPriority>> assets(ProjectOutcome projectOutcome, DataLoader<String, InvestmentPriority> assets) {
+
+        List<CompletableFuture<InvestmentPriority>> futures = projectOutcome.assets.collect { String asset ->
+            assets.load(asset)
+        }
+
+        (CompletableFuture<List<InvestmentPriority>>)CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply{futures.collect{it.join()}}
+    }
+
+    @SchemaMapping(typeName = "MeriPlan", field = "investmentPriorities")
+    CompletableFuture<List<InvestmentPriority>> investmentPriorities(MeriPlan meriPlan, DataLoader<String, InvestmentPriority> assets) {
+
+        List<CompletableFuture<InvestmentPriority>> futures = meriPlan.investmentPriorities.collect { String asset ->
+            assets.load(asset)
+        }
+
+        (CompletableFuture<List<InvestmentPriority>>)CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply{futures.collect{it.join()}}
+    }
+
     @SchemaMapping(typeName = "DeliveredAgainstTarget", field = "targetMeasure")
     CompletableFuture<TargetMeasure> targetMeasure(DeliveredAgainstTarget deliveredAgainstTarget, DataLoader<String, TargetMeasure> dataLoader) {
         dataLoader.load(deliveredAgainstTarget.scoreId)
@@ -377,5 +413,6 @@ class ProjectQueryController implements DataBinder {
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .thenApply{futures.collect{it.join()}}
     }
+
 
 }
