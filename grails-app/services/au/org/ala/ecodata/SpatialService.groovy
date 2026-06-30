@@ -236,10 +236,6 @@ class SpatialService {
                         long start = System.currentTimeMillis()
 
                         long end = System.currentTimeMillis()
-                        log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end - start}ms")
-
-                        // check if intersection should be ignored
-                        start = end
                         if (isValidGeometryIntersection(mainGeometry, boundaryPid)) {
                             filteredResponse[fid].add(obj)
                             Geometry boundaryGeometry = spatialService.getGeometryForPid(boundaryPid)
@@ -301,18 +297,21 @@ class SpatialService {
 
 
     private static Geometry getBestGeometryTypeForIntersection(Geometry geometry) {
-        Geometry result = geometry
-        GeometryFactory factory = new GeometryFactory()
-        if (geometry.geometryType == Geometry.TYPENAME_GEOMETRYCOLLECTION) {
-            List typesInPreferenceOrder = [Geometry.TYPENAME_POLYGON, Geometry.TYPENAME_MULTIPOLYGON, Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_MULTILINESTRING, Geometry.TYPENAME_POINT, Geometry.TYPENAME_MULTIPOINT]
-            List<Geometry> extracted = null
-            typesInPreferenceOrder.find{
-                extracted = GeometryExtracter.extract(geometry, it)
-                !extracted.isEmpty()
-            }
-            result = factory.buildGeometry(extracted)
+        GeometryFactory factory = geometry.factory ?: new GeometryFactory()
+        List<String> typesInPreferenceOrder = [
+                Geometry.TYPENAME_POLYGON,
+                Geometry.TYPENAME_MULTIPOLYGON,
+                Geometry.TYPENAME_LINESTRING,
+                Geometry.TYPENAME_MULTILINESTRING,
+                Geometry.TYPENAME_POINT,
+                Geometry.TYPENAME_MULTIPOINT
+        ]
+        List<Geometry> extracted = []
+        typesInPreferenceOrder.find { type ->
+            extracted = GeometryExtracter.extract(geometry, type)
+            !extracted.isEmpty()
         }
-        result
+        return extracted && !extracted.isEmpty() ? factory.buildGeometry(extracted) : geometry
     }
 
     List getIntersectionProportionAndArea (Geometry mainGeometry, Geometry boundaryGeometry) {
@@ -321,9 +320,9 @@ class SpatialService {
         double areaM2 = 0.0d
         double intersectionMeasure
         double mainGeometryMeasure
-
+        Geometry toOverlay = mainGeometry
         try {
-            Geometry toOverlay = mainGeometry
+
             if (mainGeometry.geometryType == Geometry.TYPENAME_GEOMETRYCOLLECTION) {
                 toOverlay = getBestGeometryTypeForIntersection(mainGeometry)
             }
@@ -344,7 +343,8 @@ class SpatialService {
             }
 
         }
-        if (GeometryUtils.isLine(mainGeometry)) {
+        boolean intersectUsedLine = GeometryUtils.hasLine(toOverlay)
+        if (intersectUsedLine) {
             mainGeometryMeasure = mainGeometry.getLength()
             intersectionMeasure = intersection.getLength()
         }
