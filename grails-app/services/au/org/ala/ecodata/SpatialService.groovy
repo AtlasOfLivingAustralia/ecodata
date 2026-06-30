@@ -277,9 +277,6 @@ class SpatialService {
             preparedBoundaryGeometry = RelateNG.prepare(boundaryGeometry)
         }
         try {
-            if (!preparedBoundaryGeometry.evaluate(mainGeometry, RelatePredicate.intersects())) {
-                return false
-            }
             if (preparedBoundaryGeometry.evaluate(mainGeometry, RelatePredicate.covers()) || preparedBoundaryGeometry.evaluate(mainGeometry, RelatePredicate.coveredBy())) {
                 return true
             }
