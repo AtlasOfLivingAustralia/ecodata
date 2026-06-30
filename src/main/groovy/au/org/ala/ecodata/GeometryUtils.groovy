@@ -240,7 +240,11 @@ class GeometryUtils {
     }
 
     static boolean isLine(Geometry geom) {
-        return geom.geometryType in ['LineString', 'MultiLineString']
+        List lineTypes = ['LineString', 'MultiLineString']
+        if (geom.geometryType == Geometry.TYPENAME_GEOMETRYCOLLECTION) {
+            geom = geom.geometries.find { it.geometryType in lineTypes  }
+        }
+        return geom.geometryType in lineTypes
     }
 
     static Geometry wgs84ToUtm(Geometry wgs84Geom) {

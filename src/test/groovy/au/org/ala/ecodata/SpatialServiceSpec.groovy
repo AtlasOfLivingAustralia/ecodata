@@ -6,6 +6,7 @@ import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.operation.relateng.RelateNG
 import spock.lang.Specification
 
 class SpatialServiceSpec extends Specification implements ServiceUnitTest<SpatialService> {
@@ -91,7 +92,7 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         intersectionProportion.size() == 1
         intersectionProportion["cl22"]["Australian Capital Territory"] != null
         intersectionProportion["cl22"]["New South Wales"] == null
-        1 * webService.get("/ws/shapes/wkt/123") >> getShape2()
+        2 * webService.get("/ws/shapes/wkt/123") >> getShape2()
         1 * webService.get("/ws/shapes/wkt/456") >> getBoundaryShape()
     }
 
