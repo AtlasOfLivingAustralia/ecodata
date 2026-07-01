@@ -344,6 +344,98 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         then:
         result == mockDate
     }
+
+    def "buildProjectActivityQuery for projectactivityrecords restricts a non-privileged user to embargoed-free, verified records or records they own"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1', userId: 'user1']
+
+        and: "the user is neither an ALA admin nor an admin/editor of the project"
+        service.permissionService.isUserAlaAdmin(_) >> false
+        service.permissionService.isUserAdminForProject(_, _) >> false
+        service.permissionService.isUserEditorForProject(_, _) >> false
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "records are limited to non-embargoed/verified records OR records owned by the requesting user"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1 AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:"not applicable" OR (NOT _exists_:verificationStatus))) OR userId:user1))'
+    }
+
+    def "buildProjectActivityQuery for projectactivityrecords returns all records for a privileged user"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1', userId: 'user1']
+
+        and: "the user is an ALA admin"
+        service.permissionService.isUserAlaAdmin('user1') >> true
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "no embargo/verification restrictions are applied"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1)'
+    }
+
+    def "buildProjectActivityQuery for projectactivityrecords still owner-restricts when the user is unauthenticated"() {
+        given:
+        service.permissionService = Mock(PermissionService)
+        def params = [view: 'projectactivityrecords', projectActivityId: 'pa1']
+
+        when:
+        service.buildProjectActivityQuery(params)
+
+        then: "the userId clause is empty as there is no logged in user"
+        params.query == '(docType:activity AND projectActivity.projectActivityId:pa1 AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:"not applicable" OR (NOT _exists_:verificationStatus))) OR userId:))'
+    }
+
+    def "addFacets will apply single sort order to all the facets"() {
+        given:
+        List facets = service.addFacets(
+            "status,scienceType",
+            null,
+            10,
+            "term"
+        )
+
+        expect:
+        facets.size() == 2
+
+        and:
+        facets[0].toString().contains('"_key":"asc"')
+        facets[1].toString().contains('"_key":"asc"')
+
+    }
+
+    def "addFacets will apply per facet sort order"() {
+        given:
+        List facets = service.addFacets(
+            "status,scienceType,stateFacet,nationwideFacet",
+            null,
+            10,
+            "count,term,reverse_count,reverse_term"
+        )
+
+        expect:
+        facets.size() == 4
+
+        and: "status facet sorted by count desc"
+        facets[0].toString().contains('"field":"status"')
+        facets[0].toString().contains('"_count":"desc"')
+
+        and: "scienceType facet sorted alphabetically asc"
+        facets[1].toString().contains('"field":"scienceType"')
+        facets[1].toString().contains('"_key":"asc"')
+
+        and: "stateFacet sorted by count asc"
+        facets[2].toString().contains('"field":"stateFacet"')
+        facets[2].toString().contains('"_count":"asc"')
+
+        and: "nationwideFacet sorted alphabetically desc"
+        facets[3].toString().contains('"field":"nationwideFacet"')
+        facets[3].toString().contains('"_key":"desc"')
+    }
+
     /**
      * Creates a minimal version of an Activity that has just the attributes we will be searching.
      */

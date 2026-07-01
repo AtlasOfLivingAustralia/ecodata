@@ -574,4 +574,71 @@ class RecordConverterSpec extends Specification {
         fieldsets[1].occurrenceID == "speciesFieldId2"
         fieldsets[1].measurementsOrFacts.size() == 2
     }
+
+    def "converter should not merge list measurement values from different fields"() {
+        setup:
+        List measurementsOrFacts
+        Project project = new Project(projectId: "project1")
+        Organisation organisation = new Organisation(orgId: "org1")
+        Site site = new Site(siteId: "site1")
+        ProjectActivity projectActivity = new ProjectActivity(projectActivityId: "pa1")
+        Activity activity = new Activity(activityId: "act1")
+        Output output = new Output(outputId: "output1", activityId: "act1")
+
+        Map outputMetadata = [
+            record: true,
+            dataModel: [
+                [
+                    dataType: "stringList",
+                    name: "interventionProjectAims",
+                    dwcAttribute: "measurementValue",
+                    measurementType: "text",
+                    measurementUnit: "unitless",
+                    measurementUnitID: "interventionProjectAims",
+                    description: "Aims of the work"
+                ],
+                [
+                    dataType: "stringList",
+                    name: "projectCollaborators",
+                    dwcAttribute: "measurementValue",
+                    measurementType: "text",
+                    measurementUnit: "unitless",
+                    measurementUnitID: "projectCollaborators",
+                    description: "Collaborators"
+                ],
+                [
+                    dataType: "stringList",
+                    name: "fundingType",
+                    dwcAttribute: "measurementValue",
+                    measurementType: "text",
+                    measurementUnit: "unitless",
+                    measurementUnitID: "fundingType",
+                    description: "Funding"
+                ]
+            ]
+        ]
+
+        Map submittedData = [
+            interventionProjectAims: ["Habitat restoration"],
+            projectCollaborators   : ["Research institution"],
+            fundingType            : ["Public - commonwealth"]
+        ]
+
+        when:
+        List<Map> fieldsets = RecordConverter.convertRecords(project, organisation, site, projectActivity, activity, output, submittedData, outputMetadata, false)
+        measurementsOrFacts = fieldsets[0].measurementsOrFacts
+
+        then:
+        fieldsets.size() == 1
+        measurementsOrFacts.size() == 3
+
+        measurementsOrFacts.find { it.measurementUnitID == "interventionProjectAims" }.measurementValue == ["Habitat restoration"]
+        measurementsOrFacts.find { it.measurementUnitID == "projectCollaborators" }.measurementValue == ["Research institution"]
+        measurementsOrFacts.find { it.measurementUnitID == "fundingType" }.measurementValue == ["Public - commonwealth"]
+
+        and: "then the submitted output data is not mutated during record conversion"
+        submittedData.interventionProjectAims == ["Habitat restoration"]
+        submittedData.projectCollaborators == ["Research institution"]
+        submittedData.fundingType == ["Public - commonwealth"]
+    }
 }

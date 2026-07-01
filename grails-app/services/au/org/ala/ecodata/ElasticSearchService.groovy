@@ -1775,7 +1775,7 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
                     }
                     else {
-                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     }
                 }
                 break
@@ -2138,34 +2138,39 @@ class ElasticSearchService {
             flimit = DEFAULT_FACETS
         }
 
-        // This is to keep backwards compatibility with elasticsearch 1.7.
-        BucketOrder sortOrder
-        switch (fsort) {
-            case "term":
-                sortOrder = BucketOrder.key(true)
-                break
-            case "reverse_count":
-            case "reverseCount":
-                sortOrder = BucketOrder.count(true)
-                break
-            case "reverse_term":
-            case "reverseTerm" :
-                sortOrder = BucketOrder.key(false)
-                break
-            default:
-                sortOrder = BucketOrder.count(false)
-                break
-        }
+        List facetSorts = fsort ? fsort.split(',')*.trim() : []
+        BucketOrder defaultSortOrder = getFacetSortOrder(fsort)
 
         List facetList = []
 
         if (facets) {
-            facets.split(",").each {
-                facetList.add(AggregationBuilders.terms(it).field(it).size(flimit).order(sortOrder))
+            facets.split(",").eachWithIndex { facet, index ->
+                String facetSort = facetSorts.size() > index ? facetSorts[index] : null
+                BucketOrder sortOrder = facetSort ? getFacetSortOrder(facetSort) : defaultSortOrder
+
+                facetList.add(
+                    AggregationBuilders.terms(facet).field(facet).size(flimit).order(sortOrder)
+                )
             }
         }
 
         return facetList
+    }
+
+    private BucketOrder getFacetSortOrder(String fsort) {
+        switch (fsort) {
+            case "term":
+                return BucketOrder.key(true)
+            case "reverse_count":
+            case "reverseCount":
+                return BucketOrder.count(true)
+            case "reverse_term":
+            case "reverseTerm":
+                return BucketOrder.key(false)
+            case "count":
+            default:
+                return BucketOrder.count(false)
+        }
     }
 
     List addAggregation (String aggs) {
