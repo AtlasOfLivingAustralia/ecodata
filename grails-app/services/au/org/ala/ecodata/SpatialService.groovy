@@ -7,7 +7,12 @@ import grails.plugin.cache.Cacheable
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import org.locationtech.jts.geom.*
+import org.locationtech.jts.geom.util.GeometryExtracter
 import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.operation.overlayng.OverlayNG
+import org.locationtech.jts.operation.overlayng.OverlayNGRobust
+import org.locationtech.jts.operation.relateng.RelateNG
+import org.locationtech.jts.operation.relateng.RelatePredicate
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -229,23 +234,10 @@ class SpatialService {
                         // Get geoJSON of the object stored in spatial portal
                         long start = System.currentTimeMillis()
 
-                        Geometry boundaryGeometry = spatialService.getGeometryForPid(boundaryPid)
                         long end = System.currentTimeMillis()
-                        log.debug("Time taken to convert geojson to geometry for pid $boundaryPid: ${end - start}ms")
-
-                        if (!boundaryGeometry.isValid()) {
-                            // fix invalid geometry
-                            boundaryGeometry = boundaryGeometry.buffer(0)
-                            if (!boundaryGeometry.isValid()) {
-                                log.debug("Cannot check object $boundaryPid($fid) is near main geomerty")
-                                return
-                            }
-                        }
-
-                        // check if intersection should be ignored
-                        start = end
-                        if (isValidGeometryIntersection(mainGeometry, boundaryGeometry)) {
+                        if (isValidGeometryIntersection(mainGeometry, boundaryPid)) {
                             filteredResponse[fid].add(obj)
+                            Geometry boundaryGeometry = spatialService.getGeometryForPid(boundaryPid)
                             def (intersectionAreaOfMainGeometry, area) = getIntersectionProportionAndArea(mainGeometry, boundaryGeometry)
                             intersectionAreaByFacets[fid][objName] = area
                         } else {
@@ -264,6 +256,12 @@ class SpatialService {
         [filteredResponse, intersectionAreaByFacets]
     }
 
+    boolean isValidGeometryIntersection (Geometry mainGeometry, String pid) {
+        Geometry boundaryGeometry = spatialService.getGeometryForPid(pid)
+        RelateNG preparedBoundaryGeometry = spatialService.preparedGeometryFromPid(pid)
+        isValidGeometryIntersection(mainGeometry, boundaryGeometry, preparedBoundaryGeometry)
+    }
+
     /**
      * Calculates area of intersection and check the overlap to be more than 5% (configurable) of site area.
      * @param mainGeometry
@@ -271,12 +269,16 @@ class SpatialService {
      * @return true - if intersection area is greater than or equal to intersection threshold or intersection area is greater than or equal to 10,000 hectare
      * false - if intersection area is less than intersection threshold and intersection area is less than 10,000 hectare
      */
-    boolean isValidGeometryIntersection (Geometry mainGeometry, Geometry boundaryGeometry) {
+    boolean isValidGeometryIntersection (Geometry mainGeometry, Geometry boundaryGeometry, RelateNG preparedBoundaryGeometry = null) {
         Double intersectionThreshold = grailsApplication.config.getProperty("spatial.intersectionThreshold", Double)
         Integer threshold = grailsApplication.config.getProperty('spatial.intersectionAreaThresholdInHectare', Integer)
+        if (!preparedBoundaryGeometry) {
+            preparedBoundaryGeometry = RelateNG.prepare(boundaryGeometry)
+        }
         try {
-            if (mainGeometry.contains(boundaryGeometry) || boundaryGeometry.contains(mainGeometry))
+            if (preparedBoundaryGeometry.evaluate(mainGeometry, RelatePredicate.covers()) || preparedBoundaryGeometry.evaluate(mainGeometry, RelatePredicate.coveredBy())) {
                 return true
+            }
             else {
                 def (intersectionProportion, area) = getIntersectionProportionAndArea (mainGeometry, boundaryGeometry)
                 return ( intersectionProportion >= intersectionThreshold ) // intersection is greater than 5% of site area
@@ -289,24 +291,58 @@ class SpatialService {
         }
     }
 
+
+    private static Geometry getBestGeometryTypeForIntersection(Geometry geometry) {
+        GeometryFactory factory = geometry.factory ?: new GeometryFactory()
+        List<String> typesInPreferenceOrder = [
+                Geometry.TYPENAME_POLYGON,
+                Geometry.TYPENAME_MULTIPOLYGON,
+                Geometry.TYPENAME_LINESTRING,
+                Geometry.TYPENAME_MULTILINESTRING,
+                Geometry.TYPENAME_POINT,
+                Geometry.TYPENAME_MULTIPOINT
+        ]
+        List<Geometry> extracted = []
+        typesInPreferenceOrder.find { type ->
+            extracted = GeometryExtracter.extract(geometry, type)
+            !extracted.isEmpty()
+        }
+        return extracted && !extracted.isEmpty() ? factory.buildGeometry(extracted) : geometry
+    }
+
     List getIntersectionProportionAndArea (Geometry mainGeometry, Geometry boundaryGeometry) {
         Geometry intersection
         double proportion = 0.0d
         double areaM2 = 0.0d
         double intersectionMeasure
         double mainGeometryMeasure
+        Geometry toOverlay = mainGeometry
         try {
-            intersection = boundaryGeometry.intersection(mainGeometry)
+
+            if (mainGeometry.geometryType == Geometry.TYPENAME_GEOMETRYCOLLECTION) {
+                toOverlay = getBestGeometryTypeForIntersection(mainGeometry)
+                // Remove intersections/overlaps, as they can cause issues with the intersection operation
+                toOverlay = OverlayNGRobust.union(toOverlay)
+            }
+            intersection = OverlayNGRobust.overlay(boundaryGeometry, toOverlay, OverlayNG.INTERSECTION)
         }
-        catch (TopologyException e) {
+        catch (Exception e) {
             // This can happen if the geometries are invalid or self-intersecting.
             // An invalid polygon will have been corrected by now but a self-intersecting
             // linestring is still considered valid and can cause this exception.
-            log.warn("TopologyException when calculating intersection between geometries: ${e.message}")
-            mainGeometry = mainGeometry.getEnvelope()
-            intersection = boundaryGeometry.intersection(mainGeometry.getEnvelope())
+            log.error("TopologyException when calculating intersection between geometries: ${e.message}", e)
+            try {
+                mainGeometry = mainGeometry.getEnvelope()
+                intersection = OverlayNGRobust.overlay(boundaryGeometry, mainGeometry, OverlayNG.INTERSECTION)
+            }
+            catch (Exception e2) {
+                log.error("TopologyException when calculating intersection between geometries using envelope: ${e2.message}", e2)
+                return [0d, 0d]
+            }
+
         }
-        if (GeometryUtils.isLine(mainGeometry)) {
+        boolean intersectUsedLine = GeometryUtils.hasLine(toOverlay)
+        if (intersectUsedLine) {
             mainGeometryMeasure = mainGeometry.getLength()
             intersectionMeasure = intersection.getLength()
         }
@@ -320,7 +356,7 @@ class SpatialService {
         }
 
         if (proportion != 0.0d) {
-            if (GeometryUtils.isLine(mainGeometry)) {
+            if (GeometryUtils.hasLine(mainGeometry)) {
                 Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
 
                 // for line strings we fake an area by using a buffer - a 0.5m buffer is used to create a 1m wide line by default
@@ -392,13 +428,23 @@ class SpatialService {
     }
 
     @Cacheable(value = "spatialGeometryFromPid", key= {pid})
-    Geometry getGeometryForPid(String pid) {
+    synchronized Geometry getGeometryForPid(String pid) {
         log.debug("Heap cache miss for getGeometryForPid($pid)")
         String wkt = spatialService.getWktForPid(pid)
 
         Geometry geometry = null
         try {
             geometry = new WKTReader().read(wkt)
+            if (!geometry.isValid()) {
+                // fix invalid geometry
+                geometry = geometry.buffer(0)
+                if (!geometry.isValid()) {
+                    log.warn("Invalid geometry for pid $pid.  Unable to repair.")
+                }
+                else {
+                    geometry = GeometryUtils.simplifyGeometry(geometry, grailsApplication.config.getProperty('spatial.geometrySimplificationTolerance', Double, 0.0001))
+                }
+            }
         }
         catch (Exception e) {
             log.error("Error reading geometry for pid $pid")
@@ -407,6 +453,13 @@ class SpatialService {
             geometry = new GeometryFactory().createPoint(new Coordinate(0, 0))
         }
         geometry
+    }
+
+    @Cacheable(value = "preparedGeometryFromPid", key= {pid})
+    synchronized RelateNG preparedGeometryFromPid(String pid) {
+        Geometry geometry = spatialService.getGeometryForPid(pid)
+        RelateNG prepared = RelateNG.prepare(geometry)
+        prepared
     }
 
     /**
@@ -465,8 +518,7 @@ class SpatialService {
                                 // filter out objects that are near boundary (get intersection of electorate with state
                                 // layer and check if they are at boundary)
                                 intersectedObjects = intersectedObjects.findAll { intersectObject ->
-                                    Geometry intersectGeometry = spatialService.getGeometryForPid(intersectObject.pid)
-                                    isValidGeometryIntersection(mainGeometry, intersectGeometry)
+                                    isValidGeometryIntersection(mainGeometry, intersectObject.pid)
                                 }
 
                                 intersectedObjects.sort { it.name }
