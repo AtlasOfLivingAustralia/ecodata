@@ -322,6 +322,8 @@ class SpatialService {
 
             if (mainGeometry.geometryType == Geometry.TYPENAME_GEOMETRYCOLLECTION) {
                 toOverlay = getBestGeometryTypeForIntersection(mainGeometry)
+                // Remove intersections/overlaps, as they can cause issues with the intersection operation
+                toOverlay = OverlayNGRobust.union(toOverlay)
             }
             intersection = OverlayNGRobust.overlay(boundaryGeometry, toOverlay, OverlayNG.INTERSECTION)
         }
