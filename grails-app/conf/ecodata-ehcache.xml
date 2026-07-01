@@ -25,7 +25,7 @@
     </cache>
     <cache alias="preparedSpatialGeometryFromPid">
         <key-type>java.lang.String</key-type>
-        <value-type>java.io.Serializable</value-type>
+        <value-type>java.lang.Object</value-type>
         <expiry>
             <tti unit="days">1</tti>
         </expiry>
