@@ -357,7 +357,7 @@ class SpatialService {
         }
 
         if (proportion != 0.0d) {
-            if (GeometryUtils.isLine(mainGeometry)) {
+            if (GeometryUtils.hasLine(mainGeometry)) {
                 Double lineStringBufferDistance = grailsApplication.config.getProperty("spatial.lineStringBufferDistance", Double, 0.5)
 
                 // for line strings we fake an area by using a buffer - a 0.5m buffer is used to create a 1m wide line by default
