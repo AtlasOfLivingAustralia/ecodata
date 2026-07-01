@@ -40,7 +40,6 @@ class SpatialService {
 
     Map lookupTable
     Map<String, Map> synonymLookupTable = [:]
-    Map<String, RelateNG> preparedGeometryCache = [:]
 
     public SpatialService() {
         JsonSlurper js = new JsonSlurper()
@@ -453,22 +452,15 @@ class SpatialService {
             // that won't intersect with anything.
             geometry = new GeometryFactory().createPoint(new Coordinate(0, 0))
         }
-        RelateNG prepared = RelateNG.prepare(geometry)
-        preparedGeometryCache.put(pid, prepared)
         geometry
     }
 
+    @Cacheable(value = "preparedGeometryFromPid", key= {pid})
     synchronized RelateNG preparedGeometryFromPid(String pid) {
-        RelateNG prepared = preparedGeometryCache.get(pid)
-        if (!prepared) {
-            // Calling this method will force the geometry to be cached in the preparedGeometryCache
-            spatialService.getGeometryForPid(pid)
-            prepared = preparedGeometryCache.get(pid)
-        }
+        Geometry geometry = spatialService.getGeometryForPid(pid)
+        RelateNG prepared = RelateNG.prepare(geometry)
         prepared
     }
-
-
 
     /**
      * Get GeoJSON of a spatial object.
