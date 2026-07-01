@@ -92,8 +92,8 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         intersectionProportion.size() == 1
         intersectionProportion["cl22"]["Australian Capital Territory"] != null
         intersectionProportion["cl22"]["New South Wales"] == null
-        2 * webService.get("/ws/shapes/wkt/123") >> getShape2()
-        1 * webService.get("/ws/shapes/wkt/456") >> getBoundaryShape()
+        3 * webService.get("/ws/shapes/wkt/123") >> getShape2()
+        2 * webService.get("/ws/shapes/wkt/456") >> getBoundaryShape()
     }
 
     def "titleCase should capitalize the first letter of each word"() {
