@@ -676,7 +676,7 @@ class PermissionService {
         } else if (entityType == ManagementUnit.class.name) {
             count = ManagementUnit.countByManagementUnitIdAndHubId(entityId, hubId)
         } else if (entityType == Hub.class.name) {
-            count = Hub.countByHubId(entityId, hubId)
+            count = hubId == entityId ? 1 : 0
         }
         return count > 0
     }
