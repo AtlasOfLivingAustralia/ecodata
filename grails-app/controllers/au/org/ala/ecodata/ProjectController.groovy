@@ -11,6 +11,8 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 
+    static allowedMethods = [scoreDataForActivity: "POST"]
+
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
     ElasticSearchService elasticSearchService
     ManagementUnitService managementUnitService
@@ -467,6 +469,24 @@ class ProjectController {
      */
     def scoreDataForActivityAndProject(String id) {
         def result = projectService.scoreDataForActivityAndProject(id)
+        render result as JSON
+    }
+
+    /**
+     * Given a list of ScoreIds, evaluates each score against the supplied activity data and returns the results.
+     * This is used to evaluate scores for an activity before the activity is saved.
+     * The payload must be JSON formatted of the form:
+     * {
+     *     "activityData": { ... },
+     *     "scoreIds": [ ... ]
+     * }
+     */
+    def scoreDataForActivity() {
+        Map paramData = request.JSON
+        Map activityData = paramData.activityData
+        List scoreIds = paramData.scoreIds
+        List<Score> scores = Score.findAllByScoreIdInList(scoreIds)
+        def result = projectService.scoreDataForActivity(scores, activityData)
         render result as JSON
     }
 
