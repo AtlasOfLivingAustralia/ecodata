@@ -130,6 +130,77 @@ class SpatialServiceSpec extends Specification implements ServiceUnitTest<Spatia
         intersectionArea > 0
     }
 
+    def "getIntersectionProportionAndArea should handle GeometryCollection by extracting the best geometry type"() {
+        setup:
+        // A GeometryCollection containing a polygon and a line string
+        WKTReader reader = new WKTReader()
+        Geometry geometryCollection = reader.read(
+                "GEOMETRYCOLLECTION (" +
+                        "POLYGON ((146.76 -37.40, 146.76 -37.41, 146.77 -37.41, 146.77 -37.40, 146.76 -37.40)), " +
+                        "LINESTRING (146.76 -37.405, 146.78 -37.405)" +
+                        ")"
+        )
+        // A boundary polygon that fully covers the polygon in the collection
+        Geometry boundaryShape = reader.read(
+                "POLYGON ((146.75 -37.39, 146.75 -37.42, 146.78 -37.42, 146.78 -37.39, 146.75 -37.39))"
+        )
+
+        when: "We intersect a GeometryCollection (containing a polygon and a linestring) with a boundary"
+        def (intersectionProportion, intersectionArea) = service.getIntersectionProportionAndArea(geometryCollection, boundaryShape)
+
+        then: "The polygon is used for intersection (preferred over line), and the result is valid"
+        intersectionProportion > 0
+        intersectionArea > 0
+    }
+
+    def "getIntersectionProportionAndArea should handle GeometryCollection with only lines"() {
+        setup:
+        WKTReader reader = new WKTReader()
+        // A GeometryCollection containing only line strings
+        Geometry geometryCollection = reader.read(
+                "GEOMETRYCOLLECTION (" +
+                        "MULTILINESTRING ((146.76 -37.40, 146.77 -37.41), " +
+                        " (146.77 -37.41, 146.78 -37.40)" +
+                        "))"
+        )
+        // A boundary polygon that fully covers the lines
+        Geometry boundaryShape = reader.read(
+                "POLYGON ((146.75 -37.39, 146.75 -37.42, 146.79 -37.42, 146.79 -37.39, 146.75 -37.39))"
+        )
+        grailsApplication.config.spatial.lineStringBufferDistance = 0.5
+
+        when: "We intersect a GeometryCollection containing only line strings"
+        def (intersectionProportion, intersectionArea) = service.getIntersectionProportionAndArea(geometryCollection, boundaryShape)
+
+        then: "The line strings are used and intersection is calculated using length"
+        intersectionProportion == 1.0 || intersectionProportion > 0.99 // fully covered
+        intersectionArea > 0
+    }
+
+    def "getIntersectionProportionAndArea should handle GeometryCollection with only multi-polygons"() {
+        setup:
+        WKTReader reader = new WKTReader()
+        // A GeometryCollection containing only multi-polygons
+        Geometry geometryCollection = reader.read(
+                "GEOMETRYCOLLECTION (" +
+                        "MULTIPOLYGON (((146.76 -37.40, 146.76 -37.41, 146.77 -37.41, 146.77 -37.40, 146.76 -37.40)), " +
+                        "((146.77 -37.40, 146.77 -37.41, 146.78 -37.41, 146.78 -37.40, 146.77 -37.40))), " +
+                        "MULTIPOLYGON (((146.78 -37.40, 146.78 -37.41, 146.79 -37.41, 146.79 -37.40, 146.78 -37.40)), " +
+                        "((146.79 -37.40, 146.79 -37.41, 146.80 -37.41, 146.80 -37.40, 146.79 -37.40))))"
+        )
+        // A boundary polygon that fully covers all polygons
+        Geometry boundaryShape = reader.read(
+                "POLYGON ((146.75 -37.39, 146.75 -37.42, 146.81 -37.42, 146.81 -37.39, 146.75 -37.39))"
+        )
+
+        when: "We intersect a GeometryCollection containing only multi-polygons"
+        def (intersectionProportion, intersectionArea) = service.getIntersectionProportionAndArea(geometryCollection, boundaryShape)
+
+        then: "The polygons are extracted correctly from the GeometryCollection and intersection is calculated using area"
+        intersectionProportion == 1.0 || intersectionProportion > 0.99 // fully covered
+        intersectionArea > 0
+    }
+
     private Geometry getBoundaryShape() {
         return GeometryUtils.geoJsonMapToGeometry(JSON.parse('{' +
                 '        "coordinates": [' +
