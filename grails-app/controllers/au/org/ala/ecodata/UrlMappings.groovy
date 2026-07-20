@@ -207,6 +207,7 @@ class UrlMappings {
         "/ws/project/$projectId/archive"(controller: "harvest", action: "getDarwinCoreArchiveForProject")
         "/ws/project/$projectId/dataSet/$dataSetId/records"(controller: "project", action: "fetchDataSetRecords")
         "/ws/project/findStateAndElectorateForProject"(controller: "project", action: "findStateAndElectorateForProject")
+        "/ws/project/scoreDataForActivity"(controller: "project", action: "scoreDataForActivity")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
         "/ws/dataSetSummary/$projectId/$dataSetId?"(controller :'dataSetSummary') {
 

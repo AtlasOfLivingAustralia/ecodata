@@ -1617,7 +1617,7 @@ class RecordService {
     }
 
     Map addUnlistedAttributesToResult(Map record, Map<String, Map> result) {
-        List ignoreAttributes = ["multimedia", "measurementsOrFacts"]
+        List ignoreAttributes = ["multimedia", "measurementsOrFacts", "measurementValue"]
         if (record.occurrenceID) {
             copyMissingAttributes(record, result[DWC_OCCURRENCE], ignoreAttributes)
         }

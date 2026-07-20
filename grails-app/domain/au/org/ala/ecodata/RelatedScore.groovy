@@ -11,6 +11,7 @@ import groovy.transform.ToString
 class RelatedScore {
 
     static final String INVOICED_BY_SCORE_DESCRIPTION = "Invoiced by"
+    static final String BY_OUTCOME_SCORE_DESCRIPTION = "By outcome"
     String scoreId
 
     /** A description of the association - e.g. Service Provider, Grantee, Sponsor */
