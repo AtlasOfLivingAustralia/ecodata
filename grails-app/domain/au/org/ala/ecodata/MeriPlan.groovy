@@ -202,6 +202,11 @@ class MeriPlan {
         outcomes
     }
 
+    List<ProjectOutcome> getProjectTermOutcomes() {
+        List outcomes = details.outcomes?.projectTermOutcomes?.collect { new ProjectOutcome(it) } ?: []
+        outcomes
+    }
+
     List <String> getInvestmentPriorities() {
         List assets = []
         assets.addAll(details.assets?.collect{it.description}?:[])

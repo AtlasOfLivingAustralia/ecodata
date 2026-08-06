@@ -201,9 +201,11 @@ class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<Permiss
         String hubId = "h1"
         new UserPermission(entityId:'org1', entityType:Organisation.name, userId: userId, accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
         new Organisation(organisationId: "org1", hubId:hubId, name:"test organisation").save(flush: true, failOnError: true)
+        new UserPermission(entityId:'h1', entityType:Hub.name, userId: userId, accessLevel:AccessLevel.admin.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'h2', entityType:Hub.name, userId: userId, accessLevel:AccessLevel.admin.name()).save(flush:true, failOnError: true)
 
         expect:
-        service.countUserPermissionsByHub(userId, hubId) == 1
+        service.countUserPermissionsByHub(userId, hubId) == 2
     }
 
     def "Organisation permissions need to be removed if the organisation is running any MERIT projects"() {

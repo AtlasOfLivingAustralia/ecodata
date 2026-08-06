@@ -97,5 +97,25 @@ class RecordServiceSpec extends MongoSpec implements ServiceUnitTest<RecordServi
         null               | null                 | service.SCIENTIFIC_NAME_COMMON_NAME       | ''
     }
 
+    void "addUnlistedAttributesToResult should not copy measurementValue onto Occurrence"() {
+        given:
+        Map record = [
+                occurrenceID     : "occ-1",
+                scientificName   : "Anura",
+                measurementValue : "1.0",
+                measurementsOrFacts: [[measurementValue: "1.0", measurementType: "distance"]],
+                customField      : "keep-me"
+        ]
+        Map result = [(RecordService.DWC_OCCURRENCE): [occurrenceID: "occ-1", scientificName: "Anura"]].withDefault { [:] }
+
+        when:
+        service.addUnlistedAttributesToResult(record, result)
+
+        then:
+        result[RecordService.DWC_OCCURRENCE].customField == "keep-me"
+        !result[RecordService.DWC_OCCURRENCE].containsKey("measurementValue")
+        !result[RecordService.DWC_OCCURRENCE].containsKey("measurementsOrFacts")
+    }
+
 }
 

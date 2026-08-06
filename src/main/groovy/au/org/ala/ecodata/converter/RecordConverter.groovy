@@ -49,6 +49,7 @@ class RecordConverter {
     static final String SYSTEMATIC_SURVEY = "systematic"
     static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
     static final List LIST_COMBINE_EXCEPTION = ["multimedia"]
+    static final List MERGEABLE_COLLECTION_KEYS = [PROP_MEASUREMENTS_OR_FACTS]
 
     /**
      * Creates darwin core fields from output data. It behaviour is controlled by recordGeneration attribute.
@@ -308,10 +309,9 @@ class RecordConverter {
     }
 
     /**
-     * Replaces value in result with value in source except when the value is a list.
-     * If value is list, then it combines the result and source values. However, this is not applicable
-     * for key found in LIST_COMBINE_EXCEPTION. Therefore, `multimedia` values are replaced. But `measurementorfact` values
-     * are combined.
+     * Replaces values in result with values from source.
+     * Only MERGEABLE_COLLECTION_KEYS (currently measurementsOrFacts) are merged.
+     * All other collections are replaced.
      * @param source
      * @param result
      * @return
@@ -319,18 +319,14 @@ class RecordConverter {
     static Map overrideValues(Map source, Map result) {
         source.each { entry ->
             if ((entry.value instanceof Collection) && (result[entry.key] instanceof Collection)) {
-                if (LIST_COMBINE_EXCEPTION.contains(entry.key)) {
+                if (MERGEABLE_COLLECTION_KEYS.contains(entry.key)) {
+                    result[entry.key].addAll(entry.value)
+                }
+                else {
                     result[entry.key] = entry.value
-                    return
                 }
-
-                if(result[entry.key] == null) {
-                    result[entry.key] = []
-                }
-
-                result[entry.key].addAll(entry.value)
             }
-            if (entry.value instanceof Map) {
+            else if (entry.value instanceof Map) {
                 result[entry.key] = result[entry.key] ?: [:]
                 result[entry.key] << entry.value
             }

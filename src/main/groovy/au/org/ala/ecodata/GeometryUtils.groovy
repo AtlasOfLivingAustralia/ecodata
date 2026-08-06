@@ -243,6 +243,19 @@ class GeometryUtils {
         return geom.geometryType in ['LineString', 'MultiLineString']
     }
 
+    static boolean hasLine(Geometry geom) {
+        if (geom instanceof GeometryCollection) {
+            for (int i = 0; i < geom.numGeometries; i++) {
+                if (isLine(geom.getGeometryN(i))) {
+                    return true
+                }
+            }
+            return false
+        } else {
+            return isLine(geom)
+        }
+    }
+
     static Geometry wgs84ToUtm(Geometry wgs84Geom) {
         CoordinateReferenceSystem utm = getUtmCoordinateReferenceSystem(wgs84Geom)
         MathTransform toMetres = CRS.findMathTransform(sourceCRS, utm)

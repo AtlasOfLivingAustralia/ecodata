@@ -1147,7 +1147,42 @@ class ElasticSearchService {
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
         projectMap["className"] = Project.class.name
-        // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
+        if (project.config?.visibility) {
+            projectMap.visibility = project.config.visibility
+        }
+
+        if (project.programId) {
+            Program program = programService.get(project.programId)
+            if (program) {
+                List programNames = programService.parentNames(program)
+
+                projectMap.associatedProgram = programNames[-1]
+                if (programNames.size() >= 2) {
+                    projectMap.associatedSubProgram = programNames[-2]
+                }
+                // This allows all projects associated with a particular program to be excluded from indexing.
+                // This is required to allow MERIT projects to be loaded before they have been announced.
+                if (projectMap.visibility == null && program.inheritedConfig?.visibility) {
+                    projectMap.visibility = program.inheritedConfig.visibility
+                }
+                projectMap.privateSites = project.config?.privateSites
+                if (projectMap.privateSites == null && program.inheritedConfig?.privateSites) {
+                    projectMap.privateSites = program.inheritedConfig.privateSites
+                }
+
+                List services = project.findProjectServices()
+
+                if (services) {
+                    projectMap.services = services?.collect{
+                        it.getProgramLabels()?[project.programId]?.label ?: it.name
+                    }
+                }
+            }
+            else {
+                log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
+            }
+        }
+        // MERIT project needs project sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
         if (projectMap.isMERIT) {
@@ -1245,42 +1280,8 @@ class ElasticSearchService {
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
-        if(projectMap.managementUnitId)
+        if (projectMap.managementUnitId) {
             projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
-
-        // Populate program facets from the project program, if available, do visibility check
-        if (project.config?.visibility) {
-            projectMap.visibility = project.config.visibility
-        }
-        if (project.programId) {
-            Program program = programService.get(project.programId)
-            if (program) {
-                List programNames = programService.parentNames(program)
-
-                projectMap.associatedProgram = programNames[-1]
-                if (programNames.size() >= 2) {
-                    projectMap.associatedSubProgram = programNames[-2]
-                }
-                // This allows all projects associated with a particular program to be excluded from indexing.
-                // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (!projectMap.visibility && program.inheritedConfig?.visibility) {
-                    projectMap.visibility = program.inheritedConfig.visibility
-                }
-                List services = project.findProjectServices()
-
-                if (services) {
-                    projectMap.services = services?.collect{
-                        it.getProgramLabels()?[project.programId]?.label ?: it.name
-                    }
-                }
-
-
-
-            }
-            else {
-                log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
-            }
-
         }
 
         // Elasticsearch no longer accepts URLs and the ProjectService.toMap adds org logs as URLs, so remove them
@@ -1775,7 +1776,7 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ')'
                     }
                     else {
-                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus)))'
+                        forcedQuery = '(docType:activity AND projectActivity.projectActivityId:' + projectActivityId + ' AND ((projectActivity.embargoed:false AND (verificationStatusFacet:approved OR verificationStatusFacet:\"not applicable\" OR (NOT _exists_:verificationStatus))) OR userId:' + userId + '))'
                     }
                 }
                 break
@@ -2138,34 +2139,39 @@ class ElasticSearchService {
             flimit = DEFAULT_FACETS
         }
 
-        // This is to keep backwards compatibility with elasticsearch 1.7.
-        BucketOrder sortOrder
-        switch (fsort) {
-            case "term":
-                sortOrder = BucketOrder.key(true)
-                break
-            case "reverse_count":
-            case "reverseCount":
-                sortOrder = BucketOrder.count(true)
-                break
-            case "reverse_term":
-            case "reverseTerm" :
-                sortOrder = BucketOrder.key(false)
-                break
-            default:
-                sortOrder = BucketOrder.count(false)
-                break
-        }
+        List facetSorts = fsort ? fsort.split(',')*.trim() : []
+        BucketOrder defaultSortOrder = getFacetSortOrder(fsort)
 
         List facetList = []
 
         if (facets) {
-            facets.split(",").each {
-                facetList.add(AggregationBuilders.terms(it).field(it).size(flimit).order(sortOrder))
+            facets.split(",").eachWithIndex { facet, index ->
+                String facetSort = facetSorts.size() > index ? facetSorts[index] : null
+                BucketOrder sortOrder = facetSort ? getFacetSortOrder(facetSort) : defaultSortOrder
+
+                facetList.add(
+                    AggregationBuilders.terms(facet).field(facet).size(flimit).order(sortOrder)
+                )
             }
         }
 
         return facetList
+    }
+
+    private BucketOrder getFacetSortOrder(String fsort) {
+        switch (fsort) {
+            case "term":
+                return BucketOrder.key(true)
+            case "reverse_count":
+            case "reverseCount":
+                return BucketOrder.count(true)
+            case "reverse_term":
+            case "reverseTerm":
+                return BucketOrder.key(false)
+            case "count":
+            default:
+                return BucketOrder.count(false)
+        }
     }
 
     List addAggregation (String aggs) {

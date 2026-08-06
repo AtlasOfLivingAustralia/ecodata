@@ -17,7 +17,17 @@
         <key-type>java.lang.String</key-type>
         <value-type>java.io.Serializable</value-type>
         <expiry>
-            <tti unit="hours">1</tti>
+            <tti unit="days">1</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">50</heap>
+        </resources>
+    </cache>
+    <cache alias="preparedSpatialGeometryFromPid">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
         </expiry>
         <resources>
             <heap unit="entries">50</heap>

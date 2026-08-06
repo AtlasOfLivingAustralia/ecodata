@@ -372,7 +372,12 @@ class AdminController {
                         startInterimTime = endInterimTime
 
                         if (site?.extent) {
-                            siteService.update([extent: site.extent], site.siteId, false)
+                            // This save routine deliberately avoids using the siteService.update() method
+                            // as it won't actually save the metadata because there is an explict check to only do
+                            // so if the extent has changed. In this case, the extent hasn't changed but the metadata may have.
+                            Site siteObj = Site.findBySiteId(site.siteId)
+                            siteObj.extent = site.extent
+                            siteObj.save(flush:true, failOnError:true)
                             endInterimTime = System.currentTimeMillis()
                             log.debug("Time taken to update site ${site.siteId}: ${endInterimTime - startInterimTime} ms")
                             startInterimTime = endInterimTime

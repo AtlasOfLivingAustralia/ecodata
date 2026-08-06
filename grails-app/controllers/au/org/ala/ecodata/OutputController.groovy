@@ -130,7 +130,8 @@ class OutputController {
         def searchCriteria = request.JSON
 
         def outputList = outputService.search(searchCriteria)
-        asJson outputs:outputList
+        Map result = [outputs:outputList]
+        render result as JSON
     }
 
 }
