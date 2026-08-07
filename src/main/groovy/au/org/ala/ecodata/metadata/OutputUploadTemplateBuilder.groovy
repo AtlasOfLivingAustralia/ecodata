@@ -130,12 +130,26 @@ class OutputUploadTemplateBuilder extends XlsExporter {
                     }
                     // If there are additional fields, fall through to the next case as they are handled the same.
                 case 'image':
-                case 'geoMap':
                     List fields = additionalFieldsForDataTypes[it.dataType]?.fields
                     if (fields) {
                         String path = it.path ? it.path + '.' + it.name : it.name
-                        fields.each {
-                            lastHeader = processNodeHeaders(path, it, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                        fields.each { Map field ->
+                            lastHeader = processNodeHeaders(path, field, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
+                            startIndex++
+                        }
+                    }
+                    break
+                case 'geoMap':
+                    List fields = additionalFieldsForDataTypes[it.dataType]?.fields
+                    if (fields) {
+                        // GeoMap is not treated as a nested object, instead as a set of fields in the
+                        // parent path.  This is because of how the data is stored in the data model by the geoMap data type implementation
+                        String path = it.path
+                        String name = it.name
+                        fields.each { Map field ->
+                            Map copyOfField = new HashMap(field)
+                            copyOfField.name = name+field.name
+                            lastHeader = processNodeHeaders(path, copyOfField, lastHeader, headers, dataPathHeader, groupHeaders, augmentedModel, startIndex)
                             startIndex++
                         }
                     }
