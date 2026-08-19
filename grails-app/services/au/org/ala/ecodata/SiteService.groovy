@@ -631,18 +631,23 @@ class SiteService {
     Map convertUnsupportedFeatureToGeoJSON(Map feature) {
         Map geometry
         if (feature.geometry) {
-            switch (feature.properties.type) {
-                case 'pid':
-                    geometry = geometryForPid(feature.properties.pid)
-                    break;
-                case 'Circle':
-                    // We support circles, but they are not valid geojson.
-                    Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
-                    geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
-                    break
-                default:
-                    geometry = feature.geometry
-                    break;
+            if (feature.properties) {
+                switch (feature.properties.type) {
+                    case 'pid':
+                        geometry = geometryForPid(feature.properties.pid)
+                        break;
+                    case 'Circle':
+                        // We support circles, but they are not valid geojson.
+                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
+                        geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
+                        break
+                    default:
+                        geometry = feature.geometry
+                        break;
+                }
+            }
+            else {
+                geometry = feature.geometry
             }
 
             return geometry
