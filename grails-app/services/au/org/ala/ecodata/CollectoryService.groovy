@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.core.GrailsApplication
 
@@ -19,7 +18,6 @@ class CollectoryService {
     GrailsApplication grailsApplication
     ProjectService projectService
     EmailService emailService
-    TokenService tokenService
 
     /** These are configuration options used by the Collectory to describe how to import data from MERIT / BioCollect */
     Map defaultConnectionParameters = [
@@ -43,13 +41,7 @@ class CollectoryService {
     String createInstitution(props) {
 
         def collectoryProps = mapOrganisationAttributesToCollectory(props)
-        def result = webService.doPost(
-            grailsApplication.config.getProperty('collectory.baseURL') + INSTITUTION_COLLECTORY_PATH,
-            collectoryProps,
-            true,
-            getAuthHeader()
-        )
-
+        def result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + INSTITUTION_COLLECTORY_PATH, collectoryProps)
         String institutionId = webService.extractIdFromLocationHeader(result)
 
         return institutionId
@@ -120,12 +112,7 @@ class CollectoryService {
         if (ids.dataProviderId) {
             // create a dataResource in collectory to hold project outputs
             collectoryProps.dataProvider = [uid: ids.dataProviderId]
-            Map result = webService.doPost(
-                grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH,
-                collectoryProps,
-                true,
-                getAuthHeader()
-            )
+            Map result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
             }
@@ -133,12 +120,7 @@ class CollectoryService {
 
             // Now we have an id we can create the connection properties
             Map connectionParameters = [connectionParameters:collectoryConnectionParametersForProject(props, ids.dataResourceId)]
-            result = webService.doPost(
-                grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH + '/' + ids.dataResourceId,
-                connectionParameters,
-                true,
-                getAuthHeader()
-            )
+            result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource connection parameters: ${result.error} ${result.detail ?: ""}")
             }
@@ -195,12 +177,7 @@ class CollectoryService {
 
                 // Only update if a property other than the "hiddenJSON" attribute has changed.
                 if ((collectoryAttributes.size() > 1) || forceUpdate) {
-                    Map result = webService.doPost(
-                        grailsApplication.config.getProperty('collectory.baseURL') + 'ws/dataResource/' + project.dataResourceId,
-                        collectoryAttributes,
-                        true,
-                        getAuthHeader()
-                    )
+                    Map result = webService.doPost(grailsApplication.config.getProperty('collectory.baseURL') + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
                     if (result.error) {
                         log.error "Error updating collectory info for project ${projectId} - ${result.error}"
                     }
@@ -279,20 +256,6 @@ class CollectoryService {
         }
 
         collectoryProps
-    }
-
-    private Map getAuthHeader() {
-        String accessToken = tokenService.getAuthToken(true)
-
-        if (!accessToken) {
-            throw new RuntimeException("Unable to get access token")
-        }
-
-        if (!accessToken.startsWith('Bearer ')) {
-            accessToken = 'Bearer ' + accessToken
-        }
-
-        [Authorization: accessToken]
     }
 
 }
