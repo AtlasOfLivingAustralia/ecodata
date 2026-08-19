@@ -41,8 +41,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.createInstitution(organisation)
 
         then:
-
-        1 * webServiceMock.doPost(collectoryBaseUrl + 'ws/institution', _, true, expectedAuthHeader) >> { args -> actual = args[1] }
+        1 * webServiceMock.doPost(collectoryBaseUrl+'ws/institution', _) >> {args -> actual = args[1]}
         actual == expected
         1 * webServiceMock.extractIdFromLocationHeader(_) >> ''
 
