@@ -6,7 +6,6 @@ import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
-import com.nimbusds.oauth2.sdk.token.AccessToken
 /**
  * Tests the CollectoryService
  */
@@ -18,7 +17,6 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
     WebService webServiceMock = Mock(WebService)
     ProjectService projectService = Mock(ProjectService)
     TokenService tokenService = Mock(TokenService)
-    AccessToken accessToken = Mock(AccessToken)
     Map expectedAuthHeader = [Authorization: 'Bearer test-token']
 
 
@@ -29,9 +27,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.webService = webServiceMock
         service.projectService =  projectService
         service.tokenService = tokenService
-
-        tokenService.getAuthToken(true) >> accessToken
-        accessToken.toString() >> 'test-token'
+        tokenService.getAuthToken(true) >> 'test-token'
 
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider]]
         service.grailsApplication = grailsApplication
@@ -55,6 +51,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         1 * webServiceMock.doPost(collectoryBaseUrl + 'ws/institution', _, true, expectedAuthHeader) >> { args -> actual = args[1] }
         actual == expected
         1 * webServiceMock.extractIdFromLocationHeader(_) >> ''
+        0 * _
 
     }
 
