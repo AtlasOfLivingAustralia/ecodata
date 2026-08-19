@@ -5,7 +5,6 @@ import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
-import com.nimbusds.oauth2.sdk.token.AccessToken
 /**
  * Tests the CollectoryService
  */
@@ -16,6 +15,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
     String biocollectDataProvider = 'drBiocollect'
     WebService webServiceMock = Mock(WebService)
     ProjectService projectService = Mock(ProjectService)
+
 
     String expectedConnectionJson = '{"protocol":"DwC","url":"sftp://upload.ala.org.au:biocollect/dr1234","automation":false,"csv_delimiter":",","csv_eol":"\\n","csv_escape_char":"\\\\","csv_text_enclosure":"\\"","termsForUniqueKey":["occurrenceID"],"strip":false,"incremental":false}'
 
@@ -41,9 +41,11 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.createInstitution(organisation)
 
         then:
+
         1 * webServiceMock.doPost(collectoryBaseUrl+'ws/institution', _) >> {args -> actual = args[1]}
         actual == expected
         1 * webServiceMock.extractIdFromLocationHeader(_) >> ''
+        0 * _
 
     }
 
