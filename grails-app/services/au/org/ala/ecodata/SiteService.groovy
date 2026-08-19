@@ -628,6 +628,27 @@ class SiteService {
         result
     }
 
+    Map convertUnsupportedFeatureToGeoJSON(Map feature) {
+        Map geometry
+        if (feature.geometry) {
+            switch (feature.properties.type) {
+                case 'pid':
+                    geometry = geometryForPid(feature.properties.pid)
+                    break;
+                case 'Circle':
+                    // We support circles, but they are not valid geojson.
+                    Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
+                    geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
+                    break
+                default:
+                    geometry = feature.geometry
+                    break;
+            }
+
+            return geometry
+        }
+    }
+
     Boolean isValidPolygon (List coordinates){
         Boolean valid = false
         Integer depth = 0
@@ -704,7 +725,7 @@ class SiteService {
         if (site.features?.size() >= 1) {
             siteGeom = [
                     type:'GeometryCollection',
-                    geometries: site.features.collect{it.geometry}
+                    geometries: site.features.collect { convertUnsupportedFeatureToGeoJSON(it) }
             ]
         }
         else {
@@ -970,10 +991,7 @@ class SiteService {
                     geom = [
                             'type':'GeometryCollection',
                             'geometries': site.features.collect {
-                                if (it?.properties?.pid)
-                                    return geometryForPid(it.properties.pid)
-                                else
-                                    return it.geometry
+                                convertUnsupportedFeatureToGeoJSON(it)
                             } ?: []
                     ]
                 }

@@ -525,6 +525,16 @@ app {
         ]
     }
 }
+
+if (!elasticGeo.propertyMapping) {
+    elasticGeo.propertyMapping = [
+            "organisationFacet": "organisationName",
+            "muFacet": "managementUnitName",
+            "projectElectFacet": "projectElectFacet",
+            "projectStateFacet":"projectStateFacet",
+            "imcra4_pbFacet": "imcra4_pbFacet"
+    ]
+}
 /******************************************************************************\
  *  EXTERNAL SERVERS
  \******************************************************************************/
