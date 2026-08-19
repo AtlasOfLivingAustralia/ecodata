@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -15,6 +16,8 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
     String biocollectDataProvider = 'drBiocollect'
     WebService webServiceMock = Mock(WebService)
     ProjectService projectService = Mock(ProjectService)
+    TokenService tokenService = Mock(TokenService)
+    Map expectedAuthHeader = [Authorization: 'Bearer test-token']
 
 
     String expectedConnectionJson = '{"protocol":"DwC","url":"sftp://upload.ala.org.au:biocollect/dr1234","automation":false,"csv_delimiter":",","csv_eol":"\\n","csv_escape_char":"\\\\","csv_text_enclosure":"\\"","termsForUniqueKey":["occurrenceID"],"strip":false,"incremental":false}'
@@ -23,6 +26,9 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
         service.webService = webServiceMock
         service.projectService =  projectService
+        service.tokenService = tokenService
+        tokenService.getAuthToken(true) >> 'test-token'
+
         grailsApplication.config.collectory = [baseURL:collectoryBaseUrl, dataProviderUid:[merit:meritDataProvider, biocollect:biocollectDataProvider]]
         service.grailsApplication = grailsApplication
 
@@ -42,7 +48,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
         then:
 
-        1 * webServiceMock.doPost(collectoryBaseUrl+'ws/institution', _) >> {args -> actual = args[1]}
+        1 * webServiceMock.doPost(collectoryBaseUrl + 'ws/institution', _, true, expectedAuthHeader) >> { args -> actual = args[1] }
         actual == expected
         1 * webServiceMock.extractIdFromLocationHeader(_) >> ''
         0 * _
@@ -60,11 +66,11 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.createDataResource(projectData)
 
         then:
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':biocollectDataProvider], hiddenJSON:[isMERIT:false, alaHarvest: true]]) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource", [name: projectData.name, pubDescription: projectData.description, 'dataProvider': ['uid': biocollectDataProvider], hiddenJSON: [isMERIT:false, alaHarvest:true]], true, expectedAuthHeader) >> [:]
         1 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
 
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, [connectionParameters:expectedConnectionJson]) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, [connectionParameters: expectedConnectionJson], true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
 
     }
 
@@ -79,10 +85,10 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
         then:
         result.size() == 2
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':biocollectDataProvider], hiddenJSON:[isMERIT:false, alaHarvest: false]]) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource", [name: projectData.name, pubDescription: projectData.description, 'dataProvider': ['uid': biocollectDataProvider], hiddenJSON: [isMERIT:false, alaHarvest:false]], true, expectedAuthHeader) >> [:]
         1 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, [connectionParameters:expectedConnectionJson]) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, [connectionParameters: expectedConnectionJson], true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
 
     }
 
@@ -95,11 +101,10 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.updateDataResource(projectData)
 
         then:
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':biocollectDataProvider], hiddenJSON:[isMERIT:false, alaHarvest: true]]) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource", [name: projectData.name, pubDescription: projectData.description, 'dataProvider': ['uid': biocollectDataProvider], hiddenJSON: [isMERIT:false, alaHarvest:true]], true, expectedAuthHeader) >> [:]
         1 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
-
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, [connectionParameters:expectedConnectionJson]) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, [connectionParameters: expectedConnectionJson], true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
     }
 
     void "updates can be performed when a project is edited"() {
@@ -111,8 +116,8 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.updateDataResource(projectData)
 
         then:
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, hiddenJSON:[isMERIT:false, alaHarvest: true, dataResourceId: dataResourceId]]) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, [name: projectData.name, pubDescription: projectData.description, hiddenJSON: [isMERIT:false, alaHarvest:true, dataResourceId:dataResourceId]], true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
 
     }
 
@@ -126,11 +131,10 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.createDataResource(projectData)
 
         then:
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource", [name:projectData.name, pubDescription:projectData.description, 'dataProvider':['uid':meritDataProvider], hiddenJSON:[isMERIT:true, alaHarvest: true]]) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource", [name: projectData.name, pubDescription: projectData.description, 'dataProvider': ['uid': meritDataProvider], hiddenJSON: [isMERIT:true, alaHarvest:true]], true, expectedAuthHeader) >> [:]
         1 * webServiceMock.extractIdFromLocationHeader(_) >> dataResourceId
-
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId, _) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, _, true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
     }
 
     void "updates won't be sent if only hiddenJSON data has changed"() {
@@ -143,7 +147,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.updateDataResource(projectData, [test:'value'])
 
         then:
-        0 * webServiceMock.doPost(_, _)
+        0 * webServiceMock.doPost(_, _, _, _)
 
     }
 
@@ -157,7 +161,7 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
         service.updateDataResource(projectData, [alaHarvest: false])
 
         then:
-        0 * webServiceMock.doPost(_, _)
+        0 * webServiceMock.doPost(_, _, _, _)
         0 * projectService.update(_, _, _)
     }
 
@@ -175,8 +179,8 @@ class CollectoryServiceSpec extends Specification implements ServiceUnitTest<Col
 
         then:
 
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, institution:[uid:institutionId], hiddenJSON:[isMERIT:false, alaHarvest: true, dataResourceId: dataResourceId, organisationId: '1234']]) >> [:]
-        0 * webServiceMock.doPost(_, _)
+        1 * webServiceMock.doPost(collectoryBaseUrl + "ws/dataResource/" + dataResourceId, [name: projectData.name, pubDescription: projectData.description, institution: [uid: institutionId], hiddenJSON: [isMERIT:false, alaHarvest:true, dataResourceId:dataResourceId, organisationId:'1234']], true, expectedAuthHeader) >> [:]
+        0 * webServiceMock.doPost(_, _, _, _)
     }
 
 }
