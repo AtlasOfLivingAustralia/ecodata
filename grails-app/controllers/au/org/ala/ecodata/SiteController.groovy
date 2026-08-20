@@ -310,4 +310,21 @@ class SiteController {
         Map result = [projectId:id, sites: features]
         render result as JSON
     }
+
+
+    /**
+     * Standardise a GeoJSON geometry. This is useful for converting geometries of type circle and pid into GeoJSON.
+     * @return
+     */
+    def standardiseGeoJSON() {
+        def geoJSON = request.JSON
+        if (geoJSON) {
+            def result = siteService.convertSpecialGeoJSONToStandardGeoJSON(geoJSON)
+            render result as JSON
+            return
+        }
+        else
+            render status: HttpStatus.SC_BAD_REQUEST, text: [message: "No geometry supplied"] as JSON
+
+    }
 }
