@@ -628,30 +628,59 @@ class SiteService {
         result
     }
 
-    Map convertUnsupportedFeatureToGeoJSON(Map feature) {
-        Map geometry
+    /**
+     * Converts a feature with special geometry types (pid, circle) into a valid geojson feature.
+     * @param feature
+     * @return
+     */
+    Map convertSpecialFeatureToGeoJSON(Map feature) {
         if (feature.geometry) {
             if (feature.properties) {
                 switch (feature.properties.type) {
                     case 'pid':
-                        geometry = geometryForPid(feature.properties.pid)
-                        break;
+                        feature.geometry = geometryForPid(feature.properties.pid)
+                        break
                     case 'Circle':
+                    case 'circle':
                         // We support circles, but they are not valid geojson.
                         Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
-                        geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
+                        feature.geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
                         break
-                    default:
-                        geometry = feature.geometry
-                        break;
                 }
             }
-            else {
-                geometry = feature.geometry
-            }
-
-            return geometry
         }
+
+        return feature
+    }
+
+    /**
+     * Converts a feature collection with features of type pid or circle into a valid geojson feature collection.
+     * @param featureCollection
+     * @return
+     */
+    Map convertSpecialFeatureCollectionToGeoJSON(Map featureCollection) {
+        if (featureCollection.type == 'FeatureCollection') {
+            featureCollection.features.eachWithIndex { feature, index ->
+                featureCollection.features[index] = convertSpecialFeatureToGeoJSON(feature)
+            }
+        }
+
+        return featureCollection
+    }
+
+    /**
+     * Converts a Feature collection or Feature with special geometry types (pid, circle) into a valid geojson object.
+     * @param geoJSON
+     * @return
+     */
+    Map convertSpecialGeoJSONToStandardGeoJSON(Map geoJSON) {
+        if (geoJSON.type == 'Feature') {
+            geoJSON = convertSpecialFeatureToGeoJSON(geoJSON)
+        } else if (geoJSON.type == 'FeatureCollection') {
+            geoJSON = convertSpecialFeatureCollectionToGeoJSON(geoJSON)
+        }
+
+        return geoJSON
     }
 
     Boolean isValidPolygon (List coordinates){
@@ -730,7 +759,7 @@ class SiteService {
         if (site.features?.size() >= 1) {
             siteGeom = [
                     type:'GeometryCollection',
-                    geometries: site.features.collect { convertUnsupportedFeatureToGeoJSON(it) }
+                    geometries: site.features.collect { convertSpecialFeatureToGeoJSON(it)?.geometry }
             ]
         }
         else {
@@ -996,7 +1025,7 @@ class SiteService {
                     geom = [
                             'type':'GeometryCollection',
                             'geometries': site.features.collect {
-                                convertUnsupportedFeatureToGeoJSON(it)
+                                convertSpecialFeatureToGeoJSON(it)?.geometry
                             } ?: []
                     ]
                 }
