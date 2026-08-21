@@ -80,6 +80,9 @@ if (!app.elasticsearch.indexOnGormEvents) {
 if (!app.http.header.userId) {
     app.http.header.userId = "X-ALA-userId"
 }
+if (!app.domain.whiteList) {
+    app.domain.whiteList = "ala.org.au,localhost"
+}
 if (!app.file.upload.path) {
     app.file.upload.path = "/data/ecodata/uploads"
 }
