@@ -1,16 +1,27 @@
 package au.org.ala.ecodata
 
+import org.grails.plugin.cache.GrailsCacheManager
+import org.springframework.cache.Cache
+
+import java.time.Duration
+import java.time.Instant
+
 /**
  * Handles caching of service responses (after transforming).
- * Uses passed closures to handle service requests - so remains independent
- * of the source of information.
- * Implements the info source for 'static' data read from a config file.
+ * Remains independent of the source of information by using a closure to generate the cached value.
  */
 class CacheService {
 
-    def grailsApplication
-    static cache = [:]
-    private static final Object LOCK_1 = new Object() {};
+    /**
+     * The grails cache manager will use the cache configured in 'grails.cache.*'.
+     * The default is the Spring Frameworks ConcurrentMapCache.
+     * See: https://grails.github.io/grails-cache/snapshot/guide/index.html
+     *
+     */
+    GrailsCacheManager grailsCacheManager
+
+    private static String cacheName = 'ecodata-cache'
+    private static long secondsInADay = 24 * 60 * 60
 
     /**
      * Returns the cached results for the specified key if available and fresh
@@ -20,18 +31,33 @@ class CacheService {
      * @param maxAgeInDays the maximum age of the cached results
      * @return the results
      */
-    def get(String key, Closure source, int maxAgeInDays = 1) {
-        def cached = cache[key]
-        if (cached && cached.resp && !(new Date().after(cached.time + maxAgeInDays))) {
-            //println "using cache for " + key
-            return cached.resp
+    def get(String key, Closure source, float maxAgeInDays = 1.0) {
+        def now = Instant.now()
+
+        // return a cached value if it has not expired
+        def cachedValue = cache.get(key)
+        if (cachedValue != null) {
+            def raw = cachedValue.get() as Map
+            def expiry = raw?.expiry as Instant
+            def resp = raw?.resp
+            if (now.isBefore(expiry)) {
+                return resp
+            } else {
+                cache.evict(key)
+            }
         }
 
+        // generate and cache the value
         def results
         try {
             results = source.call()
-            synchronized (LOCK_1) {
-                cache.put key, [resp: results, time: new Date()]
+            def hasError = (results?.hasProperty('error') || results?.hasProperty('getError')) && results?.error
+
+            // cache if there is no error
+            if (!hasError) {
+                def duration = Duration.ofSeconds((maxAgeInDays * secondsInADay) as long)
+                def expiry = now + duration
+                cache.put(key, [resp: results, expiry: expiry])
             }
         } catch (Exception e) {
             results = [error: e.message]
@@ -39,12 +65,15 @@ class CacheService {
         return results
     }
 
-    def clear(key) {
-        cache[key]?.resp = null
+    void clear(String key) {
+        cache.evict(key)
     }
 
-    def clear() {
-        cache = [:]
+    void clear() {
+        cache.clear()
     }
 
+    private Cache getCache() {
+        grailsCacheManager.getCache(cacheName)
+    }
 }
