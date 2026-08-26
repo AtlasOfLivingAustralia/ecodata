@@ -2035,4 +2035,4 @@ paratoo.defaultPlotLayoutViewModels = [
                 ]
         ]
 paratoo.species.specialCases = ["Other", "N/A"]
-paratoo.api.writeScope = "paratoo_api_write"
+paratoo.api.writeScope = "ecodata/write_paratoo_api_test"
