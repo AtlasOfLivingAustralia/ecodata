@@ -475,6 +475,10 @@ class ParatooService {
     }
 
     boolean protocolCheck(String userId, String projectId, String protocolId, Permission operationType) {
+
+        if (ParatooInvocationContext.getCurrent()?.isSystemUser) {
+            return true
+        }
         UserPermission permission = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndStatusNotEqualAndAccessLevelNotEqual(userId, projectId, Project.class.name, Status.DELETED, AccessLevel.starred)
         if (!permission) {
             log.warn("User ${userId} has no permissions for project ${projectId}")
