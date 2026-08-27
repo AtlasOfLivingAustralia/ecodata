@@ -17,6 +17,7 @@ class ParatooInvocationContext {
     }
 
     static final String API_VERSION_1 = "v1"
+    boolean isSystemUser = false
     String userId
     String apiVersion
     /**

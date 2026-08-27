@@ -1,9 +1,9 @@
 package au.org.ala.ecodata
 
-
 import au.com.bytecode.opencsv.CSVWriter
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.web.AuthService
+import grails.web.http.HttpHeaders
 import grails.converters.JSON
 import grails.util.Holders
 import groovy.json.JsonSlurper
@@ -632,9 +632,15 @@ class RecordService {
         }
 
         def httpClient = new DefaultHttpClient()
-        def httpPost = new HttpPost(grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/updateMetadata/${imageId}")
-        httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "${grailsApplication.config.getProperty('api_key')}");
+        String url = grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/updateMetadata/${imageId}"
+        def httpPost = new HttpPost(url)
+
+        httpPost.setHeader("X-ALA-userId", "${record.userId}")
+
+        String authorizationHeader = webService.getAuthTokenForUrl(url)
+        if (authorizationHeader) {
+            httpPost.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
+        }
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
@@ -679,9 +685,15 @@ class RecordService {
         }
 
         def httpClient = new DefaultHttpClient()
-        def httpPost = new HttpPost(grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/uploadImage")
-        httpPost.setHeader("X-ALA-userId", "${record.userId}");
-        httpPost.setHeader('apiKey', "${grailsApplication.config.getProperty('api_key')}");
+        String url = grailsApplication.config.getProperty('imagesService.baseURL') + "/ws/uploadImage"
+        def httpPost = new HttpPost(url)
+
+        httpPost.setHeader("X-ALA-userId", "${record.userId}")
+
+        String authorizationHeader = webService.getAuthTokenForUrl(url)
+        if (authorizationHeader) {
+            httpPost.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
+        }
         httpPost.setEntity(entity)
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
