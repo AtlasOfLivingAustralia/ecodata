@@ -1,31 +1,23 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.AccessLevel
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.AuditEventType
-import au.org.ala.ecodata.GormEventListener
-import au.org.ala.ecodata.Hub
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.ManagementUnit
+
 import au.org.ala.ecodata.customcodec.AccessLevelCodec
 import au.org.ala.ecodata.data_migration.ActivityFormMigrator
 import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
-import static grails.async.Promises.task
-//import net.sf.json.JSONNull
-import org.bson.BSON
-import org.bson.Transformer
+import jakarta.servlet.ServletContext
 import org.bson.types.ObjectId
-import grails.core.ApplicationAttributes
-import org.grails.datastore.mapping.mongo.MongoDatastore
-import org.grails.plugin.cache.GrailsCacheManager
-import org.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
+import org.grails.datastore.mapping.mongo.MongoDatastore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.context.WebApplicationContext
 
 import javax.imageio.ImageIO
+
+import static grails.async.Promises.task
+
+//import net.sf.json.JSONNull
 
 class BootStrap {
 
@@ -37,10 +29,12 @@ class BootStrap {
     def grailsCacheManager
     SpatialService spatialService
     MetadataService metadataService
+    ServletContext servletContext
+
     @Autowired
     MongoDatastore mongoDatastore
 
-    def init = { servletContext ->
+    def init = {
         // Don't pre-scache spatial layers during development due to frequent restarts
         if (Environment.DEVELOPMENT != Environment.current) {
             initializeSpatialIntersection()

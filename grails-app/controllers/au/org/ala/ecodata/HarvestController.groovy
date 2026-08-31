@@ -1,10 +1,12 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
 
 import java.text.SimpleDateFormat
 
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class HarvestController {
     static responseFormats = ['json']

@@ -75,7 +75,7 @@ class ProjectQueryController implements DataBinder {
     }
 
     @QueryMapping
-    Project meritProject(@Argument String projectId, DataFetchingEnvironment env) {
+    Project meritProject(@Argument("projectId") String projectId, DataFetchingEnvironment env) {
         Map hub = (Map)env.graphQlContext.get("hub")
         if (!hub) {
             throw new IllegalArgumentException("A hub context is required to access project data")
@@ -144,7 +144,7 @@ class ProjectQueryController implements DataBinder {
 
 
     @SchemaMapping(typeName = "MeritProject", field = "reports")
-    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument Boolean includedDeleted, @Argument Pagination pagination) {
+    DataFetcherResult<Map> reports(Project project, DataFetchingFieldSelectionSet selectionSet, @Argument("includeDeleted") Boolean includedDeleted, @Argument("pagination") Pagination pagination) {
         // Create a new local context and store the author value
         GraphQLContext localContext = GraphQLContext.getDefault()
                 .put("project", project);
@@ -182,7 +182,7 @@ class ProjectQueryController implements DataBinder {
 
     @SchemaMapping(typeName = "MeritProject", field = "documents")
     @CompileDynamic
-    Map documents(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
+    Map documents(Project project, @Argument("includeDeleted") Boolean includeDeleted, @Argument("pagination") Pagination pagination) {
 
         Map paginationParams = Pagination.asMap(pagination)
         PagedResultList documents = Document.createCriteria().list(paginationParams) {
@@ -213,7 +213,7 @@ class ProjectQueryController implements DataBinder {
 
     @SchemaMapping(typeName = "MeritProject", field = "sites")
     @CompileDynamic
-    Map sites(Project project, @Argument Boolean includeDeleted, @Argument Pagination pagination) {
+    Map sites(Project project, @Argument("includeDeleted") Boolean includeDeleted, @Argument("pagination") Pagination pagination) {
         Map paginationParams = Pagination.asMap(pagination)
         PagedResultList sites = Site.createCriteria().list(paginationParams) {
             eq("projects", project.projectId)

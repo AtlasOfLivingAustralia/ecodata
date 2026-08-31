@@ -7,7 +7,7 @@ import com.mongodb.client.model.Filters
 import org.bson.conversions.Bson
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
-import javax.persistence.PessimisticLockException
+import jakarta.persistence.PessimisticLockException
 
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED

@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 
-import javax.persistence.PessimisticLockException
+import jakarta.persistence.PessimisticLockException
 
 /**
  * Manages the pessimistic locking implementation used by MERIT.

@@ -578,20 +578,7 @@ auth.baseUrl = 'https://auth-test.ala.org.au'
 userDetails.web.url = "${auth.baseUrl}/userdetails/"
 userDetails.api.url = "${auth.baseUrl}/userdetails/userDetails/"
 
-if (!grails.cache.ehcache) {
-    grails {
-        cache {
-            enabled = true
-            ehcache {
-                cacheManagerName = appName + '-ehcache'
-                diskStore = "/data/${appName}/ehcache"
-                ehcacheXmlLocation = 'classpath:ecodata-ehcache.xml'
-            }
-        }
-    }
-}
 ehcache.directory='/data/ecodata/ehcache'
-
 
 security {
     cas {

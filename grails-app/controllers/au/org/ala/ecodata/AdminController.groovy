@@ -7,6 +7,7 @@ import au.org.ala.ecodata.paratoo.ParatooProtocolConfig
 import au.org.ala.plugins.openapi.Path
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import io.swagger.v3.oas.annotations.Operation
@@ -35,6 +36,7 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.Status.DELETED
 import static groovyx.gpars.actor.Actors.actor
 
+@Transactional
 class AdminController {
 
     def outputService, siteService, projectService,

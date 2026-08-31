@@ -8,8 +8,8 @@ import grails.converters.JSON
 import grails.util.Holders
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringEscapeUtils
-import org.apache.commons.lang.time.DateUtils
+import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.lang3.time.DateUtils
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.HttpMultipartMode
 import org.apache.http.entity.mime.MultipartEntity

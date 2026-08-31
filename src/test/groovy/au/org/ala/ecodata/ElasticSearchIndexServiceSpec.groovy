@@ -14,7 +14,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 /**
  * Created by sat01a on 24/11/15.
  */

@@ -1,4 +1,4 @@
-<%@ page import="au.org.ala.ecodata.AccessLevel; au.org.ala.ecodata.Project; org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="au.org.ala.ecodata.AccessLevel; au.org.ala.ecodata.Project; org.apache.commons.lang3.StringEscapeUtils" %>
 <!doctype html>
 <html>
 <head>

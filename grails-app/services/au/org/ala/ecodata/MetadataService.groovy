@@ -4,16 +4,18 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
+import com.fasterxml.jackson.databind.MappingIterator
+import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import grails.plugin.cache.Cacheable
-import grails.plugins.csv.CSVMapReader
 import grails.validation.ValidationException
 import grails.web.databinding.DataBinder
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
+import grails.plugin.cache.Cacheable
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -587,7 +589,7 @@ class MetadataService implements DataBinder {
                 while ((read = zipIn.read(buffer, 0, 1024)) >= 0) {
                     s.append(new String(buffer, 0, read));
                 }
-                results += new CSVMapReader(new StringReader(s.toString())).readAll()
+                results += readCsvToListOfMaps(new StringReader(s.toString()))
             }
 
             log.info("${(i+1)}/${pointsArray.size()} batch process completed..")
@@ -595,6 +597,19 @@ class MetadataService implements DataBinder {
 
         results
     }
+
+    static List<Map<String, String>> readCsvToListOfMaps(StringReader csvReader) throws Exception {
+        CsvMapper mapper = new CsvMapper()
+        // Use the first row as the header
+        CsvSchema schema = CsvSchema.emptySchema().withHeader()
+
+        try (MappingIterator<Map<String, String>> it = mapper.readerFor(Map.class)
+                .with(schema)
+                .readValues(csvReader)) {
+            return it.readAll()
+        }
+    }
+
 
     private def getValidSites(allSites){
 

@@ -62,7 +62,8 @@ spring:
             max-file-size: 1024MB
             max-request-size: 1024MB
     graphql:
-        path: /graphql-spring
+        http:
+            path: /graphql-spring
     devtools:
         restart:
             additional-exclude:
@@ -154,11 +155,15 @@ grails:
     web:
         disable:
             multipart: false
+        filtering:
+            filters:
+                - mongoPersistenceInterceptor
     exceptionresolver:
         params:
             exclude: #request parameters to mask when logging exceptions
                 - password
-
+mongodb.osiv:
+    enabled: true
 ---
 #grails:
 #    gorm:

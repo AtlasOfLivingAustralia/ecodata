@@ -2,7 +2,9 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SiteController {
 

@@ -2,7 +2,7 @@ package au.org.ala.ecodata.converter
 
 import au.org.ala.ecodata.*
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import static au.org.ala.ecodata.converter.ListConverter.PROP_MEASUREMENTS_OR_FACTS
 

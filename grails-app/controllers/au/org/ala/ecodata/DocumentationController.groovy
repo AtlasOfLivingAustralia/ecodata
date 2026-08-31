@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 
+@Transactional
 @PreAuthorise(basicAuth = false)
 class DocumentationController {
 

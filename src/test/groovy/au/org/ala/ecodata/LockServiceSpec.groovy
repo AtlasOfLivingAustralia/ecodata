@@ -4,7 +4,7 @@ import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import com.mongodb.MongoBulkWriteException
 
-import javax.persistence.PessimisticLockException
+import jakarta.persistence.PessimisticLockException
 
 class LockServiceSpec extends MongoSpec implements ServiceUnitTest<LockService> {
 

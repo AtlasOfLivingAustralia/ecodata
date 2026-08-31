@@ -7,7 +7,7 @@ import grails.core.GrailsApplication
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import org.apache.commons.lang.WordUtils
+import org.apache.commons.text.WordUtils
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.context.MessageSource
 

@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternResolver
 
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
-import static javax.servlet.http.HttpServletResponse.SC_OK
+import static jakarta.servlet.http.HttpServletResponse.SC_OK
 
 class MapService {
     def grailsApplication

@@ -22,10 +22,10 @@ import io.swagger.v3.oas.annotations.servers.ServerVariable
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
 
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
+import jakarta.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j

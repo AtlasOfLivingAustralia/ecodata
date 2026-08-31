@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 import org.apache.commons.io.FilenameUtils
 import org.apache.http.HttpStatus
@@ -15,6 +16,7 @@ import xyz.capybara.clamav.commands.scan.result.ScanResult
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
 
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DocumentController {
 

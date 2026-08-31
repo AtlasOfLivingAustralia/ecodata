@@ -3,12 +3,9 @@ package au.org.ala.ecodata
 import au.org.ala.grails.AnnotationMatcher
 import au.org.ala.web.AuthService
 import au.org.ala.web.Pac4jAuthService
-import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import org.pac4j.core.profile.UserProfile
-
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 
 class PreAuthoriseInterceptor {
 

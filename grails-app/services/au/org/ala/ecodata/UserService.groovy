@@ -6,7 +6,7 @@ import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.pac4j.core.profile.UserProfile
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 class UserService {
 

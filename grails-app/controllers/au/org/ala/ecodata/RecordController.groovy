@@ -1,16 +1,18 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.Status.DELETED
-import static javax.servlet.http.HttpServletResponse.*
+import static jakarta.servlet.http.HttpServletResponse.*
 /**
  * Controller for record CRUD operations with support for handling images.
  */
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class RecordController {
 

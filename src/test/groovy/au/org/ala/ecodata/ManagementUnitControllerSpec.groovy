@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
-import org.apache.commons.lang.time.FastDateFormat
+import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.http.HttpStatus
 
 import spock.lang.Specification

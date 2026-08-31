@@ -6,9 +6,9 @@ import au.org.ala.ws.tokens.TokenService
 import grails.async.Promise
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import grails.plugin.cache.Cacheable
 import groovy.util.logging.Slf4j
 import javassist.NotFoundException
+import grails.plugin.cache.Cacheable
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
