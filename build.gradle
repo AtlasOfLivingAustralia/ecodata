@@ -11,7 +11,6 @@ buildscript {
         classpath "cloud.wondrify:sass-asset-pipeline:$assetPipelineVersion"
 
         //classpath 'org.apache.grails:grails-quartz:2.0.13' // Needed to compile *Job classes
-        //classpath "org.grails.plugins:views-gradle:$grailsViewsVersion"
 
     }
 }
@@ -76,7 +75,7 @@ dependencies {
     implementation "org.apache.grails:grails-services"
     implementation "org.apache.grails:grails-url-mappings"
     implementation "org.apache.grails:grails-interceptors"
-    implementation "org.grails.plugins:cache-ehcache:3.0.0"
+    implementation "org.apache.grails:grails-cache:$grailsVersion"
     implementation "org.ehcache:ehcache:3.10.8"
     implementation "org.apache.grails:grails-async"
     implementation "org.apache.grails:grails-scaffolding"
@@ -170,6 +169,7 @@ dependencies {
     testImplementation "org.apache.grails:grails-testing-support-datamapping"
     testImplementation "org.apache.grails:grails-geb"
     testImplementation "org.apache.grails:grails-testing-support-web"
+    testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
 
     testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.1'
     testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
@@ -179,12 +179,9 @@ dependencies {
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
-    testRuntimeOnly "net.sourceforge.htmlunit:htmlunit:2.18"
+    //testRuntimeOnly "net.sourceforge.htmlunit:htmlunit:2.18"
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
-
-    // This is needed to support test execution based on @Tag
-    testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
 
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly 'org.hsqldb:hsqldb:2.7.1'

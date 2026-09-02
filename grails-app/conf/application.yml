@@ -155,15 +155,10 @@ grails:
     web:
         disable:
             multipart: false
-        filtering:
-            filters:
-                - mongoPersistenceInterceptor
     exceptionresolver:
         params:
             exclude: #request parameters to mask when logging exceptions
                 - password
-mongodb.osiv:
-    enabled: true
 ---
 #grails:
 #    gorm:

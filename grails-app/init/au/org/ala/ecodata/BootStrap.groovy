@@ -101,6 +101,12 @@ class BootStrap {
             return it.toMap()
         }
 
+        // Grails 7 now serializes java.util.Date with milliseconds which MERIT and BioCollect do not expect.
+        JSON.registerObjectMarshaller(Date) {
+            DateUtil.format(it)
+        }
+
+
       //  JSON.registerObjectMarshaller(JSONNull, {return ""})
 
         // Setup the default ALA hub if necessary as BioCollect won't load without it.
