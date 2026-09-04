@@ -202,6 +202,7 @@ class SiteService {
 
         Map properties = [
                 id:site.siteId,
+                siteId:site.siteId,
                 name:site.name,
                 type:site.type,
                 notes:site.notes,
@@ -209,6 +210,12 @@ class SiteService {
         Map geojson
 
         if (site.features) {
+            // add siteId to each feature
+            site.features.eachWithIndex { feature, index ->
+                feature.properties = feature.properties ?: [:]
+                feature.properties.siteId = site.siteId
+            }
+
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
@@ -621,6 +628,67 @@ class SiteService {
         result
     }
 
+    /**
+     * Converts a feature with special geometry types (pid, circle) into a valid geojson feature.
+     * @param feature
+     * @return
+     */
+    Map convertSpecialFeatureToGeoJSON(Map feature) {
+        if (feature.geometry) {
+            if (feature.properties) {
+                switch (feature.properties.type) {
+                    case 'pid':
+                        feature = JSON.parse((feature as JSON).toString())
+                        feature.geometry = geometryForPid(feature.properties.pid)
+                        feature.properties.remove('pid')
+                        feature.properties.remove('type')
+                        break
+                    case 'Circle':
+                    case 'circle':
+                        feature = JSON.parse((feature as JSON).toString())
+                        // We support circles, but they are not valid geojson.
+                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
+                        feature.geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
+                        feature.properties.remove('radius')
+                        feature.properties.remove('type')
+                        break
+                }
+            }
+        }
+
+        return feature
+    }
+
+    /**
+     * Converts a feature collection with features of type pid or circle into a valid geojson feature collection.
+     * @param featureCollection
+     * @return
+     */
+    Map convertSpecialFeatureCollectionToGeoJSON(Map featureCollection) {
+        if (featureCollection.type == 'FeatureCollection') {
+            featureCollection.features.eachWithIndex { feature, index ->
+                featureCollection.features[index] = convertSpecialFeatureToGeoJSON(feature)
+            }
+        }
+
+        return featureCollection
+    }
+
+    /**
+     * Converts a Feature collection or Feature with special geometry types (pid, circle) into a valid geojson object.
+     * @param geoJSON
+     * @return
+     */
+    Map convertSpecialGeoJSONToStandardGeoJSON(Map geoJSON) {
+        if (geoJSON.type == 'Feature') {
+            geoJSON = convertSpecialFeatureToGeoJSON(geoJSON)
+        } else if (geoJSON.type == 'FeatureCollection') {
+            geoJSON = convertSpecialFeatureCollectionToGeoJSON(geoJSON)
+        }
+
+        return geoJSON
+    }
+
     Boolean isValidPolygon (List coordinates){
         Boolean valid = false
         Integer depth = 0
@@ -694,12 +762,10 @@ class SiteService {
     def populateLocationMetadataForSite(Map site, List<String> fids = null) {
 
         Map siteGeom
-        if (site.type == Site.TYPE_COMPOUND) {
+        if (site.features?.size() >= 1) {
             siteGeom = [
                     type:'GeometryCollection',
-                    geometries: [
-                            site.features.collect{it.geometry}
-                    ]
+                    geometries: site.features.collect { convertSpecialFeatureToGeoJSON(it)?.geometry }
             ]
         }
         else {
@@ -961,11 +1027,12 @@ class SiteService {
                 break
             default:
                 Map geom
-                if (site.type == Site.TYPE_COMPOUND) {
+                if (site.features) {
                     geom = [
                             'type':'GeometryCollection',
-                            'geometries': site.features.collect{it.geometry} ?: []
-
+                            'geometries': site.features.collect {
+                                convertSpecialFeatureToGeoJSON(it)?.geometry
+                            } ?: []
                     ]
                 }
                 else {
