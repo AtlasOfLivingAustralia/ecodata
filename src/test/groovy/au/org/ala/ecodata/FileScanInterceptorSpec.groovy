@@ -1,11 +1,12 @@
 package au.org.ala.ecodata
 
+import grails.testing.gorm.DataTest
 import grails.testing.web.interceptor.InterceptorUnitTest
 import spock.lang.Specification
 import xyz.capybara.clamav.ScanFailureException
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 
-class FileScanInterceptorSpec extends Specification implements InterceptorUnitTest<FileScanInterceptor> {
+class FileScanInterceptorSpec extends Specification implements InterceptorUnitTest<FileScanInterceptor>, DataTest {
     def documentService
 
     def setup() {

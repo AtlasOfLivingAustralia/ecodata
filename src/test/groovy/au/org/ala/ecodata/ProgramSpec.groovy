@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
-import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
+import spock.lang.Specification
 
 /**
  * Tests the mappings in the Program class.

@@ -1,10 +1,10 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
+import jakarta.servlet.http.HttpServletRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexRequestBuilder
@@ -13,8 +13,8 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import spock.lang.Specification
 
-import jakarta.servlet.http.HttpServletRequest
 /**
  * Created by sat01a on 24/11/15.
  */

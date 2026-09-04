@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooProject
-import grails.test.mongodb.MongoSpec
-
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 
@@ -107,14 +105,12 @@ class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTe
         userService.currentUserDetails >> [userId: 'u1']
 
         Project project = new Project(projectId: projectId, name:'Project 1', custom: [dataSets: [[dataSetId: dataSetId, siteId: 's1', surveyId:[survey_metadata:[provenance:[:], survey_details:[protocol_id:'p1']]]]]])
-        project.save(failOnError: true)
+        project.save(flush:true, failOnError: true)
         ParatooProject paratooProject = new ParatooProject()
         paratooProject.project = project
         ActivityForm siteForm = new ActivityForm(name: 'Site Form', type:"EMSA", externalIds: [new ExternalId(externalId:'p1')], tags:['site'])
-        siteForm.save(failOnError: true)
+        siteForm.save(flush:true, failOnError: true)
 
-        ActivityForm form2 = ActivityForm.findByName("Site Form")
-        println form2
         def site = [siteId: 's1']
 
         when:
@@ -123,8 +119,8 @@ class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTe
         then:
         1 * paratooService.protocolCheck('u1', projectId,'p1', Permission.WRITE) >> true
         siteService.get('s1') >> site
-        1 * projectService.canModifyDataSetSite(site, project) >> true
-        1 * paratooService.paratooProjectFromProject(project, null) >> paratooProject
+        1 * projectService.canModifyDataSetSite(site, { it.projectId == project.projectId }) >> true
+        1 * paratooService.paratooProjectFromProject({ it.projectId == project.projectId }, null) >> paratooProject
         paratooService.submitCollection({it.orgMintedUUID == dataSetId}, paratooProject, 'u1', true) >> null
 
         response.status == HttpStatus.SC_OK

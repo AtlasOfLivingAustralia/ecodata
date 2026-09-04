@@ -3,18 +3,18 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
+import spock.lang.Specification
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService>, DomainUnitTest<Project> {
+class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectService> {
 
     ProjectActivityService projectActivityServiceStub = Stub(ProjectActivityService)
     WebService webServiceStub = Stub(WebService)
@@ -278,7 +278,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map props = [name:"Project", externalId:'e1', associatedOrgs:[[organisationId:'o1', name:"Test name", logo:"test logo", url:"test url"]]]
 
         when:
-        Map result = service.create(props)
+        Map result = null
+        Project.withSession {
+            result = service.create(props)
+        }
 
         then:
         result.status == "ok"
@@ -304,7 +307,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
                 [idType:'WORK_ORDER', externalId: 'workOrderId1']
         ]]
         Project project = new Project([projectId:'p1', name:"Project", externalId:'e1'])
-        project.save()
+        project.save(flush:true)
 
         when:
         Map result = service.update(externalIds, project.projectId, false)
@@ -333,7 +336,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         ]]
 
         when:
-        Map result = service.create(props)
+        Map result = null
+        Project.withSession {
+            result = service.create(props)
+        }
 
         then:
         result.status == "ok"
@@ -355,10 +361,13 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map geographicInfo = [primaryElectorate:"Canberra", primaryState:"ACT", otherStates:["NSW"], otherElectorates:["Bean"]]
 
         Project project = new Project([projectId:'p1', name:"Project", externalId:'e1'])
-        project.save()
+        project.save(flush:true)
 
         when:
-        Map result = service.update([geographicInfo:geographicInfo], project.projectId, false)
+        Map result = null
+        Project.withSession {
+            result = service.update([geographicInfo:geographicInfo], project.projectId, false)
+        }
 
         then:
         result.status == "ok"
@@ -382,7 +391,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Map props = [name:"Project", externalId:'e1', geographicInfo: geographicInfo]
 
         when:
-        Map result = service.create(props)
+        Map result = null
+        Project.withSession {
+            result = service.create(props)
+        }
 
         then:
         result.status == "ok"
@@ -482,7 +494,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project1.save(flush: true, failOnError: true)
 
         when:
-        def response = service.get('p1', [service.BASIC])
+        def response = null
+        Project.withSession {
+            response = service.get('p1', [service.BASIC])
+        }
 
         then:
         response != null
@@ -508,11 +523,15 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project1.save(flush: true, failOnError: true)
 
         when:
-        def response = service.getProjectServicesWithTargets('p1')
-        def p = service.get('p1')
+        def response = null
+        def p = null
+        Project.withSession {
+            response = service.getProjectServicesWithTargets('p1')
+            p = service.get('p1')
+        }
 
         then:
-        1 * metadataService.getProjectServicesWithTargets(service.get('p1')) >> []
+        1 * metadataService.getProjectServicesWithTargets({ it.projectId == 'p1' }) >> []
         response != null
     }
 
@@ -534,7 +553,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project1.save(flush: true, failOnError: true)
 
         when:
-        def response = service.getByDataResourceId('1', 'active', [service.BASIC])
+        def response = null
+        Project.withSession {
+            response = service.getByDataResourceId('1', 'active', [service.BASIC])
+        }
 
         then:
         response != null
@@ -562,7 +584,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2.save(flush: true, failOnError: true)
 
         when:
-        def response = service.list([service.BASIC])
+        def response = null
+        Project.withSession {
+            response = service.list([service.BASIC])
+        }
 
         then:
         response != null
@@ -578,7 +603,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2.save(flush: true, failOnError: true)
 
         when:
-        def response = service.list([service.BASIC], true, false)
+        def response = null
+        Project.withSession {
+            response = service.list([service.BASIC], true)
+        }
 
         then:
         response != null
@@ -597,7 +625,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2.save(flush: true, failOnError: true)
 
         when:
-        def response = service.list([service.BASIC], false, true)
+        def response = null
+        Project.withSession {
+            response = service.list([service.BASIC], false, true)
+        }
 
         then:
         response != null
@@ -611,8 +642,12 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project1.save(flush: true, failOnError: true)
         Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isCitizenScience: true, status: Status.DELETED)
         project2.save(flush: true, failOnError: true)
+
         when:
-        def response = service.list([service.BASIC], true, true)
+        def response = null
+        Project.withSession {
+            response = service.list([service.BASIC], true, true)
+        }
 
         then:
         response != null
@@ -641,8 +676,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2.save(flush: true, failOnError: true)
 
         when:
-        def response = service.listMeritProjects([service.BASIC], false)
-
+        def response = null
+        Project.withSession {
+            response = service.listMeritProjects([service.BASIC], false)
+        }
         then:
         response != null
         response.projectId == ['p1']
@@ -656,7 +693,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project project2 = new Project(projectId: 'p2', name: "A project 2", dataResourceId: '1', isMERIT: true, status: Status.DELETED)
         project2.save(flush: true, failOnError: true)
         when:
-        def response = service.listMeritProjects([service.BASIC], true)
+        def response = null
+        Project.withSession {
+            response = service.listMeritProjects([service.BASIC], true)
+        }
 
         then:
         response != null
@@ -675,7 +715,10 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2.save(flush: true, failOnError: true)
 
         when:
-        def response = service.promoted()
+        def response = null
+        Project.withSession {
+            response = service.promoted()
+        }
 
         then:
         response != null
@@ -740,18 +783,21 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     void "User have a role on an existing MERIT project"() {
         setup:
-        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345").save()
-        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345").save()
-        Project project3 = new Project(projectId: '333', name: "Project 333").save()
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345").save(flush:true)
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345").save(flush:true)
+        Project project3 = new Project(projectId: '333', name: "Project 333").save(flush:true)
 
-        UserPermission up1 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save()
-        UserPermission up2 = new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:project2.projectId, entityType:Project.name, status: Status.ACTIVE).save()
-        UserPermission up3 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project3.projectId, entityType:Project.name, status: Status.ACTIVE).save()
-        UserPermission up4 = new UserPermission(userId:'1', accessLevel:AccessLevel.readOnly, entityId:'12345', entityType:Hub.name, status: Status.ACTIVE).save()
+        UserPermission up1 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project1.projectId, entityType:Project.name, status: Status.ACTIVE).save(flush:true)
+        UserPermission up2 = new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:project2.projectId, entityType:Project.name, status: Status.ACTIVE).save(flush:true)
+        UserPermission up3 = new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:project3.projectId, entityType:Project.name, status: Status.ACTIVE).save(flush:true)
+        UserPermission up4 = new UserPermission(userId:'1', accessLevel:AccessLevel.readOnly, entityId:'12345', entityType:Hub.name, status: Status.ACTIVE).save(flush:true)
 
 
         when:
-        Boolean response = service.doesUserHaveHubProjects('1', '12345')
+        Boolean response = null
+        Project.withSession {
+            response = service.doesUserHaveHubProjects('1', '12345')
+        }
 
         then:
         response != null
@@ -912,12 +958,15 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
     void "getAllMERITProjectIds should only get MERIT projects"() {
         setup:
-        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true).save()
-        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true).save()
-        Project project3 = new Project(projectId: '333', name: "Project 333", isMERIT: false).save()
+        Project project1 = new Project(projectId: '111', name: "Project 111", hubId:"12345", isMERIT: true).save(flush:true)
+        Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true).save(flush:true)
+        Project project3 = new Project(projectId: '333', name: "Project 333", isMERIT: false).save(flush:true)
 
         when:
-        def results = service.getAllMERITProjectIds()
+        def results = null
+        Project.withSession {
+            results = service.getAllMERITProjectIds()
+        }
 
         then:
         results.size() == 2
@@ -1110,12 +1159,17 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         Project project2 = new Project(projectId: '222', name: "Project 222", hubId:"12345", isMERIT: true, managementUnitId: 'mu1', organisationId:"o1", organisationName:"Test name")
 
         project1.save(flush: true, failOnError: true)
-        project2.save(flash:true, failOnError: true)
+        project2.save(flush:true, failOnError: true)
 
         when:
-        service.updateOrganisationName('o1', "not a name", "Updated name")
-        Project project1Reloaded = Project.findByProjectId('111')
-        Project project2Reloaded = Project.findByProjectId('222')
+        Project project1Reloaded = null
+        Project project2Reloaded = null
+        Project.withSession {
+            service.updateOrganisationName('o1', "not a name", "Updated name")
+            project1Reloaded = Project.findByProjectId('111')
+            project2Reloaded = Project.findByProjectId('222')
+        }
+
 
         then:
         project1Reloaded.associatedOrgs[0].name == "Test name"
@@ -1123,10 +1177,11 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         project2Reloaded.organisationName == "Test name"
 
         when:
-        service.updateOrganisationName('o1', "Test name", "Updated name")
-        project1Reloaded = Project.findByProjectId('111')
-        project2Reloaded = Project.findByProjectId('222')
-
+        Project.withSession {
+            service.updateOrganisationName('o1', "Test name", "Updated name")
+            project1Reloaded = Project.findByProjectId('111')
+            project2Reloaded = Project.findByProjectId('222')
+        }
         then:
         project1Reloaded.associatedOrgs[0].name == "Updated name"
         project1Reloaded.associatedOrgs[1].name == "Test name 2"

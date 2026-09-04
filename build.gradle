@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url "https://repo.grails.org/grails/core" }
         maven { url "https://nexus.ala.org.au/content/groups/public/" }
         maven { url 'https://plugins.gradle.org/m2/' }
     }
@@ -23,9 +24,9 @@ plugins {
 }
 
 
-version "$ecodataVersion"
-group "au.org.ala"
-description "Ecodata"
+version = "$ecodataVersion"
+group = "au.org.ala"
+description = "Ecodata"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -75,7 +76,7 @@ dependencies {
     implementation "org.apache.grails:grails-services"
     implementation "org.apache.grails:grails-url-mappings"
     implementation "org.apache.grails:grails-interceptors"
-    implementation "org.apache.grails:grails-cache:$grailsVersion"
+    implementation "org.apache.grails:grails-cache"
     implementation "org.ehcache:ehcache:3.10.8"
     implementation "org.apache.grails:grails-async"
     implementation "org.apache.grails:grails-scaffolding"
@@ -83,8 +84,8 @@ dependencies {
     implementation "org.apache.grails:grails-datasource"
     implementation "org.apache.grails:grails-databinding"
     implementation "org.apache.grails:grails-codecs"
-    implementation "org.apache.grails:grails-data-mongodb:$grailsVersion"
-    implementation "org.apache.grails:grails-cache:$grailsVersion"
+    implementation "org.apache.grails:grails-data-mongodb"
+    implementation "org.apache.grails:grails-cache"
     implementation "org.commonmark:commonmark:0.24.0"
     implementation "org.apache.commons:commons-lang3:3.20.0"
     implementation "org.apache.commons:commons-text:1.15.0"
@@ -94,9 +95,8 @@ dependencies {
     implementation "org.apache.grails:grails-gsp"
     console "org.apache.grails:grails-console"
     profile "org.apache.grails.profiles:web"
-    implementation "org.apache.grails:grails-views-gson:$grailsVersion"
-    implementation "org.apache.grails:grails-data-mongodb-gson-templates:$grailsVersion"
-    testImplementation "org.apache.grails:grails-testing-support-views-gson:$grailsVersion"
+    implementation "org.apache.grails:grails-views-gson"
+    implementation "org.apache.grails:grails-data-mongodb-gson-templates"
 
     implementation 'org.grails.plugins:grails-mail:5.0.3'
     implementation "cloud.wondrify:asset-pipeline-grails:$assetPipelineVersion"
@@ -169,6 +169,7 @@ dependencies {
     testImplementation "org.apache.grails:grails-testing-support-datamapping"
     testImplementation "org.apache.grails:grails-geb"
     testImplementation "org.apache.grails:grails-testing-support-web"
+    testImplementation "org.apache.grails:grails-testing-support-views-gson"
     testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
 
     testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.1'
@@ -213,10 +214,7 @@ tasks.withType(GroovyCompile) {
 }
 
 tasks.withType(Test) {
-    useJUnitPlatform() {
-        excludeTags("mongo")
-    }
-
+    useJUnitPlatform()
 }
 
 tasks.withType(Test) {
@@ -258,6 +256,5 @@ bootWar {
 publish {
     dependsOn assemble
 }
-
 
 

@@ -1,9 +1,10 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import grails.testing.web.GrailsWebUnitTest
+import spock.lang.Specification
 
 class HubServiceSpec extends MongoSpec implements ServiceUnitTest<HubService>, DomainUnitTest<Hub>, GrailsWebUnitTest {
 

@@ -1,13 +1,12 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import au.org.ala.web.IAuthService
 import au.org.ala.web.Pac4jAuthService
 import au.org.ala.ws.security.profile.AlaM2MUserProfile
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import org.pac4j.core.config.Config
+import spock.lang.Specification
 import spock.lang.Unroll
 
 /**

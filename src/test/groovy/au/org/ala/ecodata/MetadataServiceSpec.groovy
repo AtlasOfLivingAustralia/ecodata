@@ -1,15 +1,17 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
+import grails.gorm.transactions.Transactional
+import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.springframework.context.MessageSource
+import spock.lang.Specification
 
-class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService> {
+class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService>, DataTest {
 
     WebService webService = Mock(WebService)
     SettingService settingService = Mock(SettingService)
@@ -19,7 +21,6 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     def setupSpec() {
         setupTerms()
-
     }
 
     private void setupTerms() {
@@ -47,10 +48,10 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
     }
 
     def cleanup() {
-        Service.findAll().each { it.delete() }
-        Score.findAll().each{ it.delete() }
-        ActivityForm.findAll().each{ it.delete() }
-        Program.findAll().each { it.delete() }
+        Service.findAll().each { it.delete(flush:true) }
+        Score.findAll().each{ it.delete(flush:true) }
+        ActivityForm.findAll().each{ it.delete(flush:true) }
+        Program.findAll().each { it.delete(flush:true) }
     }
 
     def cleanupSpec() {
@@ -288,7 +289,10 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         def file = new File("src/test/resources/bulk_import_example.xlsx").newInputStream()
 
         when:
-        def resp = service.excelWorkbookToMap(file, 'form1', true, null)
+        def resp = null
+        ActivityForm.withSession {
+            resp = service.excelWorkbookToMap(file, 'form1', true, null)
+        }
         def content = resp.success
 
         then:
@@ -410,8 +414,9 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Term term = new Term(termId: 't1', term: "testTerm - updated", hubId: "hub1", category: "testCategory")
 
         when:
-        Term updatedTerm = service.updateTerm(term.properties)
+        Term updatedTerm = null
         Term.withSession{
+            updatedTerm = service.updateTerm(term.properties)
             it.clear()
         }
 
@@ -426,7 +431,10 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Term term = new Term(termId: 't1', term: "testTerm - updated", hubId: "hub2", category: "testCategory")
 
         when:
-        Term updatedTerm = service.updateTerm(term.properties)
+        Term updatedTerm = null
+        Term.withSession{
+            updatedTerm = service.updateTerm(term.properties)
+        }
 
         then:
         updatedTerm.hasErrors()

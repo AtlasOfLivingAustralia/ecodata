@@ -1,17 +1,12 @@
 package au.org.ala.ecodata
 
-import com.mongodb.BasicDBObject
+
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DataTest
-import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
-
-/*import grails.test.mixin.TestMixin
-import grails.test.mixin.mongodb.MongoDbTestMixin*/
-
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import spock.lang.Specification
+
 /**
  * Specification / tests for the SiteService
  */

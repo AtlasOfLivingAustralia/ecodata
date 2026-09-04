@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
+import spock.lang.Specification
 
 class PermissionServiceSpec extends MongoSpec implements ServiceUnitTest<PermissionService> {
 

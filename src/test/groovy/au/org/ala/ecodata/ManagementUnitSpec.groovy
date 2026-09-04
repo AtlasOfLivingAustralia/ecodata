@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
-import grails.test.mongodb.MongoSpec
+import grails.testing.gorm.DomainUnitTest
+import org.grails.testing.GrailsUnitTest
+import spock.lang.Specification
 
 class ManagementUnitSpec extends MongoSpec {
 

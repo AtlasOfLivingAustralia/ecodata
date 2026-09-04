@@ -4,14 +4,15 @@ import au.org.ala.ecodata.paratoo.*
 import au.org.ala.ws.tokens.TokenService
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import spock.lang.Specification
 
 import static grails.async.Promises.waitAll
+
 /**
  * Tests for the ParatooService.
  * The tests are incomplete as some of the behaviour needs to be specified.
@@ -86,14 +87,14 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
     }
 
     private void deleteAll() {
-        Hub.findAll().each { it.delete() }
-        Project.findAll().each { it.delete() }
-        ActivityForm.findAll().each { it.delete() }
-        Service.findAll().each { it.delete() }
-        UserPermission.findAll().each { it.delete() }
-        Program.findAll().each { it.delete() }
-        Site.findAll().each { it.delete() }
-        Activity.findAll().each { it.delete() }
+        Hub.findAll().each { it.delete(flush:true) }
+        Project.findAll().each { it.delete(flush:true) }
+        ActivityForm.findAll().each { it.delete(flush:true) }
+        Service.findAll().each { it.delete(flush:true) }
+        UserPermission.findAll().each { it.delete(flush:true) }
+        Program.findAll().each { it.delete(flush:true) }
+        Site.findAll().each { it.delete(flush:true) }
+        Activity.findAll().each { it.delete(flush:true) }
     }
 
     def cleanup() {

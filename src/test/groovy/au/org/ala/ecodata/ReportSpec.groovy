@@ -1,15 +1,12 @@
 package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
-import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
 /**
  * See the API for {@link grails.test.mixin.domain.DomainClassUnitTestMixin} for usage instructions
  */
-//@TestMixin(MongoDbTestMixin)
-//@Domain(Report)
 class ReportSpec extends MongoSpec implements DomainUnitTest<Report> {
 
     def setup() {

@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
 import grails.testing.gorm.DomainUnitTest
+import spock.lang.Specification
 
 class EmbargoUtilSpec extends MongoSpec implements DomainUnitTest<ProjectActivity> {
 

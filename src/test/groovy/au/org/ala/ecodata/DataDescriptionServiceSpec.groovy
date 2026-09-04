@@ -1,10 +1,10 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.apache.poi.ss.usermodel.DateUtil
 import org.grails.plugins.testing.GrailsMockMultipartFile
+import spock.lang.Specification
 
 class DataDescriptionServiceSpec extends MongoSpec implements ServiceUnitTest<DataDescriptionService>, DataTest {
 

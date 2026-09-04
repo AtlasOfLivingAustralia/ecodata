@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
-
 import grails.testing.services.ServiceUnitTest
 import grails.core.GrailsApplication
 import spock.lang.Specification

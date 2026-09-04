@@ -1,21 +1,11 @@
 package au.org.ala.ecodata
 
-/*import grails.test.mixin.TestFor
-import grails.test.mixin.TestMixin
-import grails.test.mixin.domain.DomainClassUnitTestMixin
-import grails.test.mixin.gorm.Domain
-import grails.test.mixin.mongodb.MongoDbTestMixin*/
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
-//import org.h2.engine.User
 import org.springframework.context.MessageSource
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionStatus
 import spock.lang.Specification
 
-//@TestMixin(MongoDbTestMixin)
-/*@Domain([Report, Activity])
-@TestFor(ReportingService)*/
 class ReportingServiceSpec extends MongoSpec implements ServiceUnitTest<ReportingService> {
 
     CommonService commonService = new CommonService()

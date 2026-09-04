@@ -1,8 +1,7 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
 import grails.testing.services.ServiceUnitTest
-import org.apache.http.HttpStatus
 import org.springframework.context.MessageSource
 import spock.lang.Specification
 
@@ -50,15 +49,19 @@ class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramSer
 
         when:
         Map newDetails = [name:'test 2', description: 'description 2', externalIds:[[idType:"GRANT_AWARD", externalId:'e1']]]
-        service.update(programId, newDetails)
-        Program newProgram = service.get(programId)
+
+        Program newProgram = null
+        Program.withSession {
+            service.update(programId, newDetails)
+            newProgram = service.get(programId)
+        }
 
         then:
         newProgram.name == 'test 2'
         newProgram.description == 'description 2'
-        program.externalIds.size() == 1
-        program.externalIds[0].idType == ExternalId.IdType.GRANT_AWARD
-        program.externalIds[0].externalId == "e1"
+        newProgram.externalIds.size() == 1
+        newProgram.externalIds[0].idType == ExternalId.IdType.GRANT_AWARD
+        newProgram.externalIds[0].externalId == "e1"
         1 * elasticSearchService.reindexProjectsWithCriteriaAsync([programId:'1'])
     }
 

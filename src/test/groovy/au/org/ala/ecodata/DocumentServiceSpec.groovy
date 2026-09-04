@@ -1,9 +1,11 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import grails.util.Holders
+import spock.lang.Specification
+
 /**
  * Tests the DocumentService.
  * Images for orientation testing are from: https://github.com/recurser/exif-orientation-examples

@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
+import grails.testing.gorm.DomainUnitTest
+import spock.lang.Specification
 
 import static com.mongodb.client.model.Filters.eq
 

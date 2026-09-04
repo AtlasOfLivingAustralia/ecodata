@@ -1,9 +1,9 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import grails.test.mongodb.MongoSpec
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
+import spock.lang.Specification
 
 class BulkImportServiceSpec extends MongoSpec implements ServiceUnitTest<BulkImportService>, DataTest {
     def authService

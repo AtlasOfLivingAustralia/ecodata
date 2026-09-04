@@ -2,12 +2,12 @@ package au.org.ala.ecodata
 
 import au.com.bytecode.opencsv.CSVReader
 import au.org.ala.web.AuthService
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
+import spock.lang.Specification
 
 /**
  * Specification for the ReportService.

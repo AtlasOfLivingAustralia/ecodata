@@ -1,12 +1,8 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
-import grails.testing.gorm.DataTest
-import grails.testing.gorm.DomainUnitTest
+
 import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
-import spock.lang.Ignore
-import spock.lang.Specification
 
 class ActivityFormServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityFormService> {
 
@@ -348,7 +344,7 @@ class ActivityFormServiceSpec extends MongoSpec implements ServiceUnitTest<Activ
         ActivityForm form = new ActivityForm(name: 'test', formVersion: 1, supportsSites: true, supportsPhotoPoints: true, type: 'Activity')
         FormSection section = new FormSection(name: 'section 1', template: [test: 'value'])
         form.sections << section
-        form.save()
+        form.save(flush:true)
 
         when:
         List forms = service.search([type:'Activity'])

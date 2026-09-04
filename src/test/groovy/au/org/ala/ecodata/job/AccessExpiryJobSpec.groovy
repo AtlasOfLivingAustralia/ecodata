@@ -1,18 +1,16 @@
 package au.org.ala.ecodata.job
 
 import au.org.ala.ecodata.*
-import grails.test.mongodb.MongoSpec
-import grails.util.Holders
 import org.apache.http.HttpStatus
 import org.grails.testing.GrailsUnitTest
-import org.joda.time.DateTimeUtils
+import spock.lang.Specification
 
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class AccessExpiryJobSpec extends MongoSpec implements GrailsUnitTest {
+class AccessExpiryJobSpec extends Specification implements GrailsUnitTest {
 
     AccessExpiryJob job = new AccessExpiryJob()
     HubService hubService = Mock(HubService)
