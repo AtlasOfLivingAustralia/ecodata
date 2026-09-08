@@ -154,15 +154,13 @@ class Report {
             throw new IllegalArgumentException("Only submitted reports can be approved.")
         }
         if (!approvalDeltaInWeekdays) {
-            approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
+            setApprovalDeltaInWeekdays(weekDaysBetween(dateSubmitted, changeDate))
         }
         StatusChange change = changeStatus(userId, StatusChange.APPROVED, changeDate, comment)
-        markDirty("approvedBy")
-        markDirty("dateApproved")
-        markDirty("publicationStatus")
-        publicationStatus = PublicationStatus.PUBLISHED
-        approvedBy = change.changedBy
-        dateApproved = change.dateChanged
+
+        setPublicationStatus(PublicationStatus.PUBLISHED)
+        setApprovedBy(change.changedBy)
+        setDateApproved(change.dateChanged)
     }
 
     public void submit(String userId, String comment = '', Date changeDate = new Date()) {
@@ -172,34 +170,28 @@ class Report {
         StatusChange change = changeStatus(userId, StatusChange.SUBMITTED, changeDate, comment)
 
         if (dueDate && !submissionDeltaInWeekdays) {
-            submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
+            setSubmissionDeltaInWeekdays(weekDaysBetween(dueDate, changeDate))
         }
-        markDirty("submittedBy")
-        markDirty("dateSubmitted")
-        markDirty("publicationStatus")
-        publicationStatus = PublicationStatus.SUBMITTED_FOR_REVIEW
-        submittedBy = change.changedBy
-        dateSubmitted = change.dateChanged
+
+        setPublicationStatus(PublicationStatus.SUBMITTED_FOR_REVIEW)
+        setSubmittedBy(change.changedBy)
+        setDateSubmitted(change.dateChanged)
     }
 
     public void returnForRework(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, StatusChange.RETURNED, changeDate, comment, categories)
-        markDirty("returnedBy")
-        markDirty("dateReturned")
-        markDirty("publicationStatus")
-        publicationStatus = PublicationStatus.DRAFT
-        returnedBy = change.changedBy
-        dateReturned = change.dateChanged
+
+        setPublicationStatus(PublicationStatus.DRAFT)
+        setReturnedBy(change.changedBy)
+        setDateReturned(change.dateChanged)
     }
 
     public void cancel(String userId, String comment = '', List categories = null, Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, StatusChange.CANCELLED, changeDate, comment, categories)
-        markDirty("cancelledBy")
-        markDirty("dateCancelled")
-        markDirty("publicationStatus")
-        publicationStatus = PublicationStatus.CANCELLED
-        cancelledBy = change.changedBy
-        dateCancelled = change.dateChanged
+
+        setPublicationStatus(PublicationStatus.CANCELLED)
+        setCancelledBy(change.changedBy)
+        setDateCancelled(change.dateChanged)
     }
 
     public void adjust(String userId, String comment, Date changeDate = new Date()) {
@@ -209,13 +201,9 @@ class Report {
         }
         StatusChange change = changeStatus(userId, StatusChange.ADJUSTED, changeDate, comment)
 
-        markDirty("adjustedBy")
-        markDirty("dateAdjusted")
-        markDirty("publicationStatus")
-
-        publicationStatus = PublicationStatus.PUBLISHED
-        adjustedBy = change.changedBy
-        dateAdjusted = change.dateChanged
+        setPublicationStatus(PublicationStatus.PUBLISHED)
+        setAdjustedBy(change.changedBy)
+        setDateAdjusted(change.dateChanged)
     }
 
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', List categories = null) {
