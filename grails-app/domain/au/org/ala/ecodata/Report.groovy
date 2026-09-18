@@ -97,6 +97,11 @@ class Report {
     /** The user ID of the grant manager who cancelled this Report */
     String cancelledBy
 
+    /** Tracks whether the report reminder emails have been sent for this report.  This is used to avoid sending multiple emails for the same report. */
+    Date dueSoonEmailSentDate
+    Date dueTodayEmailSentDate
+    Date overDueEmailSentDate
+
     /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
     String publicationStatus = PublicationStatus.DRAFT
 
@@ -246,6 +251,9 @@ class Report {
         cancelledBy nullable:true
         adjustedBy nullable:true
         dateAdjusted nullable:true
+        dueSoonEmailSentDate nullable:true
+        dueTodayEmailSentDate nullable:true
+        overDueEmailSentDate nullable:true
         projectId nullable:true
         dueDate nullable:true
         organisationId nullable:true
