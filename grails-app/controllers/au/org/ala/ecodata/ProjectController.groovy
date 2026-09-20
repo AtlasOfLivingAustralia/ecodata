@@ -78,7 +78,17 @@ class ProjectController {
                         asXlsx projectService.toMap(p, 'all', false, params?.version)  // Probably should only support one level of detail?
                     }
                     shp {
-                        asShapefile p // Make sure sites are included
+                        String siteIds = params.siteIds
+                        asShapefile p, siteIds // Make sure sites are included
+                    }
+                    geojson {
+                        String siteIds = params.siteIds
+                        List siteIdList = (siteIds ?: null)?.split(',') as List
+                        Map geojson = projectService.toGeoJSON([p.projectId], siteIdList)
+                        response.setContentType("application/octet-stream")
+                        response.setHeader("Content-disposition", "filename=projectSites.json")
+                        response.outputStream << (geojson as JSON).toString()
+                        response.outputStream.flush()
                     }
                 }
 
@@ -110,12 +120,13 @@ class ProjectController {
         exporter.save(response.outputStream)
     }
 
-    def asShapefile(project) {
+    def asShapefile(project, String siteIds) {
         if (siteService.doesProjectHaveSite(project.projectId)) {
             def name = 'projectSites'
             response.setContentType("application/zip")
             response.setHeader("Content-disposition", "filename=${name}.zip")
-            reportService.exportShapeFile([project.projectId], name, response.outputStream)
+            List siteIdList = (siteIds ?: null)?.split(',') as List
+            reportService.exportShapeFile([project.projectId], name, response.outputStream, siteIdList)
             response.outputStream.flush()
         }
         else {

@@ -219,7 +219,7 @@ class SiteService {
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
-                    features: site.features
+                    features: site.features?.collect { convertSpecialFeatureToGeoJSON(it) }
             ]
         }
         else {

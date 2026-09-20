@@ -431,12 +431,12 @@ class ReportService {
         }
     }
 
-    def exportShapeFile(projectIds, name, outputStream) {
+    def exportShapeFile(projectIds, name, outputStream, List siteIds = null) {
 
         ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
         builder.setName(name)
         projectIds.each { projectId ->
-            builder.addProject(projectId)
+            builder.addProject(projectId, siteIds)
         }
         builder.writeShapefile(outputStream)
     }

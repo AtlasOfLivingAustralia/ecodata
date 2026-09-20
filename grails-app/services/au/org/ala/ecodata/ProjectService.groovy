@@ -5,7 +5,6 @@ import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.gorm.PagedResultList
 import groovy.json.JsonSlurper
-import org.apache.http.HttpStatus
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
@@ -1581,4 +1580,43 @@ class ProjectService {
         }
     }
 
+    /**
+     * Get project sites in GeoJSON format.
+     */
+    Map toGeoJSON(List projectIds, List siteIds = null) {
+        Map featureCollection = [
+                type: "FeatureCollection",
+                features: []
+        ]
+
+        if (siteIds) {
+            List sites = Site.findAllBySiteIdInListAndProjectsInListAndStatus(siteIds, projectIds, Status.ACTIVE)
+            sites.collect { siteService.toGeoJson(siteService.toMap(it, [SiteService.FLAT])) }?.each {
+                switch (it.type) {
+                    case "FeatureCollection":
+                        featureCollection.features.addAll(it.features)
+                        break
+                    case "Feature":
+                        featureCollection.features.add(it)
+                        break
+                }
+            }
+
+        }
+        else {
+            List sites = Site.findAllByProjectsInListAndStatus(projectIds, Status.ACTIVE)
+            sites.collect { siteService.toGeoJson(siteService.toMap(it, [SiteService.FLAT])) }?.each {
+                switch (it.type) {
+                    case "FeatureCollection":
+                        featureCollection.features.addAll(it.features)
+                        break
+                    case "Feature":
+                        featureCollection.features.add(it)
+                        break
+                }
+            }
+        }
+
+        featureCollection
+    }
 }
