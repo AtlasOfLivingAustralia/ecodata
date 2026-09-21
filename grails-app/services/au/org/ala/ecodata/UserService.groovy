@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
+import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.pac4j.core.profile.UserProfile
 
 import javax.servlet.http.HttpServletRequest
 
@@ -201,6 +203,17 @@ class UserService {
         // If the OIDC provider is CAS, authService.getUser() will return the clientId, if it's Cognito, it will return null.
         if (!userId) {
             userId = authService.getUserId()
+
+            if (!userId) {
+                UserProfile profile = authService.delegateService.getUserProfile()
+                if (profile instanceof AlaM2MUserProfile) {
+                    // get client id of the M2M user as the userId for the request.
+                    // This is the case for the DAFF API M2M token as well as the Monitor core M2M token.
+                    // Although they have an AlaM2MUserProfile, MERIT and BioCollect also use a delegate user
+                    // so will have been set in checkForDelegatedUserId() above.
+                    userId = request.userId = profile.getUserId()
+                }
+            }
         }
         if (userId) {
             if (log.isDebugEnabled()) {

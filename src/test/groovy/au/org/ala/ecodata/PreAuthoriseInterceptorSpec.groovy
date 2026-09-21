@@ -92,38 +92,6 @@ class PreAuthoriseInterceptorSpec extends Specification implements InterceptorUn
         "annotatedPublicAction" | 200 | true
         "publicAction" | 200 | true
     }
-
-    void "interceptor should allow access using M2M token where required and pass when permission is granted"() {
-        given:
-        // need to do this because grailsApplication.controllerClasses is empty in the filter when run from the unit test
-        // unless we manually add the dummy controller class used in this test
-        grailsApplication.addArtefact("Controller", AnnotatedMethodController)
-        AnnotatedMethodController controller = new AnnotatedMethodController()
-
-        params.id = "abc"
-        userService.setUser() >> null
-        delegateService.getUserProfile() >> new AlaM2MUserProfile("m2mUser", "issuer", [])
-        hubService.findByUrlPath(params.id) >> [hubId: "hub1", name: "Test Hub", urlPath: params.id]
-        permissionService.isUserAlaAdmin(_) >> false
-        permissionService.checkPermission("readOnly", "hub1", Hub.class.name, "m2mUser") >> [error: '', status: 403]
-
-        when:
-
-        request.setAttribute(GrailsApplicationAttributes.CONTROLLER_NAME_ATTRIBUTE, 'annotatedMethod')
-        request.setAttribute(GrailsApplicationAttributes.ACTION_NAME_ATTRIBUTE, action)
-        withRequest(controller: "annotatedMethod", action: action)
-        def result = interceptor.before()
-
-        then:
-        response.status == statusCode
-        result == before
-
-        where:
-        action | statusCode | before
-        "securedAction" | 200 | true
-        "annotatedPublicAction" | 200 | true
-        "publicAction" | 200 | true
-    }
 }
 
 

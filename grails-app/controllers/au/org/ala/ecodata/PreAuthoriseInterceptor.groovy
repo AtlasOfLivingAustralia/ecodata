@@ -38,14 +38,6 @@ class PreAuthoriseInterceptor {
         if (pa?.basicAuth()) {
             def user = userService.setUser()
             request.userId = user?.userId
-            if (user == null) {
-                UserProfile profile = authService.delegateService.getUserProfile()
-                if (profile instanceof AlaM2MUserProfile) {
-                    // get client id of the M2M user
-                    String userId = request.userId = profile.getUserId()
-                    userService.setCurrentUser(userId)
-                }
-            }
 
             if (permissionService.isUserAlaAdmin(request.userId)) {
                 /* Don't enforce check for ALA admin.*/

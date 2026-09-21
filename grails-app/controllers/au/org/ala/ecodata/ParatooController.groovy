@@ -29,7 +29,7 @@ import javax.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j
-@au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"])
+@au.ala.org.ws.security.RequireApiKey(scopes = ["profile", "openid"], scopesFromProperty = "paratoo.api.writeScope", anyScope = true)
 @OpenAPIDefinition(
         info = @Info(
                 title = "Ecodata APIs",
