@@ -41,9 +41,10 @@ class ReportController {
     }
 
     def search() {
-        def searchCriteria = request.JSON
+        Map searchCriteria = request.JSON
+        Map pagination = searchCriteria.remove('pagination') ?: [:]
 
-        def reportList = reportingService.search(searchCriteria)
+        def reportList = reportingService.search(searchCriteria, pagination)
         respond reportList
     }
 
