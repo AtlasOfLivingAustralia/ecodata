@@ -1,12 +1,10 @@
 package au.org.ala.ecodata
 
+import grails.gorm.transactions.Transactional
 import grails.util.Holders
 import groovy.util.logging.Slf4j
 import org.apache.http.HttpStatus
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 
-import java.text.SimpleDateFormat
 import java.time.Period
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -55,6 +53,7 @@ class AccessExpiryJob {
      * Called when the cron job is fired - checks for users and UserPermissions that need to be removed due
      * to inactivity or reaching their expiry date.
      */
+    @Transactional
     void execute() {
 
         int maxEmailsToSend = Holders.config.getProperty("access.expiry.maxEmails", Integer, DEFAULT_MAX_EMAILS_TO_SEND)

@@ -11,7 +11,6 @@ import static au.org.ala.ecodata.Status.*
 /**
  * This service works with the Report domain object.  Need to fix this up!.
  */
-@Transactional
 class ReportingService {
     static transactional = true
 

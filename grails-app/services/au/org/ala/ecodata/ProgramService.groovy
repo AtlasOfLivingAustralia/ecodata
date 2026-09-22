@@ -58,7 +58,7 @@ class ProgramService {
      * the parent program of the supplied Program.
      * @param program the Program to update
      * @param properties a Map optionally containing a key parentProgramId which specifies the programId of
-     * the desired parent program of this program.  A null value is used to indicate this Program should have
+     * the desired parent program of this program.  A null value` is used to indicate this Program should have
      * no parent (i.e. a top level program)
      */
     private void updateParent(Program program, Map properties) {

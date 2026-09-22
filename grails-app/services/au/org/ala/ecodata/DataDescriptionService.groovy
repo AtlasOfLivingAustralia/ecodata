@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
 import org.apache.poi.ss.usermodel.DateUtil
 
-@Transactional
 class DataDescriptionService {
 
     ExcelImportService excelImportService
