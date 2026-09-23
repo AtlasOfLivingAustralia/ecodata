@@ -77,7 +77,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "A user can be assigned a role for a program"() {
         setup:
         String programId = '1'
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true, failOnError:true)
         String userId = '1'
 
 
@@ -94,7 +94,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when assigning a user a program role"(String userId, String programId, String role) {
         setup:
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true)
 
         when:
         params.userId = userId
@@ -116,7 +116,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String programId = '1'
         String userId = '1'
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true, failOnError:true)
 
 
         when:
@@ -145,7 +145,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "A user can have a role unassigned for a program"() {
         setup:
         String programId = '1'
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true, failOnError:true)
         String userId = '1'
 
 
@@ -162,7 +162,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when unassigning a user from a program role"(String userId, String programId, String role) {
         setup:
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true,)
 
         when:
         params.userId = userId
@@ -216,7 +216,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String programId = '1'
         String userId = '1'
-        new Program(programId:programId, name:'test').save()
+        new Program(programId:programId, name:'test').save(flush:true, failOnError:true)
 
 
         when:
@@ -245,7 +245,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "A user can be assigned a role for a hub"() {
         setup:
         String hubId = '1'
-        new Hub(hubId:hubId, urlPath:'test').save()
+        new Hub(hubId:hubId, urlPath:'test').save(flush:true, failOnError:true)
         String userId = '1'
         request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
@@ -263,7 +263,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when assigning a user a hub role"(String userId, String hubId, String role) {
         setup:
-        new Hub(hubId:hubId, urlPath:'test').save()
+        new Hub(hubId:hubId, urlPath:'test').save(flush:true)
 
         when:
         params.userId = userId
@@ -286,7 +286,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String hubId = '1'
         String userId = '1'
-        new Hub(hubId:hubId, urlPath:'test').save()
+        new Hub(hubId:hubId, urlPath:'test').save(flush:true, failOnError:true)
 
         request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
@@ -314,7 +314,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "A user can have a role unassigned from a hub"() {
         setup:
         String hubId = '1'
-        new Hub(hubId:hubId, urlPath:'test', skin:'configurableHubTemplate1').save()
+        new Hub(hubId:hubId, urlPath:'test', skin:'configurableHubTemplate1').save(flush:true, failOnError:true)
         String userId = '1'
         request.JSON = [entity:Hub.name, entityId: hubId, role: AccessLevel.admin.name(), userId: userId]
 
@@ -334,7 +334,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when unassigning a user from a hub role"(String userId, String hubId, String role) {
         setup:
-        new Hub(hubId:hubId, urlPath:'test').save()
+        new Hub(hubId:hubId, urlPath:'test').save(flush:true)
 
         when:
         params.userId = userId
@@ -357,7 +357,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String hubId = '1'
         String userId = '1'
-        new Hub(hubId:hubId, urlPath:'test').save()
+        new Hub(hubId:hubId, urlPath:'test').save(flush:true, failOnError:true)
         request.JSON = [entity:Hub.name, entityId: hubId, role: role, userId: userId]
 
         when:
@@ -806,7 +806,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "A user can have a role unassigned for a management unit"() {
         setup:
         String managementUnitId = '1'
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true, failOnError:true)
         String userId = '1'
 
 
@@ -823,7 +823,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when unassigning a user from a management unit role"(String userId, String managementUnitId, String role) {
         setup:
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true)
 
         when:
         params.userId = userId
@@ -845,7 +845,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String managementUnitId = '1'
         String userId = '1'
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true, failOnError:true)
 
 
         when:
@@ -872,7 +872,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "All parameters must be supplied when assigning a user from a management unit role"(String userId, String managementUnitId, String role) {
         setup:
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true)
 
         when:
         params.userId = userId
@@ -894,7 +894,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String managementUnitId = '1'
         String userId = '1'
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true, failOnError:true)
 
 
         when:
@@ -923,7 +923,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
         setup:
         String managementUnitId = '1'
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true, failOnError:true)
 
         when:
         controller.getMembersOfManagementUnit(managementUnitId)
@@ -1338,7 +1338,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "Get users for a hub" () {
         setup:
         String hubId = '1'
-        new Hub(hubId:hubId, name:'test').save()
+        new Hub(hubId:hubId, name:'test').save(flush:true)
 
         when:
         controller.getByHub(hubId)
@@ -1351,7 +1351,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "Get users for an organisation" () {
         setup:
         String organisationId = '1'
-        new Organisation(organisationId:organisationId, name:'test').save()
+        new Organisation(organisationId:organisationId, name:'test').save(flush:true, failOnError:true)
 
         when:
         controller.getByOrganisation(organisationId)
@@ -1364,7 +1364,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "Get users for a project" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         controller.getByProject(projectId)
@@ -1416,7 +1416,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
 
     void "Clear all permissions" () {
         setup:
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Hub.name).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Hub.name).save(flush:true, failOnError:true)
 
         when:
         controller.clearAllPermissionsForAllUsers()
@@ -1442,7 +1442,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "Clear all permissions for userId" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Hub.name).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Hub.name).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -1486,7 +1486,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String organisationId = '1'
-        new Organisation(organisationId:organisationId, name:'test').save()
+        new Organisation(organisationId:organisationId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1533,7 +1533,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String organisationId = '1'
-        new Organisation(organisationId:organisationId, name:'test').save()
+        new Organisation(organisationId:organisationId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1580,7 +1580,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1648,8 +1648,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String userId = '1'
         String projectId = '1'
         String role = AccessLevel.admin.name()
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1696,8 +1696,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.projectParticipant, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.projectParticipant, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1743,8 +1743,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.editor, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.editor, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1790,8 +1790,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.moderator, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.moderator, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1837,8 +1837,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.caseManager, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1884,7 +1884,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -1931,8 +1931,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name).save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -2022,9 +2022,9 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get starred Site Ids For UserId - valid" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Site.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Site.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Site.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Site.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Site.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Site.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2052,12 +2052,12 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get starred project Ids For UserId - valid" () {
         setup:
         String userId = '1'
-        new Project(projectId:'1', name:'test').save()
-        new Project(projectId:'2', name:'test').save()
-        new Project(projectId:'3', name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new Project(projectId:'1', name:'test').save(flush:true, failOnError:true)
+        new Project(projectId:'2', name:'test').save(flush:true, failOnError:true)
+        new Project(projectId:'3', name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2085,12 +2085,12 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get user roles For UserId - valid" () {
         setup:
         String userId = '1'
-        new Project(projectId:'1', name:'test').save()
-        new Project(projectId:'2', name:'test').save()
-        new Project(projectId:'3', name:'test').save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new Project(projectId:'1', name:'test').save(flush:true, failOnError:true)
+        new Project(projectId:'2', name:'test').save(flush:true, failOnError:true)
+        new Project(projectId:'3', name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2120,9 +2120,9 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get organisations For UserId - valid" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Organisation.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Organisation.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Organisation.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Organisation.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Organisation.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Organisation.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2154,9 +2154,9 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get organisation For UserId - valid" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Organisation.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Organisation.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Organisation.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Organisation.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Organisation.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Organisation.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2184,9 +2184,9 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get all projects For UserId - valid" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2222,9 +2222,9 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get projects For UserId - valid" () {
         setup:
         String userId = '1'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.id = userId
@@ -2268,7 +2268,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get members For Organisation - valid organisation" () {
         setup:
         String organisationId = '1'
-        new Organisation(organisationId:organisationId, name:'test').save()
+        new Organisation(organisationId:organisationId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.id = organisationId
@@ -2312,7 +2312,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get members For project per page - valid project" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.projectId = projectId
@@ -2333,7 +2333,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get members For project - when no mandatory params" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         controller.getMembersForProject()
@@ -2359,7 +2359,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get members For project - valid project" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.id = projectId
@@ -2375,7 +2375,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get editors For project - when no mandatory params" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         controller.getEditorsForProject()
@@ -2401,7 +2401,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "get editors For project - valid project" () {
         setup:
         String projectId = '1'
-        new Project(projectId:projectId, name:'test').save()
+        new Project(projectId:projectId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.id = projectId
@@ -2452,7 +2452,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String siteId = '1'
         Site site = new Site(siteId: 1, name: "Site 1")
         site.save(flush:true, failOnError: true)
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Site.name, status: Status.ACTIVE).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Site.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -2470,7 +2470,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String hubId = '123'
         String userId = '1'
-        new Hub(hubId:hubId, urlPath:'merit').save()
+        new Hub(hubId:hubId, urlPath:'merit').save(flush:true, failOnError:true)
 
         when:
         params.hubId = hubId
@@ -2516,10 +2516,10 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '1'
         String entityId = '12'
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'4', entityType:Project.name, status: Status.DELETED).save()
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'1', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'2', entityType:Project.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.starred, entityId:'3', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'4', entityType:Project.name, status: Status.DELETED).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -2543,8 +2543,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         String userId = '1'
         String entityId = '12'
         Date date1 = DateUtil.parse("2022-02-12T00:00:00Z")
-        new UserPermission(userId:'2', accessLevel:AccessLevel.starred, entityId:'20', entityType:Hub.name, status: Status.ACTIVE).save()
-        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'12', entityType:Hub.name, status: Status.ACTIVE, expiryDate: date1).save()
+        new UserPermission(userId:'2', accessLevel:AccessLevel.starred, entityId:'20', entityType:Hub.name, status: Status.ACTIVE).save(flush:true, failOnError:true)
+        new UserPermission(userId:'1', accessLevel:AccessLevel.admin, entityId:'12', entityType:Hub.name, status: Status.ACTIVE, expiryDate: date1).save(flush:true, failOnError:true)
 
 
         when:
@@ -2631,8 +2631,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '123'
         String managementUnitId = '567'
-        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save()
-        new UserPermission(userId:'123', accessLevel:AccessLevel.starred, entityId:'567', entityType:ManagementUnit.name).save()
+        new ManagementUnit(managementUnitId:managementUnitId, name:'test').save(flush:true, failOnError:true)
+        new UserPermission(userId:'123', accessLevel:AccessLevel.starred, entityId:'567', entityType:ManagementUnit.name).save(flush:true, failOnError:true)
 
         when:
         params.userId = userId
@@ -2665,7 +2665,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
     void "Is user a member of project"(String userId, String projectId, List roles, int statusCode) {
         setup:
         if (projectId) {
-            new Project(projectId:projectId, name:"Project 1").save()
+            new Project(projectId:projectId, name:"Project 1").save(flush:true, failOnError:true)
         }
 
         when:
@@ -2689,7 +2689,7 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         setup:
         String userId = '123'
         String organisationId = 'o1'
-        new Organisation(organisationId:organisationId, name:'test').save()
+        new Organisation(organisationId:organisationId, name:'test').save(flush:true, failOnError:true)
 
         when:
         params.userId = userId

@@ -23,6 +23,15 @@ abstract class ContainerisedMongoSpec extends AutoStartedMongoSpec {
 
     }
 
+    /**
+     * See MongoSpec.cleanupSpec - the GORM API registered by the datastore is global to the JVM and must be
+     * released so that it doesn't leak into subsequent specs.
+     */
+    void cleanupSpec() {
+        mongoDatastore?.close()
+        mongoDatastore = null
+    }
+
     protected String createConnectionString(String host, int port) {
         "mongodb://${host}:${port as String}/myDb" as String
     }

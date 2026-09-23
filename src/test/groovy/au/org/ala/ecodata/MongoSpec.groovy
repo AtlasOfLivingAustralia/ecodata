@@ -29,6 +29,16 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
 
     }
 
+    /**
+     * The MongoDatastore registers the GORM API (including dynamic finders cached on the metaClass of each
+     * domain class) globally for the JVM.  If it isn't closed, those APIs remain bound to this datastore and
+     * will be used by subsequent specs in the same JVM instead of the datastore they have configured.
+     */
+    void cleanupSpec() {
+        mongoDatastore?.close()
+        mongoDatastore = null
+    }
+
     protected String createConnectionString(String host, int port, String databaseName) {
         "mongodb://${host}:${port as String}/${databaseName}" as String
     }

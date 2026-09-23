@@ -17,7 +17,7 @@ import static grails.async.Promises.waitAll
  * Tests for the ParatooService.
  * The tests are incomplete as some of the behaviour needs to be specified.
  */
-class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService>, DataTest {
+class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooService> {
 
     String userId = 'u1'
     SiteService siteService = Mock(SiteService)
