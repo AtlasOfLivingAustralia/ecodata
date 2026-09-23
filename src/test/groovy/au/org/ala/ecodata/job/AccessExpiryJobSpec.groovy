@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.job
 
 import au.org.ala.ecodata.*
+import grails.testing.gorm.DataTest
 import org.apache.http.HttpStatus
 import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
@@ -10,7 +11,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class AccessExpiryJobSpec extends Specification implements GrailsUnitTest {
+class AccessExpiryJobSpec extends Specification implements DataTest {
 
     AccessExpiryJob job = new AccessExpiryJob()
     HubService hubService = Mock(HubService)
@@ -26,6 +27,10 @@ class AccessExpiryJobSpec extends Specification implements GrailsUnitTest {
     }
 
     def setup() {
+        mockDomain(User)
+        mockDomain(UserHub)
+        mockDomain(Hub)
+        mockDomain(UserPermission)
         deleteAll()
         AccessManagementOptions options = new AccessManagementOptions()
         options.warnUsersAfterPeriodInactive = "P23M"
@@ -137,7 +142,7 @@ class AccessExpiryJobSpec extends Specification implements GrailsUnitTest {
         setup:
         ZonedDateTime processTime = ZonedDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(ZoneOffset.UTC)
         UserPermission permission = new UserPermission(userId:"u1", entityType: Project.class.name, entityId:'p1', accessLevel: AccessLevel.admin)
-        permission.save()
+        permission.save(flush:true, failOnError:true)
 
         when:
         job.processExpiredPermissions(processTime, 10)

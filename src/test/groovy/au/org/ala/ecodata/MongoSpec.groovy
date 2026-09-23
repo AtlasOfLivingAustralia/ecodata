@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 
 import grails.core.GrailsApplication
+import org.grails.datastore.mapping.core.DatastoreUtils
+import org.grails.datastore.mapping.core.Session
 import org.grails.datastore.mapping.mongo.MongoDatastore
 import org.grails.testing.GrailsUnitTest
 import spock.lang.Shared
@@ -18,6 +20,8 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
     @Shared
     protected MongoDatastore mongoDatastore
 
+    protected Session mongoSession
+
     void setupSpec() {
         String host = config.getProperty("grails.mongodb.host", String, "localhost")
         int port = config.getProperty("grails.mongodb.port", Integer, 27017)
@@ -27,6 +31,23 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
         packages[0] = getClass().getPackage()
         mongoDatastore = new MongoDatastore(configuration, packages)
 
+    }
+
+    /**
+     * Binds a Session to the current thread for the duration of each test.  Without a bound session, each GORM
+     * operation is run in a new (and immediately closed) session, meaning writes made via save() without
+     * flush:true are discarded before they reach MongoDB.
+     */
+    void setup() {
+        mongoSession = DatastoreUtils.bindSession(mongoDatastore.connect())
+    }
+
+    void cleanup() {
+        if (mongoSession) {
+            DatastoreUtils.unbindSession(mongoSession)
+            mongoSession.disconnect()
+            mongoSession = null
+        }
     }
 
     /**

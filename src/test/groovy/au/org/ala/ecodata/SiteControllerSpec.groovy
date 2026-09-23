@@ -1,12 +1,13 @@
 package au.org.ala.ecodata
 import com.mongodb.MongoExecutionTimeoutException
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
  */
-class SiteControllerSpec extends Specification implements ControllerUnitTest<SiteController> {
+class SiteControllerSpec extends Specification implements ControllerUnitTest<SiteController>, DomainUnitTest<Site> {
 
     SiteService siteService = Stub(SiteService);
 

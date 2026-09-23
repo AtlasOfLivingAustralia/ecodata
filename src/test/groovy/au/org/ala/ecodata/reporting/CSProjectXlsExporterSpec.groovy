@@ -33,7 +33,7 @@ import java.time.ZoneId
 /**
  * Spec for the csProjectXlsExporter
  */
-class CSProjectXlsExporterSpec extends Specification implements GrailsUnitTest, DataTest {
+class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest {
 
     def projectService = Mock(ProjectService)
     def projectActivityService = Mock(ProjectActivityService)

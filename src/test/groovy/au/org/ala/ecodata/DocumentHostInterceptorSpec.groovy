@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.web.interceptor.InterceptorUnitTest
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class DocumentHostInterceptorSpec extends Specification implements InterceptorUnitTest<DocumentHostInterceptor> {
     def hubService
@@ -11,52 +12,34 @@ class DocumentHostInterceptorSpec extends Specification implements InterceptorUn
     }
 
     def cleanup() {
-        interceptor.documentHostUrlPrefix.set(null)
+        DocumentHostInterceptor.clearDocumentHostUrlPrefix()
     }
 
-    void "interceptor must set document host name if request is coming from biocollect hub"() {
+    @Unroll
+    void "interceptor must set the document host name to #expected when the host name header is '#hostName'"() {
         given:
-        def hostName = 'https://biocollect.ala.org.au'
-        def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
+        String headerName = grailsApplication.config.getProperty('app.http.header.hostName')
+        request.addHeader(headerName, hostName)
 
         when:
-            withInterceptors([controller: DocumentationController]) {
-                controller.getProjectSites()
-            }
+        boolean proceed = interceptor.before()
 
         then:
-            DocumentHostInterceptor.documentHostUrlPrefix.get() == hostName
-    }
+        proceed
+        DocumentHostInterceptor.documentHostUrlPrefix.get() == expected
 
-    void "interceptor must reject requests with a not allowed hostname "() {
-        given:
-        def hostName = 'https://example.com'
-        def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
+        when: "the request has been rendered"
+        interceptor.afterView()
 
-        when:
-        withInterceptors([controller: DocumentationController]) {
-            controller.getProjectSites()
-        }
-
-        then:
+        then: "the thread local is cleared"
         DocumentHostInterceptor.documentHostUrlPrefix.get() == null
-    }
 
-
-    void "interceptor must not set document host name if incorrect url is supplied"() {
-        given:
-        def hostName = ''
-        def controller = (DocumentationController) mockController(DocumentationController)
-        request.addHeader(grailsApplication.config.getProperty('app.http.header.hostName'), hostName)
-
-        when:
-        withInterceptors([controller: DocumentationController]) {
-            controller.getProjectSites()
-        }
-
-        then:
-        DocumentHostInterceptor.documentHostUrlPrefix.get() == null
+        where:
+        hostName                            | expected
+        'https://biocollect.ala.org.au'     | 'https://biocollect.ala.org.au'
+        'https://biocollect.ala.org.au:8080'| 'https://biocollect.ala.org.au:8080'
+        'https://example.com'               | null
+        'biocollect.ala.org.au'             | null
+        ''                                  | null
     }
 }

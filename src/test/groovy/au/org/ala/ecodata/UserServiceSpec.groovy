@@ -70,7 +70,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         setup:
         String hubId = "h1"
         String userId = "u1"
-        new Hub(hubId:hubId).save()
         Date loginTime1 = DateUtil.parse("2021-01-01T00:00:00Z")
         Date loginTime2 = DateUtil.parse("2021-01-01T00:00:00Z")
 

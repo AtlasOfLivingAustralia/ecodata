@@ -19,10 +19,6 @@ class ReportingServiceSpec extends MongoSpec implements ServiceUnitTest<Reportin
         service.activityService = activityService
         service.userService = userService
 
-        service.transactionManager = Mock(PlatformTransactionManager) {
-            getTransaction(_) >> Mock(TransactionStatus)
-        }
-
         userService.getCurrentUserDetails() >> ['userId':'1234']
 
         Report.findAll().each { it.delete(flush:true) }
