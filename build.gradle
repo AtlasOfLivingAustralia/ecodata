@@ -168,6 +168,9 @@ dependencies {
 
     testImplementation "org.apache.grails:grails-testing-support-datamapping"
     testImplementation "org.apache.grails:grails-geb"
+    // grails-geb only exposes the Geb library (geb-spock, geb.* classes) via its test
+    // fixtures in Grails 7; without this the integration tests fail to compile.
+    testImplementation testFixtures("org.apache.grails:grails-geb")
     testImplementation "org.apache.grails:grails-testing-support-web"
     testImplementation "org.apache.grails:grails-testing-support-views-gson"
     testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
