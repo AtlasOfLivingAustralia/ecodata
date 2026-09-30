@@ -88,9 +88,9 @@ class UserService {
      * It sets the user details in a thread local for extraction by the audit service.
      * @param userId
      */
-    def setCurrentUser(String userId) {
+    def setCurrentUser(String userId, boolean isSystemUser = false) {
 
-        def userDetails = lookupUserDetails(userId)
+        def userDetails = lookupUserDetails(userId, isSystemUser)
         if (userDetails) {
             _currentUser.set(userDetails)
             return userDetails
@@ -223,12 +223,12 @@ class UserService {
                 }
             }
         }
-        if (userId && !isSystemUser) {
+        if (userId) {
             if (log.isDebugEnabled()) {
                 log.debug("Setting current user to ${userId}")
             }
 
-            userDetails = setCurrentUser(userId)
+            userDetails = setCurrentUser(userId, isSystemUser)
             if (userDetails) {
                 // We set the current user details in the request scope because
                 // the 'afterView' hook can be called prior to the actual rendering (despite the name)

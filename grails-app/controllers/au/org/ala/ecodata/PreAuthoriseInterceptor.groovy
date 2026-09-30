@@ -5,6 +5,7 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.Pac4jAuthService
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.gorm.transactions.Transactional
 import jakarta.annotation.PostConstruct
 
 class PreAuthoriseInterceptor {
@@ -40,46 +41,7 @@ class PreAuthoriseInterceptor {
                 /* Don't enforce check for ALA admin.*/
             }
             else if (request.userId) {
-                String accessLevel = pa.accessLevel()
-                String idType = pa.idType()
-                String entityId = params[pa.id()]
-
-                if (accessLevel && idType) {
-
-                    switch (idType) {
-                        case "hubId":
-                            def hub = hubService.findByUrlPath(entityId)
-                            if (!hub) {
-                                hub = hubService.get(entityId)
-                            }
-
-                            if (!hub) {
-                                result.error = "Hub not found for id: ${entityId}"
-                                result.status = 404
-                                break
-                            }
-
-                            result = permissionService.checkPermission(accessLevel, hub.hubId, Hub.class.name, request.userId)
-                            break
-                        case "organisationId":
-                            result = permissionService.checkPermission(accessLevel, entityId, Organisation.class.name, request.userId)
-                            break
-                        case "projectId":
-                            result = permissionService.checkPermission(accessLevel, entityId, Project.class.name, request.userId)
-                            break
-                        case "projectActivityId":
-                            def pActivity = projectActivityService.get(entityId)
-                            request.projectId = pActivity?.projectId
-                            result = permissionService.checkPermission(accessLevel, pActivity?.projectId, Project.class.name, request.userId)
-                            break
-                        case "activityId":
-                            def activity = activityService.get(entityId,'flat')
-                            result = permissionService.checkPermission(accessLevel, activity?.projectId, Project.class.name, request.userId)
-                            break
-                        default:
-                            break
-                    }
-                }
+                result = checkUserPermission(pa, result)
 
             } else {
                 result.error = "Access denied"
@@ -95,6 +57,51 @@ class PreAuthoriseInterceptor {
         }
 
         true
+    }
+
+    @Transactional
+    private LinkedHashMap<String, Serializable> checkUserPermission(PreAuthorise pa, LinkedHashMap<String, Serializable> result) {
+        String accessLevel = pa.accessLevel()
+        String idType = pa.idType()
+        String entityId = params[pa.id()]
+
+        if (accessLevel && idType) {
+
+            switch (idType) {
+                case "hubId":
+                    def hub = hubService.findByUrlPath(entityId)
+                    if (!hub) {
+                        hub = hubService.get(entityId)
+                    }
+
+                    if (!hub) {
+                        result.error = "Hub not found for id: ${entityId}"
+                        result.status = 404
+                        break
+                    }
+
+                    result = permissionService.checkPermission(accessLevel, hub.hubId, Hub.class.name, request.userId)
+                    break
+                case "organisationId":
+                    result = permissionService.checkPermission(accessLevel, entityId, Organisation.class.name, request.userId)
+                    break
+                case "projectId":
+                    result = permissionService.checkPermission(accessLevel, entityId, Project.class.name, request.userId)
+                    break
+                case "projectActivityId":
+                    def pActivity = projectActivityService.get(entityId)
+                    request.projectId = pActivity?.projectId
+                    result = permissionService.checkPermission(accessLevel, pActivity?.projectId, Project.class.name, request.userId)
+                    break
+                case "activityId":
+                    def activity = activityService.get(entityId, 'flat')
+                    result = permissionService.checkPermission(accessLevel, activity?.projectId, Project.class.name, request.userId)
+                    break
+                default:
+                    break
+            }
+        }
+        result
     }
 
     boolean after() { true }

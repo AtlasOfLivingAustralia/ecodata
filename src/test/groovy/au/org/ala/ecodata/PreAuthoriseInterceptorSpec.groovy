@@ -2,12 +2,12 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
 import au.org.ala.web.Pac4jAuthService
-import au.org.ala.ws.security.profile.AlaM2MUserProfile
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.interceptor.InterceptorUnitTest
 import org.grails.web.util.GrailsApplicationAttributes
 import spock.lang.Specification
 
-class PreAuthoriseInterceptorSpec extends Specification implements InterceptorUnitTest<PreAuthoriseInterceptor> {
+class PreAuthoriseInterceptorSpec extends Specification implements InterceptorUnitTest<PreAuthoriseInterceptor>, DomainUnitTest<UserPermission> {
     def hubService
     def userService
     def permissionService

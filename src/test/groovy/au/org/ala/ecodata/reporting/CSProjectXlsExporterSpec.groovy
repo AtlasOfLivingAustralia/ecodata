@@ -33,7 +33,7 @@ import java.time.ZoneId
 /**
  * Spec for the csProjectXlsExporter
  */
-class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest {
+class CSProjectXlsExporterSpec extends MongoSpec {
 
     def projectService = Mock(ProjectService)
     def projectActivityService = Mock(ProjectActivityService)
@@ -84,11 +84,8 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest {
         csProjectXlsExporter.documentService = documentService
     }
 
-    void teardown() {
-        outputFile.delete()
-    }
-
     def cleanup() {
+        outputFile.delete()
         Activity.collection.remove(new BasicDBObject())
         Record.collection.remove(new BasicDBObject())
     }

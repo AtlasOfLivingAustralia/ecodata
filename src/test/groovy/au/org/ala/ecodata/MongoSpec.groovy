@@ -27,10 +27,15 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
         int port = config.getProperty("grails.mongodb.port", Integer, 27017)
         String databaseName = config.getProperty("grails.mongodb.database", String, "test")
         Map<String, Object> configuration = ['grails.mongodb.url': createConnectionString(host, port, databaseName)]
-        Package[] packages = new Package[1]
-        packages[0] = getClass().getPackage()
-        mongoDatastore = new MongoDatastore(configuration, packages)
+        mongoDatastore = new MongoDatastore(configuration, domainPackages())
+    }
 
+    /**
+     * The packages to scan for domain classes.  Defaults to the package containing the ecodata domain classes
+     * (which is not necessarily the package of the Spec - e.g. specs in au.org.ala.ecodata.reporting).
+     */
+    protected Package[] domainPackages() {
+        [Project.package] as Package[]
     }
 
     /**
