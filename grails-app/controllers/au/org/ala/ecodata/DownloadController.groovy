@@ -1,4 +1,7 @@
 package au.org.ala.ecodata
+
+import org.apache.commons.io.FilenameUtils
+
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DownloadController {
     def get(String id) {
@@ -7,7 +10,8 @@ class DownloadController {
             render "A download ID is required"
         } else {
             String extension = params.format ?: 'zip'
-            File file = new File("${grailsApplication.config.getProperty('temp.dir')}${File.separator}${id}.${extension}")
+            String name = FilenameUtils.getName(id)
+            File file = new File("${grailsApplication.config.getProperty('temp.dir')}${File.separator}${name}.${extension}")
             if (file.exists()) {
                 response.setContentType("application/zip")
                 response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')

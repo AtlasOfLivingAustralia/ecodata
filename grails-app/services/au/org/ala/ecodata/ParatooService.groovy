@@ -520,14 +520,36 @@ class ParatooService {
     }
 
     Map findDataSet(String userId, String orgMintedUUID) {
-        List projects = findUserProjects(userId)
-
-        Map dataSet = null
-        ParatooProject project = projects?.find {
-            dataSet = it.dataSets?.find { it.dataSetId == orgMintedUUID }
-            dataSet
+        Map response
+        if (ParatooInvocationContext.current.isSystemUser) {
+            response = findDataSetByOrgMintedUUID(orgMintedUUID)
         }
-        [dataSet: dataSet, project: project]
+        else {
+            List projects = findUserProjects(userId)
+
+            Map dataSet = null
+            ParatooProject project = projects?.find {
+                dataSet = it.dataSets?.find { it.dataSetId == orgMintedUUID }
+                dataSet
+            }
+            response = [dataSet: dataSet, project: project]
+        }
+
+        response
+    }
+
+    Map findDataSetByOrgMintedUUID(String orgMintedUUID) {
+        List<Project> projects = Project.withCriteria {
+            eq('custom.dataSets.dataSetId', orgMintedUUID)
+        }
+        Project project = projects?.find {
+            it.custom?.dataSets?.any { it.dataSetId == orgMintedUUID }
+        }
+        Map dataSet = project?.custom?.dataSets?.find { it.dataSetId == orgMintedUUID }
+        // Moderator represents the highest level of access for a paratoo user, so we can use that to map to a ParatooProject
+        AccessLevel accessLevel = AccessLevel.moderator
+        ParatooProject paratooProject = project ? paratooProjectFromProject(project, accessLevel) : null
+        [dataSet: dataSet, project: paratooProject]
     }
 
     /**
