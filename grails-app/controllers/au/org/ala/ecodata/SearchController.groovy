@@ -198,6 +198,11 @@ class SearchController {
     }
 
     private String propertyNameForFacet(String facet) {
+        Map properties = grailsApplication.config.getProperty('elasticGeo.propertyMapping', Map, [:])
+        if (properties.containsKey(facet)) {
+            return properties[facet]
+        }
+
         String facetSuffix = "Facet"
         String result = facet
         if (facet?.endsWith(facetSuffix)) {
