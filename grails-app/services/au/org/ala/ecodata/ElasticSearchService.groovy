@@ -1147,7 +1147,42 @@ class ElasticSearchService {
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
         projectMap["className"] = Project.class.name
-        // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
+        if (project.config?.visibility) {
+            projectMap.visibility = project.config.visibility
+        }
+
+        if (project.programId) {
+            Program program = programService.get(project.programId)
+            if (program) {
+                List programNames = programService.parentNames(program)
+
+                projectMap.associatedProgram = programNames[-1]
+                if (programNames.size() >= 2) {
+                    projectMap.associatedSubProgram = programNames[-2]
+                }
+                // This allows all projects associated with a particular program to be excluded from indexing.
+                // This is required to allow MERIT projects to be loaded before they have been announced.
+                if (projectMap.visibility == null && program.inheritedConfig?.visibility) {
+                    projectMap.visibility = program.inheritedConfig.visibility
+                }
+                projectMap.privateSites = project.config?.privateSites
+                if (projectMap.privateSites == null && program.inheritedConfig?.privateSites) {
+                    projectMap.privateSites = program.inheritedConfig.privateSites
+                }
+
+                List services = project.findProjectServices()
+
+                if (services) {
+                    projectMap.services = services?.collect{
+                        it.getProgramLabels()?[project.programId]?.label ?: it.name
+                    }
+                }
+            }
+            else {
+                log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
+            }
+        }
+        // MERIT project needs project sites to be indexed for faceting purposes but Biocollect does not require private sites.
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
         if (projectMap.isMERIT) {
@@ -1245,42 +1280,8 @@ class ElasticSearchService {
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
-        if(projectMap.managementUnitId)
+        if (projectMap.managementUnitId) {
             projectMap.managementUnitName = managementUnitService.get(projectMap.managementUnitId)?.name
-
-        // Populate program facets from the project program, if available, do visibility check
-        if (project.config?.visibility) {
-            projectMap.visibility = project.config.visibility
-        }
-        if (project.programId) {
-            Program program = programService.get(project.programId)
-            if (program) {
-                List programNames = programService.parentNames(program)
-
-                projectMap.associatedProgram = programNames[-1]
-                if (programNames.size() >= 2) {
-                    projectMap.associatedSubProgram = programNames[-2]
-                }
-                // This allows all projects associated with a particular program to be excluded from indexing.
-                // This is required to allow MERIT projects to be loaded before they have been announced.
-                if (!projectMap.visibility && program.inheritedConfig?.visibility) {
-                    projectMap.visibility = program.inheritedConfig.visibility
-                }
-                List services = project.findProjectServices()
-
-                if (services) {
-                    projectMap.services = services?.collect{
-                        it.getProgramLabels()?[project.programId]?.label ?: it.name
-                    }
-                }
-
-
-
-            }
-            else {
-                log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
-            }
-
         }
 
         // Elasticsearch no longer accepts URLs and the ProjectService.toMap adds org logs as URLs, so remove them

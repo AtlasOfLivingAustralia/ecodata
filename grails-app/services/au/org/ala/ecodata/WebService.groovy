@@ -15,12 +15,15 @@
 
 package au.org.ala.ecodata
 
+import au.org.ala.ws.tokens.TokenService
 import grails.converters.JSON
 import org.grails.web.converters.exceptions.ConverterException
 import grails.web.http.HttpHeaders
 import org.springframework.http.MediaType
 
 import javax.servlet.http.HttpServletResponse
+import javax.annotation.PostConstruct
+
 /**
  * Helper class for invoking web services.
  */
@@ -32,6 +35,16 @@ class WebService {
     }
     
     def grailsApplication
+    TokenService tokenService
+    List WHITE_LISTED_DOMAINS = []
+
+    @PostConstruct
+    void init() {
+        String whiteListed = grailsApplication.config.getProperty('app.domain.whiteList', '')
+        WHITE_LISTED_DOMAINS = whiteListed.split(',')
+            .collect { it.trim() }
+            .findAll { it }
+    }
 
     def get(String url, boolean includeUserId) {
         def conn = null
@@ -73,6 +86,43 @@ class WebService {
         grailsApplication.config.getProperty('webservice.readTimeout', Integer)
     }
 
+    private String getToken(boolean requireUser = false) {
+        tokenService.getAuthToken(requireUser)?.toAuthorizationHeader()
+    }
+
+    boolean canAddSecret(String url) {
+        try {
+            URL urlObj = new URL(url)
+            return isValidDomain(urlObj.host)
+        } catch (Exception e) {
+            log.error("Error parsing URL: ${url}")
+        }
+
+        false
+    }
+
+    boolean isValidDomain(String host) {
+        WHITE_LISTED_DOMAINS.any { domain ->
+            host == domain || host.endsWith(".${domain}")
+        }
+    }
+
+    private void addTokenHeader(URLConnection conn, String url, boolean requireUser = false) {
+        if (canAddSecret(url)) {
+            String token = getToken(requireUser)
+            if (token) {
+                conn.setRequestProperty(HttpHeaders.AUTHORIZATION, token)
+            }
+        }
+    }
+
+    String getAuthTokenForUrl(String url, boolean requireUser = false) {
+        if (canAddSecret(url)) {
+            return getToken(requireUser)
+        }
+        null
+    }
+
     private URLConnection configureConnection(String url, boolean includeUserId, Integer timeout = null, boolean includeApiKey = false) {
         URLConnection conn = new URL(url).openConnection()
 
@@ -88,7 +138,7 @@ class WebService {
 
         }
         if (includeApiKey) {
-            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
+            addTokenHeader(conn, url)
         }
         conn
     }
@@ -99,10 +149,7 @@ class WebService {
      */
     def proxyGetRequest(HttpServletResponse response, String url, boolean includeUserId = true, boolean includeApiKey = false, List headers = [HttpHeaders.CONTENT_DISPOSITION], int readTimeout) {
 
-        HttpURLConnection conn = configureConnection(url, includeUserId, readTimeout)
-        if (includeApiKey) {
-            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
-        }
+        HttpURLConnection conn = configureConnection(url, includeUserId, readTimeout, includeApiKey)
 
         response.setContentType(conn.getContentType())
         response.setContentLength(conn.getContentLength())
@@ -234,8 +281,8 @@ class WebService {
             conn = new URL(url).openConnection()
             conn.setRequestMethod("POST")
             conn.setDoOutput(true)
-            conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}");
-            conn.setRequestProperty("Authorization", "${grailsApplication.config.getProperty('api_key')}");
+            conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}")
+            addTokenHeader(conn, url)
 
             if (addUserId) {
                 def user = getUserService().getCurrentUserDetails()
@@ -279,8 +326,7 @@ class WebService {
             conn.setDoOutput(true)
             conn.setRequestProperty("Content-Type", "text/plain;charset=${charEncoding}");
             if (includeAuthKey) {
-                conn.setRequestProperty("Authorization", "${grailsApplication.config.getProperty('api_key')}");
-
+                addTokenHeader(conn, url)
             }
 
             if (addALACookie) {
@@ -317,12 +363,13 @@ class WebService {
     }
 
     def doDelete(String url) {
-        url += (url.indexOf('?') == -1 ? '?' : '&') + "api_key=${grailsApplication.config.getProperty('api_key')}"
         def conn = null
         try {
             conn = new URL(url).openConnection()
             conn.setRequestMethod("DELETE")
-            conn.setRequestProperty("Authorization", grailsApplication.config.getProperty('api_key'));
+
+            addTokenHeader(conn, url)
+
             def user = getUserService().getUser()
             if (user) {
                 conn.setRequestProperty(grailsApplication.config.getProperty('app.http.header.userId'), user.userId)

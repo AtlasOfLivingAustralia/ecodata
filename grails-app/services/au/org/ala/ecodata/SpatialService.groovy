@@ -296,11 +296,8 @@ class SpatialService {
         GeometryFactory factory = geometry.factory ?: new GeometryFactory()
         List<String> typesInPreferenceOrder = [
                 Geometry.TYPENAME_POLYGON,
-                Geometry.TYPENAME_MULTIPOLYGON,
                 Geometry.TYPENAME_LINESTRING,
-                Geometry.TYPENAME_MULTILINESTRING,
-                Geometry.TYPENAME_POINT,
-                Geometry.TYPENAME_MULTIPOINT
+                Geometry.TYPENAME_POINT
         ]
         List<Geometry> extracted = []
         typesInPreferenceOrder.find { type ->

@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
+import au.org.ala.web.IAuthService
+import au.org.ala.web.Pac4jAuthService
 import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
@@ -16,6 +18,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
 
     WebService webService = Mock(WebService)
     AuthService authService = Mock(AuthService)
+    Pac4jAuthService delegateService = Mock(Pac4jAuthService)
     Config pack4jConfig
 
     def user
@@ -33,6 +36,7 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         new Hub(hubId:'h2', urlPath:'hub2').save(flush:true, failOnError:true)
         service.webService = webService
         service.authService = authService
+        service.authService.delegateService >> delegateService
     }
 
     def cleanup() {
@@ -193,8 +197,22 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         1 * authService.getUserId() >> null
         0 * authService.getUserDetailsById(_)
         UserService.currentUser() == null
+    }
 
+    void "If the request has a non ALA M2M token, the userId will not be read from the header, but will be assigned to the client ID of the token"() {
+        setup:
+        AuditInterceptor.httpRequestHeaderForUserId = 'userId'
+        request.addUserRole("ecodata/write_paratoo_api_test")
 
+        when:
+        request.addHeader('userId', user.userId)
+        service.setUser()
+
+        then:
+        1 * delegateService.getUserProfile() >> new AlaM2MUserProfile("m2mUser", "issuer", [])
+        1 * authService.getUserId() >> null
+        0 * authService.getUserDetailsById(_)
+        UserService.currentUser().userId == "m2mUser"
     }
 
 

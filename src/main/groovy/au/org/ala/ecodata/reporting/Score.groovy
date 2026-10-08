@@ -9,6 +9,9 @@ class Score {
     /** Enumerates the currently supported ways to aggregate output scores. */
     enum AGGREGATION_TYPE {SUM, AVERAGE, COUNT, HISTOGRAM, SET, DISTINCT_SUM}
 
+    Date lastUpdated
+    Date dateCreated
+
     /** The name of the output to which the score belongs */
     String outputName
 

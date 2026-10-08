@@ -1750,6 +1750,76 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         "user2" | []
     }
 
+    void "findDataSet will find a data set from the projects the user has access to"() {
+        when:
+        Map result = service.findDataSet(userId, 'c1')
+
+        then:
+        result.dataSet.dataSetId == 'c1'
+        result.project.id == 'p1'
+        result.project.roles == [ParatooService.ADMIN]
+    }
+
+    void "findDataSet will not return a data set from a project the user does not have access to"() {
+        when:
+        Map result = service.findDataSet('u2', 'c1')
+
+        then:
+        result.dataSet == null
+        result.project == null
+    }
+
+    void "findDataSet will return null values if the data set does not exist in the user's projects"() {
+        when:
+        Map result = service.findDataSet(userId, 'notADataSet')
+
+        then:
+        result.dataSet == null
+        result.project == null
+    }
+
+    void "When invoked by the system user, findDataSet will find a data set regardless of the user's project permissions"() {
+        setup:
+        ParatooInvocationContext.getCurrent().isSystemUser = true
+        Map projectProps = getProject()
+        projectProps.projectId = 'p2'
+        projectProps.name = 'Project 2'
+        projectProps.custom.dataSets = [[dataSetId: 'c2']]
+        new Project(projectProps).save(failOnError: true, flush: true)
+        siteService.sitesForProjectWithTypes('p2', [Site.TYPE_PROJECT_AREA, Site.TYPE_SURVEY_AREA]) >> []
+
+        when:
+        Map result = service.findDataSet('u2', 'c2')
+
+        then:
+        result.dataSet.dataSetId == 'c2'
+        result.project.id == 'p2'
+        result.project.name == 'Project 2'
+        result.project.roles == [ParatooService.ADMIN, ParatooService.DETERMINER]
+
+        cleanup:
+        ParatooInvocationContext.getCurrent().isSystemUser = false
+    }
+
+    void "findDataSetByOrgMintedUUID will find a data set and map the owning project with moderator access"() {
+        when:
+        Map result = service.findDataSetByOrgMintedUUID('c1')
+
+        then:
+        result.dataSet.dataSetId == 'c1'
+        result.project.id == 'p1'
+        result.project.roles == [ParatooService.ADMIN, ParatooService.DETERMINER]
+    }
+
+    void "findDataSetByOrgMintedUUID will return null values if no project contains the data set"() {
+        when:
+        Map result = service.findDataSetByOrgMintedUUID('notADataSet')
+
+        then:
+        result.dataSet == null
+        result.project == null
+    }
+
     private Map getNormalDefinition() {
         def input = """
 {

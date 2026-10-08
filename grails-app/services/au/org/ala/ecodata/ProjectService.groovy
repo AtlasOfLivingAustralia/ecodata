@@ -699,6 +699,11 @@ class ProjectService {
 
     }
 
+    Map scoreDataForActivity(List<String> scoreIds, Map activityData = null) {
+        List activityResults = reportService.aggregateActivities([activityData], scoreIds)
+        [activityScores:activityResults]
+    }
+
     List<String> getActivityIdsForProject(String projectId) {
         Activity.withCriteria {
             eq("projectId", projectId)

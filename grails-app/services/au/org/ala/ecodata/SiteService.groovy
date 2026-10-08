@@ -1025,12 +1025,12 @@ class SiteService {
 
         def resp = null
         if (geometry?.type == 'Circle') {
-            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            def body = [name: name, description: "my description", user_id: userId]
             def url = grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/pointradius/" +
                     geometry?.coordinates[1] + '/' + geometry?.coordinates[0] + '/' + (geometry?.radius / 1000)
             resp = webService.doPost(url, body)
         } else if (geometry?.type in ['Polygon', 'LineString']) {
-            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.getProperty('api_key')]
+            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId]
             resp = webService.doPost(grailsApplication.config.getProperty('spatial.baseUrl') + "/ws/shape/upload/geojson", body)
         }
 

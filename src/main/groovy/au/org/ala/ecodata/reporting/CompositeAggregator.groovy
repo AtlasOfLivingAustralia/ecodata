@@ -24,18 +24,18 @@ class CompositeAggregator implements AggregatorIf {
         }
     }
 
-    public SingleResult result() {
+    public AggregationResult result() {
 
-        // We could do a sum
-        Number sum = aggregators.sum { it.result().result }
-
-//        // We could also do averages...
-//        List<SingleResult> results = aggregators.collect { it.result() }
-//        def total = results.sum { it.result * it.count }
-//        def count = results.sum { it.count }
-//        def avg = total/count
-
-        SingleResult result = new SingleResult([label:config.label, count:count, result:sum])
+        AggregationResult result
+        // If more than one child aggregation exists, we will sum the results of all child aggregations and return a single result. If only one child aggregation exists, we will return the result of that aggregation directly.
+        if (aggregators.size() > 1) {
+            Number sum = aggregators.sum { it.result().result }
+            result = new SingleResult([label:config.label, count:count, result:sum])
+        }
+        else {
+            result = aggregators[0].result()
+            result.label = config.label
+        }
 
         result
     }
