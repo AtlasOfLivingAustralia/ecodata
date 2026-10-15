@@ -4,8 +4,6 @@ import au.org.ala.ecodata.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
-import static au.org.ala.ecodata.converter.ListConverter.PROP_MEASUREMENTS_OR_FACTS
-
 /**
  * Utility for converting the data submitted for an Output into one or more Records with the correct Darwin Core fields
  * so that it can be exported to the Biocache.
@@ -49,7 +47,10 @@ class RecordConverter {
     static final String SYSTEMATIC_SURVEY = "systematic"
     static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
     static final List LIST_COMBINE_EXCEPTION = ["multimedia"]
-    static final List MERGEABLE_COLLECTION_KEYS = [PROP_MEASUREMENTS_OR_FACTS]
+    // Groovy 5 cannot statically import a static property declared on a trait (RecordFieldConverter),
+    // so the shared key is declared here. Keep in sync with RecordFieldConverter.PROP_MEASUREMENTS_OR_FACTS.
+    //static final String PROP_MEASUREMENTS_OR_FACTS = "measurementsOrFacts"
+    static final List MERGEABLE_COLLECTION_KEYS = [ListConverter.PROP_MEASUREMENTS_OR_FACTS]
 
     /**
      * Creates darwin core fields from output data. It behaviour is controlled by recordGeneration attribute.
