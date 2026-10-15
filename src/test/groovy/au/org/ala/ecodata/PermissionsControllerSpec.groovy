@@ -20,6 +20,8 @@ class PermissionsControllerSpec extends Specification implements ControllerUnitT
         controller.permissionService = permissionService
         controller.organisationService = organisationService
         controller.projectService = projectService
+        // Use the production enum JSON format (BootStrap does not run in unit tests).
+        BootStrap.registerEnumMarshallers()
     }
 
     def cleanup() {

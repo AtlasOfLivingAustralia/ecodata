@@ -82,7 +82,8 @@ server:
     shutdown: "graceful"
 management:
     endpoints:
-        enabled-by-default: false
+        access:
+            default: none
 ---
 grails:
     mime:
@@ -123,9 +124,6 @@ grails:
 
     controllers:
         defaultScope: singleton
-        upload:
-            maxFileSize: 65536000 #64Mb, matches nginx config
-            maxRequestSize: 65536000 #64Mb, matches nginx config
     converters:
         encoding: UTF-8
     resources:
@@ -159,11 +157,15 @@ grails:
         params:
             exclude: #request parameters to mask when logging exceptions
                 - password
+    gorm:
+        default:
+            nullable: false # restore previous behaviour of GORM 6.0.0 where fields are not nullable by default
 ---
-#grails:
-#    gorm:
-#        autowire: true
----
+spring:
+    servlet:
+        multipart:
+            max-file-size: 64MB
+            max-request-size: 64MB
 
 reloadable:
     cfgs:

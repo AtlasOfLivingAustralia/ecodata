@@ -1,6 +1,6 @@
 apply plugin:"jacoco"
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.14" // Java 25 bytecode support
 }
 test {
     useJUnitPlatform()

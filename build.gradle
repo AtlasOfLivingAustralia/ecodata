@@ -7,6 +7,8 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
+        // Grails 8: the Gradle plugin classpath uses the Grails Gradle BOM (Gradle 9 embeds Groovy 4).
+        classpath platform("org.apache.grails:grails-gradle-bom:$grailsVersion")
         classpath "org.apache.grails:grails-gradle-plugins:$grailsVersion"
         classpath "cloud.wondrify:asset-pipeline-gradle:$assetPipelineVersion"
         classpath "cloud.wondrify:sass-asset-pipeline:$assetPipelineVersion"
@@ -17,16 +19,25 @@ buildscript {
 }
 
 plugins {
-    id "com.github.node-gradle.node" version "3.4.0"
+    id "com.github.node-gradle.node" version "7.1.0"
     id 'jacoco'
-    id "com.gorylenko.gradle-git-properties" version "2.4.1"
-    //id "org.grails.plugins.views-json" version "4.0.0"
+    id "com.gorylenko.gradle-git-properties" version "2.5.2"
+    id 'com.skillsjars.gradle-plugin' version '0.1.4'
 }
 
 
 version = "$ecodataVersion"
 group = "au.org.ala"
 description = "Ecodata"
+
+// Declared before the Grails plugin is applied so the Grails BOM / CLI companions can be resolved.
+repositories {
+    mavenLocal()
+    maven { url "https://repo.osgeo.org/repository/release/" }
+    maven { url "https://repo.grails.org/grails/core" }
+    maven { url "https://nexus.ala.org.au/content/groups/public/" }
+    mavenCentral()
+}
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -41,18 +52,14 @@ if (Boolean.valueOf(enableJacoco)) {
     apply from: "${project.projectDir}/gradle/jacoco.gradle"
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+// Grails 8 requires JDK 21+; this application targets Java 25.
+// (Gradle 9 removed the top-level sourceCompatibility/targetCompatibility convention properties.)
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
 
 apply from: "${project.projectDir}/gradle/publish.gradle"
-
-repositories {
-    mavenLocal()
-    maven { url "https://repo.osgeo.org/repository/release/" }
-    maven { url "https://repo.grails.org/grails/core" }
-    maven { url "https://nexus.ala.org.au/content/groups/public/" }
-    mavenCentral()
-}
 
 configurations {
     developmentOnly
@@ -62,6 +69,9 @@ configurations {
 }
 
 dependencies {
+    skill 'org.apache.grails.skills:grails-developer:8.0.0'
+    skill 'org.apache.grails.skills:grails-8-upgrade:8.0.0'
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
@@ -110,9 +120,7 @@ dependencies {
     implementation 'org.apache.poi:poi:5.4.1'
     implementation 'org.apache.poi:poi-ooxml:5.4.1'
     implementation 'org.apache.poi:poi-ooxml-full:5.4.1'
-    implementation('org.apache.groovy:groovy-dateutil:4.0.24') {
-        exclude module: "groovy"
-    }
+    implementation('org.apache.groovy:groovy-dateutil')
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
     implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
@@ -128,7 +136,8 @@ dependencies {
     implementation ("com.github.fge:json-schema-validator:2.1.6")  {
         exclude module: "mailapi"
     }
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
+    // Jackson 2 CSV module; version aligned through the jackson-2-bom managed by the Grails BOM.
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
 
     implementation 'org.grails.plugins:excel-export:2.1'
     implementation "org.locationtech.jts:jts-core:${jtsVersion}"
@@ -155,7 +164,8 @@ dependencies {
     implementation 'au.org.ala.plugins:openapi:2.0.0-SNAPSHOT'
     implementation "io.swagger.core.v3:swagger-annotations:2.2.23"
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
-    implementation "org.hibernate:hibernate-validator:6.2.0.Final"
+    // Jakarta-based Hibernate Validator; version managed by Spring Boot 4 (6.2.x was javax-based).
+    implementation "org.hibernate.validator:hibernate-validator"
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'xyz.capybara:clamav-client:2.1.2'
 
@@ -171,6 +181,8 @@ dependencies {
     // grails-geb only exposes the Geb library (geb-spock, geb.* classes) via its test
     // fixtures in Grails 7; without this the integration tests fail to compile.
     testImplementation testFixtures("org.apache.grails:grails-geb")
+    // Grails 8 moved grails.util.GrailsWebMockUtil into the grails-web-common test fixtures.
+    testImplementation testFixtures("org.apache.grails.web:grails-web-common")
     testImplementation "org.apache.grails:grails-testing-support-web"
     testImplementation "org.apache.grails:grails-testing-support-views-gson"
     testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
@@ -189,6 +201,10 @@ dependencies {
 
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly 'org.hsqldb:hsqldb:2.7.1'
+    // TEMPORARY (Grails 8 migration): remove once startup reports no property-migration warnings.
+    runtimeOnly 'org.springframework.boot:spring-boot-properties-migrator'
+    // Gradle 9 no longer supplies an implicit JUnit Platform launcher.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 springBoot {
@@ -241,7 +257,7 @@ npm_run_bundle {
 bootJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     enabled = true
-    launchScript()
+    // launchScript() removed: Spring Boot 4 no longer supports fully executable jars.
 }
 
 assetCompile {
@@ -258,6 +274,10 @@ bootWar {
 
 publish {
     dependsOn assemble
+}
+
+skillsjars {
+    outputDir = layout.projectDirectory.dir('.agents/skills')
 }
 
 
