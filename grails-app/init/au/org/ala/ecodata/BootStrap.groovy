@@ -165,8 +165,6 @@ class BootStrap {
     }
 
     def destroy = {
-        // Close ehcache so that disk cached items are persisted. Otherwise, it will clear it the next time it starts up.
-        grailsCacheManager.destroy()
         // shutdown ES server
         elasticSearchService.destroy()
         log.info "Shutting down - completed destroy method"

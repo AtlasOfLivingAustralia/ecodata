@@ -12,9 +12,6 @@ buildscript {
         classpath "org.apache.grails:grails-gradle-plugins:$grailsVersion"
         classpath "cloud.wondrify:asset-pipeline-gradle:$assetPipelineVersion"
         classpath "cloud.wondrify:sass-asset-pipeline:$assetPipelineVersion"
-
-        //classpath 'org.apache.grails:grails-quartz:2.0.13' // Needed to compile *Job classes
-
     }
 }
 
@@ -124,7 +121,17 @@ dependencies {
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
     implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
-    implementation "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
+    implementation("org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion") {
+        // http-builder-helper 1.1.0 is a Grails 3 plugin whose descriptor registers rest.Application as a
+        // provided artefact. Its static initialiser references grails.dev.Support (removed in Grails 7) and
+        // overwrites the grails.main.class system property, which breaks startup once grails-quartz
+        // (whose JobArtefactHandler initialises every provided artefact class) is on the classpath.
+        exclude group: 'org.grails.plugins', module: 'http-builder-helper'
+    }
+    // Previously a transitive dependency of http-builder-helper; still required by ala-ws-plugin's WebService.
+    implementation("org.codehaus.groovy.modules.http-builder:http-builder:0.7.1") {
+        exclude group: 'org.codehaus.groovy'
+    }
     implementation "au.org.ala:userdetails-service-client:$alaSecurityLibsVersion"
 
     implementation "au.org.ala.grails:interceptor-annotation-matcher:2.0.0-SNAPSHOT"
@@ -152,8 +159,7 @@ dependencies {
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'
     implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
 
-    //implementation 'org.apache.grails:grails-quartz:2.0.13'
-    implementation 'org.quartz-scheduler:quartz:2.2.1' // Need transitive dependency from plugin
+    implementation 'org.apache.grails:grails-quartz'
 
     // For logback filter
     implementation 'org.codehaus.janino:janino:3.0.6'

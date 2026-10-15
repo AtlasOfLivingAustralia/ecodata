@@ -117,7 +117,7 @@ class RecordConverter {
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel, context)
             baseRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
-            updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
+            updateEventIdToMeasurements(baseRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
         }
 
         List<Map> records = []
@@ -131,7 +131,7 @@ class RecordConverter {
                     records << speciesRecord
             }
             else {
-                updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
+                updateSpeciesIdToMeasurements(speciesRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
                 records << speciesRecord
             }
         }
@@ -155,7 +155,7 @@ class RecordConverter {
                         }
                     }
                     else {
-                        updateEventIdToMeasurements(rowRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
+                        updateEventIdToMeasurements(rowRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
                         records << rowRecord
                     }
                 }
@@ -174,7 +174,7 @@ class RecordConverter {
 
     static List convertMeasurementsOrFactsToList (List records) {
         records?.each { record ->
-            record[PROP_MEASUREMENTS_OR_FACTS] = record[PROP_MEASUREMENTS_OR_FACTS]?.collect { it.value } ?: []
+            record[ListConverter.PROP_MEASUREMENTS_OR_FACTS] = record[ListConverter.PROP_MEASUREMENTS_OR_FACTS]?.collect { it.value } ?: []
         }
 
         records
