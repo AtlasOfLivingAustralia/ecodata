@@ -24,7 +24,7 @@ class LocationController {
         Location r = Location.get(params.id)
         if(r){
             r.metaPropertyValues.each { println "meta: "  + it.name }
-            def mapOfProperties = r.getProperty("dbo")
+            def mapOfProperties = GormMongoUtil.getDbo(r)
             mapOfProperties.remove("_id")
             response.setContentType("application/json")
             render mapOfProperties as JSON
@@ -93,7 +93,7 @@ class LocationController {
 
         log.debug("Retrieving a list for user:"  + params.userId)
         Location.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
-            def mapOfProperties = it.getProperty("dbo")
+            def mapOfProperties = GormMongoUtil.getDbo(it)
             mapOfProperties.remove("_id")
             locations.add(mapOfProperties)
         }
@@ -110,7 +110,7 @@ class LocationController {
 
         log.debug("Retrieving a list for all users")
         Location.findAllWhere([:], [sort:sort,order:order,offset:offset,max:max]).each {
-            def mapOfProperties = it.getProperty("dbo")
+            def mapOfProperties = GormMongoUtil.getDbo(it)
             mapOfProperties.remove("_id")
             locations.add(mapOfProperties)
         }

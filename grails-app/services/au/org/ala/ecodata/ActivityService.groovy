@@ -286,8 +286,8 @@ class ActivityService {
      * @return map of properties
      */
     def toMap(act, levelOfDetail = ['all'], version = null) {
-       // def mapOfProperties = act instanceof Activity ? act.getProperty("dbo").toMap() : act
-        def mapOfProperties = act instanceof Activity ? GormMongoUtil.extractDboProperties(act.getProperty("dbo")) : act //[*:GormMongoUtil.extractDboProperties(act.getProperty("dbo"))] : act
+       // def mapOfProperties = act instanceof Activity ? GormMongoUtil.getDbo(act).toMap() : act
+        def mapOfProperties = act instanceof Activity ? GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(act)) : act //[*:GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(act))] : act
         mapOfProperties.complete = act.complete // This is not a persistent property so is not in the dbo.
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
@@ -587,7 +587,7 @@ class ActivityService {
      * @return map of properties
      */
     def toLiteMap(act) {
-        def mapOfProperties = act.getProperty("dbo")
+        def mapOfProperties = GormMongoUtil.getDbo(act)
        // def mapOfProperties = dbo.toMap()
         [activityId: mapOfProperties.activityId,
                 siteId: mapOfProperties.siteId,

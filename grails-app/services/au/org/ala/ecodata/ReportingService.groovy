@@ -35,7 +35,7 @@ class ReportingService {
     }
 
     Map toMap(Report report, levelOfDetail = []) {
-        def mapOfProperties = GormMongoUtil.extractDboProperties(report.getProperty("dbo"))
+        def mapOfProperties = GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(report))
       //  def mapOfProperties = dbo.toMap()
         mapOfProperties.findAll {k,v -> v != null}
         //GormMongoUtil.deepPrune(mapOfProperties)

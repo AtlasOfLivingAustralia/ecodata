@@ -160,7 +160,7 @@ class OrganisationService implements DataBinder {
     }
 
     def toMap(Organisation org, levelOfDetail = []) {
-        def mapOfProperties = GormMongoUtil.extractDboProperties(org.getProperty('dbo'))
+        def mapOfProperties = GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(org))
        // def mapOfProperties = dbo.toMap()
 
         if ('projects' in levelOfDetail) {

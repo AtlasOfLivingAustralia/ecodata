@@ -17,7 +17,7 @@ class CommentService {
      * @return
      */
     Map getPropertiesOfDomainObject(Comment it) {
-        def mapOfProperties = it.getProperty("dbo")
+        def mapOfProperties = GormMongoUtil.getDbo(it)
         //Map mapOfProperties = dbo.toMap()
         mapOfProperties.id = mapOfProperties._id
         mapOfProperties.remove("_id")

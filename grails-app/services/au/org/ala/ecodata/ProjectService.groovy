@@ -210,7 +210,7 @@ class ProjectService {
     Map toMap(project, levelOfDetail = [], includeDeletedActivities = false, version = null) {
         Map result
 
-        Map mapOfProperties = project instanceof Project ? GormMongoUtil.extractDboProperties(project.getProperty("dbo")) : project
+        Map mapOfProperties = project instanceof Project ? GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(project)) : project
 
         if (levelOfDetail instanceof List) {
             levelOfDetail = levelOfDetail[0]
@@ -336,7 +336,7 @@ class ProjectService {
      * @return map of properties
      */
     def toRichMap(prj) {
-        def mapOfProperties = prj.getProperty("dbo")
+        def mapOfProperties = GormMongoUtil.getDbo(prj)
         //def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
