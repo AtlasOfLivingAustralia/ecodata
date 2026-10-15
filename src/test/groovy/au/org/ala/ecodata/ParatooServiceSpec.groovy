@@ -888,10 +888,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         output.size() == 2
-        output["properties"]["vegetation-mapping-survey"]["properties"].size() == 2
-        output["properties"]["vegetation-mapping-survey"]["properties"]["vegetation-mapping-observation"]["properties"].size() == 1
-        output["properties"]["vegetation-mapping-survey"]["properties"]["test"] == ["type": "string"]
-        output["properties"]["vegetation-mapping-survey"]["properties"]["vegetation-mapping-observation"]["properties"]["observation"]["properties"]["survey"]["properties"].size() == 0
+        output.get('properties')["vegetation-mapping-survey"].get('properties').size() == 2
+        output.get('properties')["vegetation-mapping-survey"].get('properties')["vegetation-mapping-observation"].get('properties').size() == 1
+        output.get('properties')["vegetation-mapping-survey"].get('properties')["test"] == ["type": "string"]
+        output.get('properties')["vegetation-mapping-survey"].get('properties')["vegetation-mapping-observation"].get('properties')["observation"].get('properties')["survey"].get('properties').size() == 0
     }
 
     void "cleanSwaggerDefinition should standardize the swagger definition"() {
@@ -934,10 +934,10 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         result.size() == 3
 
-        result.properties.size() == 5
-        result.properties.plot.size() == 2
-        result.properties.number.type == "string"
-        result.properties.quad.properties.type == "integer"
+        result.get('properties').size() == 5
+        result.get('properties').plot.size() == 2
+        result.get('properties').number.type == "string"
+        result.get('properties').quad.get('properties').type == "integer"
         result.required.size() == 2
         result.required[0] == "transect_number"
     }
@@ -1090,12 +1090,12 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
 
         then:
         result.size() == 2
-        result.properties.plot.properties.transect_number.type == "string"
-        result.properties.plot.properties.date_time.format == "date-time"
-        result.properties.quad.properties.properties.date.format == "date"
-        result.properties.quad.properties.properties.transect.type == "string"
-        result.properties.photo.type == "integer"
-        result.properties.photo["x-model-ref"] == "file"
+        result.get('properties').plot.get('properties').transect_number.type == "string"
+        result.get('properties').plot.get('properties').date_time.format == "date-time"
+        result.get('properties').quad.get('properties').get('properties').date.format == "date"
+        result.get('properties').quad.get('properties').get('properties').transect.type == "string"
+        result.get('properties').photo.type == "integer"
+        result.get('properties').photo["x-model-ref"] == "file"
     }
 
     void "isPlotLayoutNeededByProtocol checks if plot is required by protocol"() {
@@ -1284,11 +1284,11 @@ class ParatooServiceSpec extends MongoSpec implements ServiceUnitTest<ParatooSer
         then:
         result.size() == 2
         result["plot-layout"].size() == 2
-        result["plot-layout"].properties.transect_number.type == "string"
-        result["plot-layout"].properties.date_time.format == "date-time"
+        result["plot-layout"].get('properties').transect_number.type == "string"
+        result["plot-layout"].get('properties').date_time.format == "date-time"
         result["basal-area-dbh-measure-observation"].size() == 2
-        result["basal-area-dbh-measure-observation"].items.properties.date.format == "date"
-        result["basal-area-dbh-measure-observation"].items.properties.transect.type == "string"
+        result["basal-area-dbh-measure-observation"].items.get('properties').date.format == "date"
+        result["basal-area-dbh-measure-observation"].items.get('properties').transect.type == "string"
     }
 
     void "convertToDataModelAndViewModel should return correct data model"() {

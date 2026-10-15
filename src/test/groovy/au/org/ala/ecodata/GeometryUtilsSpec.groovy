@@ -55,10 +55,10 @@ class GeometryUtilsSpec extends Specification {
         GeometryUtils.assignNeighboursToFeatures(features, "neighbours")
 
         then:
-        features[0].properties.neighbours == ["2", "3"]
-        features[1].properties.neighbours == ["1", "3", "4"]
-        features[2].properties.neighbours == ["1", "2", "4"]
-        features[3].properties.neighbours == ["2", "3"]
+        features[0].get('properties').neighbours == ["2", "3"]
+        features[1].get('properties').neighbours == ["1", "3", "4"]
+        features[2].get('properties').neighbours == ["1", "2", "4"]
+        features[3].get('properties').neighbours == ["2", "3"]
 
     }
 
@@ -76,10 +76,10 @@ class GeometryUtilsSpec extends Specification {
         GeometryUtils.assignDistinctValuesToNeighbouringFeatures(features, "type")
 
         then:
-        features[0].properties.type == 1
-        features[1].properties.type == 2
-        features[2].properties.type == 3
-        features[3].properties.type == 1
+        features[0].get('properties').type == 1
+        features[1].get('properties').type == 2
+        features[2].get('properties').type == 3
+        features[3].get('properties').type == 1
 
     }
 

@@ -18,7 +18,7 @@
         </div>
         <div class="row-fluid">
             <h4><g:message code="api.output.heading" args="${[name]}"/></h4>
-            <g:render template="objectDocumentation" model="${[object:outputSchema, target:outputSchema.properties.data, name:name, overview:overview]}"/>
+            <g:render template="objectDocumentation" model="${[object:outputSchema, target:outputSchema.get('properties').data, name:name, overview:overview]}"/>
 
         </div>
     </div>

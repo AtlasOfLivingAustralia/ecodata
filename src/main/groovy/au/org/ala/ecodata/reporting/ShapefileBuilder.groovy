@@ -101,8 +101,8 @@ class ShapefileBuilder {
                     if (feature.geometry) {
                         Map siteProps = new HashMap(site)
                         siteProps.name = site.name
-                        siteProps.featureName = feature.properties?.name
-                        siteProps.featureId = feature.properties?.id
+                        siteProps.featureName = feature.get('properties')?.name
+                        siteProps.featureId = feature.get('properties')?.id
                         writeGeometry(siteProps, project, new HashMap(feature.geometry))
                     }
                     else {

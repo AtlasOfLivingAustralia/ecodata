@@ -386,9 +386,9 @@ class ElasticSearchService {
             Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
             def facetMappings = buildFacetMapping()
             // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-            parsedJson.mappings["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
-            parsedJson.mappings["properties"].sites["properties"].extent["properties"].geometry["properties"].putAll(facetMappings.properties)
-            parsedJson.mappings["properties"].putAll(facetMappings.facets)
+            parsedJson.mappings.get('properties').extent.get('properties').geometry.get('properties').putAll(facetMappings.get('properties'))
+            parsedJson.mappings.get('properties').sites.get('properties').extent.get('properties').geometry.get('properties').putAll(facetMappings.get('properties'))
+            parsedJson.mappings.get('properties').putAll(facetMappings.facets)
             parsedJson
         })
     }
@@ -431,17 +431,17 @@ class ElasticSearchService {
             case 'Image':
             case 'document':
             case 'stringList':
-                mapping?.mappings["properties"].put(field.indexName, [
+                mapping?.mappings.get('properties').put(field.indexName, [
                         "type" : "keyword"
                 ])
                 break
             case 'number':
-                mapping?.mappings["properties"].put(field.indexName, [
+                mapping?.mappings.get('properties').put(field.indexName, [
                         "type" : "double"
                 ])
                 break
             case 'date':
-                mapping?.mappings["properties"].put(field.indexName, [
+                mapping?.mappings.get('properties').put(field.indexName, [
                         "type" : "date"
                 ])
                 break
@@ -451,7 +451,7 @@ class ElasticSearchService {
     }
 
     boolean doesIndexExist(String index, Map mapping){
-        if(mapping?.mappings["properties"].hasProperty(index)){
+        if(mapping?.mappings.get('properties').hasProperty(index)){
             return true
         }
 
@@ -1480,7 +1480,6 @@ class ElasticSearchService {
             if (site) {
                 // Not useful for the search index and there is a bug right now that can result in invalid POI
                 // data causing the indexing to fail.
-              //  def mapOfSite = site.getProperty("dbo")
                 site.remove('poi')
               //  site = mapOfSite as Site
                 activity.sites = [site]
@@ -1606,7 +1605,7 @@ class ElasticSearchService {
         List navigatedPath = []
         path?.each{ prop ->
             if(temp instanceof Map){
-                temp = temp[prop]
+                temp = MapKeyAccess.mapEntry(temp, prop)
             } else if(temp instanceof List){
                 temp.each { map ->
                     result.addAll(getDataFromPath(map, path - navigatedPath))

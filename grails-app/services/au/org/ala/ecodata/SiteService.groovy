@@ -168,7 +168,7 @@ class SiteService {
      * @return map of properties
      */
     def toMap(site, levelOfDetail = [], version = null) {
-        def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(site.getProperty("dbo")) : site
+        def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(site)) : site
         // Treat the default externalId as the externalId property for backwards
         // compatibility with the MERIT and BioCollect UI
         if (site instanceof Site) {
@@ -241,7 +241,7 @@ class SiteService {
         Map geometry = geoJson
 
         if (geoJson.type == "Feature") {
-            properties = geoJson.properties
+            properties = geoJson.get('properties')
             geometry = geoJson.geometry
         }
         Map site = [name:properties.name, description:properties.description, notes:properties.notes]

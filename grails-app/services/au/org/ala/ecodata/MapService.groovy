@@ -370,7 +370,7 @@ class MapService {
 
     String getDataTypeForIndex (String index, String dataStore) {
         Map mapping = getMapping(dataStore)
-        mapping = mapping["properties"]
+        mapping = mapping.get('properties')
         getDataTypeFromMapping(index, mapping, getFieldsMapping(dataStore))
     }
 
@@ -389,7 +389,7 @@ class MapService {
     Map getFieldsMapping(String dataStore) {
         cacheService.get("elastic-search-fields-mapping-${dataStore}", {
             Map mapping = getMapping(dataStore)
-            mapping = mapping["properties"]
+            mapping = mapping.get('properties')
             getFieldsMapping(mapping)
         }) as Map
     }
@@ -400,8 +400,8 @@ class MapService {
 
         path?.each { element ->
             currentMapping = currentMapping?.get(element)
-            if (currentMapping?.properties) {
-                currentMapping = currentMapping.properties
+            if (currentMapping?.get('properties')) {
+                currentMapping = currentMapping.get('properties')
             }
         }
 
@@ -423,8 +423,8 @@ class MapService {
                 fieldsMapping[it.key].path = "${fieldPath.join('.')}"
             }
 
-            if(definition.properties) {
-                getFieldsMapping(definition.properties, fieldsMapping, fieldPath)
+            if(definition.get('properties')) {
+                getFieldsMapping(definition.get('properties'), fieldsMapping, fieldPath)
             }
         }
 
@@ -756,7 +756,7 @@ class MapService {
             numberOfBuckets = grailsApplication.config.getProperty('geoserver.facetRangeColour', List).size()
 
         features?.features?.each { Map feature ->
-            Map properties = feature.properties
+            Map properties = feature.get('properties')
             if (properties.count > maxCount) {
                 maxCount = properties.count
             }
@@ -787,7 +787,7 @@ class MapService {
         }
 
         features?.features?.each { Map feature ->
-            Map properties = feature.properties
+            Map properties = feature.get('properties')
             int index = (properties.count - minCount) / stepSize
             if (index >= buckets.size()) {
                 index = buckets.size() - 1

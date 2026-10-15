@@ -58,7 +58,7 @@ class OutputFetcher implements DataFetcher<List<Output>> {
         Schema schemaEntity = new Schema()
         schemaEntity.type = schema.type
         schemaEntity.id = schema.id
-        schemaEntity.propertyList = schema.properties
+        schemaEntity.propertyList = schema.get('properties') // Groovy 5: map.properties is the bean property
         return schemaEntity
     }
 
