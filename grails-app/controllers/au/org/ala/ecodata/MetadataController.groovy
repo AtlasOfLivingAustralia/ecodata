@@ -230,7 +230,7 @@ class MetadataController {
     def extractOutputDataFromExcelOutputTemplate() {
 
         MultipartFile file = null
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             file = request.getFile('data')
         }
         String outputName = params.type
@@ -263,7 +263,7 @@ class MetadataController {
     def extractOutputDataFromActivityExcelTemplate() {
 
         MultipartFile file = null
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             file = request.getFile('data')
         }
         String outputName = params.type

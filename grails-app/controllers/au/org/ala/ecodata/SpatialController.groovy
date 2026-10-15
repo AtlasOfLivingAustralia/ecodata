@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.tuple.Pair
 import org.locationtech.jts.geom.Geometry
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import jakarta.servlet.http.HttpServletResponse
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
@@ -22,7 +21,7 @@ class SpatialController {
 
         File tmpZipFile = File.createTempFile("shpUpload", ".zip")
 
-        if (request instanceof MultipartHttpServletRequest) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             // Parse the request
             Map<String, MultipartFile> items = request.getFileMap()
 

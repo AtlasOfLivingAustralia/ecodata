@@ -5,7 +5,6 @@ import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.Status.DELETED
 import static jakarta.servlet.http.HttpServletResponse.*
@@ -310,7 +309,7 @@ class RecordController {
     def create() {
 
         log.info("Create request received: " + request.getContentType())
-        if (request instanceof MultipartHttpServletRequest) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             try {
                 log.info("Multipart POST received ...")
                 def js = new JsonSlurper()
@@ -327,7 +326,7 @@ class RecordController {
                     def imagesToBeLoaded = [:]
 
                     //handle the multipart message.....
-                    if (request instanceof MultipartHttpServletRequest) {
+                    if (MultipartRequestUtils.isMultipart(request)) {
                         Map<String, MultipartFile> fileMap = request.getFileMap()
                         for (String fileKey : fileMap.keySet()) {
                             MultipartFile multipartFile = fileMap.get(fileKey)

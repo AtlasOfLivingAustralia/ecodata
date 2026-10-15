@@ -857,7 +857,7 @@ class AdminController {
 
     @AlaSecured(["ROLE_ADMIN"])
     def createDataDescription() {
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             MultipartFile excel = request.getFile('descriptionData')
             String fileType = excel.getContentType()
 
@@ -1012,7 +1012,7 @@ class AdminController {
     @AlaSecured(["ROLE_ADMIN"])
     def scanDocument () {
         MultipartFile file = null
-        if (request.respondsTo('getFile'))
+        if (MultipartRequestUtils.isMultipart(request))
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()

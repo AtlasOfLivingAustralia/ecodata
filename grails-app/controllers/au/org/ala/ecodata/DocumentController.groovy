@@ -10,7 +10,6 @@ import org.apache.http.HttpStatus
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.multipart.MultipartHttpServletRequest
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
@@ -166,12 +165,13 @@ class DocumentController {
         def props = null
         def stream = null
         long contentLength = 0
-        if (request instanceof MultipartHttpServletRequest) {
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request
-            Iterator<String> names = multipartRequest.getFileNames()
+        // Grails 8 keeps the outermost request wrapper, so check the content type rather than the request class
+        // and use the request's upload accessors directly.
+        if (MultipartRequestUtils.isMultipart(request)) {
+            Iterator<String> names = request.getFileNames()
             if (names.hasNext()) {
 
-                MultipartFile file = multipartRequest.getFile(names.next())
+                MultipartFile file = request.getFile(names.next())
                 props = JSON.parse(params.document)
                 if (!props.contentType && file) {
                     props.contentType = file.contentType
@@ -264,14 +264,13 @@ class DocumentController {
      * @return the thumbnail image
      */
     def createThumbnail() {
-        if (!request.respondsTo('getFile')) {
+        MultipartFile file = MultipartRequestUtils.isMultipart(request) ? request.getFile('image') : null
+        if (!file) {
             render status:400, text:'An image file must be supplied'
             return
         }
         else {
 
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request
-            MultipartFile file = multipartRequest.getFile('image')
 
             File tmp = File.createTempFile("tmp", "."+FilenameUtils.getExtension(file.originalFilename))
             new FileOutputStream(tmp).withStream { it << file.inputStream }
@@ -373,7 +372,7 @@ class DocumentController {
 
     def scanDocument () {
         MultipartFile file = null
-        if (request.respondsTo('getFile'))
+        if (MultipartRequestUtils.isMultipart(request))
             file = request.getFile('fileToScan')
         if (file) {
             InputStream input = file.getInputStream()

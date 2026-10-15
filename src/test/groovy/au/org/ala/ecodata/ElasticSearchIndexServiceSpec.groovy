@@ -4,7 +4,7 @@ import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
-import jakarta.servlet.http.HttpServletRequest
+import org.springframework.mock.web.MockHttpServletRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexRequestBuilder
@@ -54,9 +54,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "", 'view': "", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -69,9 +69,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "", 'view': "myrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -84,9 +84,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "8997", 'projectId': "", 'view': "myrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -99,9 +99,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> true
         permissionService.isUserEditorForProject(_, _) >> true
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "8997", 'projectId': "abc", 'view': "project", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -115,9 +115,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> true
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "8997", 'projectId': "abc", 'view': "project", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -130,9 +130,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "889", 'projectId': "abc", 'view': "project", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -146,9 +146,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "abc", 'view': "project", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -161,9 +161,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "", 'view': "allrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -177,9 +177,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.moderator, AccessLevel.editor) >> ['abc', 'cde']
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "", 'view': "allrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -193,9 +193,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.editor) >> []
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "", 'view': "allrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -209,9 +209,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser(_, _) >> []
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "", 'view': "allrecords", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -225,9 +225,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser(_, _) >> []
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "", 'view': "allrecords", 'query': "", 'searchTerm': "Test"]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -240,9 +240,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserAdminForProject(_, _) >> false
         permissionService.isUserEditorForProject(_, _) >> false
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -256,9 +256,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.moderator, AccessLevel.editor) >> ['abc', 'cde']
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "", 'view': "bulkimport", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -272,9 +272,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser('1234', AccessLevel.admin, AccessLevel.editor) >> ["123"]
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "1234", 'projectId': "123", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -288,9 +288,9 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         permissionService.isUserEditorForProject(_, _) >> false
         permissionService.getProjectsForUser(_, _) >> []
 
-        GrailsParameterMap map = new GrailsParameterMap([getParameterMap: { ->
+        GrailsParameterMap map = paramsMap(
             ['userId': "", 'projectId': "", 'view': "bulkimport", "bulkImportId": "123", 'query': ""]
-        }] as HttpServletRequest)
+        )
         service.buildProjectActivityQuery(map)
 
         then:
@@ -498,5 +498,15 @@ class ElasticSearchIndexServiceSpec extends MongoSpec implements ServiceUnitTest
         1 * client.get(_, _) >> getResponse
         1 * getResponse.exists >> true
         1 * client.delete(_, _)
+    }
+
+    /**
+     * Grails 8's GrailsParameterMap resolves the multipart request behind the supplied request, which a
+     * Map-coerced HttpServletRequest cannot support, so build the params from a real mock request.
+     */
+    private static GrailsParameterMap paramsMap(Map<String, String> params) {
+        MockHttpServletRequest request = new MockHttpServletRequest()
+        params.each { String name, String value -> request.addParameter(name, value) }
+        new GrailsParameterMap(request)
     }
 }
