@@ -155,9 +155,9 @@ dependencies {
     implementation "org.geotools:gt-geojson:${geoToolsVersion}"
     implementation "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
     implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.12.0'
-    implementation 'org.grails.plugins:mail:3.0.0'
+    implementation 'org.apache.grails:grails-mail'
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'
-    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
+    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260101.1'
 
     implementation 'org.apache.grails:grails-quartz'
 

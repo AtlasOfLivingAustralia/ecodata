@@ -1118,11 +1118,11 @@ class ParatooService {
 
     def getModelStructureFromDefinition(def definition) {
         if (definition instanceof Map)
-            definition?.get('properties')?.data?.get('properties') ?: definition?.items?.get('properties')?.data?.get('properties') ?: definition?.items?.get('properties') ?: definition?.get('properties') ?: definition?.items
+            MapKeyAccess.valueAt(definition, 'properties')?.data?.get('properties') ?: MapKeyAccess.valueAt(definition, 'items')?.get('properties')?.data?.get('properties') ?: MapKeyAccess.valueAt(definition, 'items')?.get('properties') ?: MapKeyAccess.valueAt(definition, 'properties') ?: MapKeyAccess.valueAt(definition, 'items')
     }
 
     def getRequiredModels(Map properties) {
-        properties.get('properties')?.data?.required ?: properties.items?.get('properties')?.data?.required ?: properties.items?.required ?: properties.get('properties')?.required ?: properties?.required ?: []
+        MapKeyAccess.valueAt(properties, 'properties')?.data?.required ?: MapKeyAccess.valueAt(properties, 'items')?.get('properties')?.data?.required ?: MapKeyAccess.valueAt(properties, 'items')?.required ?: MapKeyAccess.valueAt(properties, 'properties')?.required ?: MapKeyAccess.valueAt(properties, 'required') ?: []
     }
 
     Map simplifyModelStructure(Map definition) {
@@ -1211,7 +1211,7 @@ class ParatooService {
                         }
                     }
                 }
-            } else if (definition.get('properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
+            } else if (MapKeyAccess.valueAt(definition, 'properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
                 // For representation like
                 //   {
                 //         "quad" : {
@@ -1264,7 +1264,7 @@ class ParatooService {
                         }
                     }
                 }
-            } else if (definition.get('properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
+            } else if (MapKeyAccess.valueAt(definition, 'properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
                 // For representation like
                 //   {
                 //         "quad" : {
@@ -1275,9 +1275,9 @@ class ParatooService {
                 //          }
                 //      }
                 //  }
-                buildParentChildRelationship(definition.get('properties'), ancestorNodes, relationships)
+                buildParentChildRelationship(MapKeyAccess.valueAt(definition, 'properties'), ancestorNodes, relationships)
             } else {
-                def iteratingObject = definition.get('properties') ?: definition
+                def iteratingObject = MapKeyAccess.valueAt(definition, 'properties') ?: definition
                 if (iteratingObject instanceof Map) {
                     iteratingObject?.each { String modelName, model ->
                         ancestorNodes.push(modelName)

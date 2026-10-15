@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import groovy.transform.CompileStatic
+import org.grails.web.json.JSONObject
 
 /**
  * Key lookup helpers for code that navigates arbitrary Map structures (JSON schemas, GeoJSON, form data) using
@@ -28,7 +29,7 @@ class MapKeyAccess {
         target[key]
     }
 
-    /** Statically compiled so the call binds to Map.get(Object) rather than JSONObject.get(String). */
+    /** Statically compiled so the call binds to Map.get(Object) rather than JSONObject.get(String) as JSONObject.get throws an Exception if the key is missing. */
     @CompileStatic
     static Object mapEntry(Map map, Object key) {
         map.get(key)
