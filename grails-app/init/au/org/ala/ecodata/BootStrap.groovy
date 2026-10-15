@@ -21,11 +21,37 @@ import static grails.async.Promises.task
 
 class BootStrap {
 
+    /** Lower than the default (0) so the type-specific marshallers registered here take precedence. */
+    static final int ENUM_FALLBACK_MARSHALLER_PRIORITY = -1
+
+    /**
+     * Registers the JSON enum formats returned by the ecodata API.
+     *
+     * Grails 8 made SimpleEnumMarshaller (enum rendered as a plain string) the default and removed the previous
+     * EnumMarshaller, which rendered {"enumType": "<class name>", "name": "<constant>"}. MERIT and BioCollect consume
+     * the existing format, so it is registered explicitly as a fallback for all enums.
+     */
+    static void registerEnumMarshallers() {
+        JSON.registerObjectMarshaller(Enum, ENUM_FALLBACK_MARSHALLER_PRIORITY) { Enum value ->
+            [enumType: value.getDeclaringClass().name, name: value.name()]
+        }
+
+        /**
+         * Custom JSON serializer for {@link AccessLevel} enum
+         */
+        JSON.registerObjectMarshaller( AccessLevel ) { AccessLevel al ->
+            return [
+                    class: al.getClass().canonicalName,
+                    name : al.name(),
+                    code : al.getCode()
+            ]
+        }
+    }
+
     def elasticSearchService
     def grailsApplication
     def auditService
     def hubService
-    def messageSource
     def grailsCacheManager
     SpatialService spatialService
     MetadataService metadataService
@@ -40,12 +66,6 @@ class BootStrap {
             initializeSpatialIntersection()
         }
 
-        messageSource.setBasenames(
-                "file:///var/opt/atlas/i18n/ecodata/messages",
-                "file:///opt/atlas/i18n/ecodata/messages",
-                "WEB-INF/grails-app/i18n/messages",
-                "classpath:messages"
-        )
 
         // Add custom GORM event listener for ES indexing
         def ctx = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
@@ -66,16 +86,7 @@ class BootStrap {
         // Registering it here seems to resolve the issue.
         mongoDatastore.setCodecs([new AccessLevelCodec()])
 
-        /**
-         * Custom JSON serializer for {@link AccessLevel} enum
-         */
-        JSON.registerObjectMarshaller( AccessLevel ) { AccessLevel al ->
-            return [
-                    class: al.getClass().canonicalName,
-                    name : al.name(),
-                    code : al.getCode()
-            ]
-        }
+        registerEnumMarshallers()
 
         JSON.registerObjectMarshaller(Program) {
             return it.toMap()
