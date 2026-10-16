@@ -25,6 +25,10 @@ class Application extends GrailsAutoConfiguration {
     private static final String EHCACHE_DIRECTORY_CONFIG_ITEM = "ehcache.directory"
     private static final String DEFAULT_EHCACHE_DIRECTORY = "./ehcache"
 
+    static {
+        BsonDocumentConverterWorkaround.install()
+    }
+
     static void main(String[] args) {
         GrailsApp.run(Application, args)
     }

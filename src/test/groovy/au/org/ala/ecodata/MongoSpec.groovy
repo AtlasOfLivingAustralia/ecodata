@@ -23,6 +23,7 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
     protected Session mongoSession
 
     void setupSpec() {
+        BsonDocumentConverterWorkaround.install()
         String host = config.getProperty("grails.mongodb.host", String, "localhost")
         int port = config.getProperty("grails.mongodb.port", Integer, 27017)
         String databaseName = config.getProperty("grails.mongodb.database", String, "test")

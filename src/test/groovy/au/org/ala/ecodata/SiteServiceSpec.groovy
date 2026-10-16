@@ -305,6 +305,25 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
         sites.externalIds.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
     }
 
+    def "Site features with a 'properties' key can be read back from the database"() {
+        setup:
+        Map feature = [type:'Feature', geometry:[type:'Point', coordinates:[149.06538752124, -35.25925241653464]], properties:[name:'Point 1', id:'p1']]
+
+        when:
+        Site.withSession { session ->
+            new Site(siteId:'s1', name:'Site 1', projects:['p1'], features:[feature]).save(flush:true, failOnError:true)
+            session.clear()
+        }
+        List<Site> sites = Site.findAllByProjects('p1')
+
+        then:
+        sites.size() == 1
+        sites[0].features.size() == 1
+        sites[0].features[0].type == 'Feature'
+        sites[0].features[0].geometry.coordinates == [149.06538752124, -35.25925241653464]
+        sites[0].features[0].get('properties') == [name:'Point 1', id:'p1']
+    }
+
     def "The site area is calculated from the FeatureCollection for a compound site"() {
         setup:
         projectService.findHubIdFromProjectsOrCurrentHub(_) >> []
