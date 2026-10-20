@@ -1,5 +1,6 @@
 import au.org.ala.ecodata.Document
 import grails.util.Holders
+import org.grails.web.config.http.GrailsFilters
 
 import static au.org.ala.ecodata.Status.DELETED
 import org.joda.time.DateTime
@@ -622,7 +623,7 @@ security {
         callUserInfoEndpoint = false
         alaUseridClaim = "username"
         userIdClaim = "username"
-        requestWrapperFilterOrder = -155
+        requestWrapperFilterOrder = GrailsFilters.GRAILS_WEB_REQUEST_FILTER.order - 1
     }
 }
 webservice.jwt = false

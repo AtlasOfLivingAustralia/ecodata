@@ -13,7 +13,7 @@ class Lock {
     }
 
     static mapping = {
-        id generator: 'assigned'
+        id generator: 'assigned', storedAs: String
     }
 
     void setId(String id) {
