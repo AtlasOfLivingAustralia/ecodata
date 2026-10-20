@@ -36,7 +36,7 @@ class DownloadService {
     UserService userService
 
     def grailsApplication
-    def groovyPageRenderer
+    EmailTemplateService emailTemplateService
     def grailsLinkGenerator
 
     /**
@@ -63,7 +63,7 @@ class DownloadService {
             // download url entry point is either BioCollect or MERIT.
             String urlPrefix = params.remove('downloadUrl') ?: grailsApplication.config.getProperty('async.download.url.prefix')
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
-            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            String body = emailTemplateService.render("downloadComplete", [url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
@@ -75,7 +75,7 @@ class DownloadService {
 
         p.onError { Throwable error ->
             log.error("Failed to generate file for download.", error)
-            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            String body = emailTemplateService.render("downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
@@ -204,7 +204,7 @@ class DownloadService {
             int days = grailsApplication.config.getProperty('temp.file.cleanup.days', Integer)
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.getProperty('async.download.url.prefix')
             String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
-            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            String body = emailTemplateService.render("downloadComplete", [url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
@@ -214,7 +214,7 @@ class DownloadService {
         p.onError { Throwable error ->
             userService.clearCurrentUser()
             log.error("Failed to generate file for download.", error)
-            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            String body = emailTemplateService.render("downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
@@ -246,7 +246,7 @@ class DownloadService {
             else
                 url = params.reportDownloadBaseUrl+'/' + downloadId+'.'+fileExtension
 
-            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            String body = emailTemplateService.render("downloadComplete", [url: url, days: days])
             if(params.email && params.systemEmail && params.senderEmail)
                 emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             else
@@ -254,7 +254,7 @@ class DownloadService {
 
         }.onError { Throwable error ->
             log.error("Failed to generate zip file for download.", error)
-            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            String body = emailTemplateService.render("downloadFailed")
             emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
         }
 

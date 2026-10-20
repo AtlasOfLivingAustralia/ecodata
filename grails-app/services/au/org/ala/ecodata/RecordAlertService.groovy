@@ -24,7 +24,7 @@ class RecordAlertService {
     EmailService emailService
     ProjectService projectService
 
-    def groovyPageRenderer
+    EmailTemplateService emailTemplateService
     def grailsApplication
 
     static transactional = false
@@ -52,7 +52,7 @@ class RecordAlertService {
             values.activityUrl = grailsApplication.config.getProperty('biocollect.activity.url') + record?.activityId
             values.projectUrl = grailsApplication.config.getProperty('biocollect.project.url') + project?.projectId
 
-            String body = groovyPageRenderer.render(template: "/email/speciesAlert", model:[values: values])
+            String body = emailTemplateService.render("speciesAlert", [values: values])
             emailService.sendEmail("Species Alert", body, pActivity?.alert?.emailAddresses?.collect{it})
         }
     }
