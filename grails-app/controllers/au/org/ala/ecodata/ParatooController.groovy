@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.*
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -73,6 +74,7 @@ import jakarta.ws.rs.Path
                 scheme = "bearer"
         )])
 @Path("/ws/paratoo")
+@Transactional
 class ParatooController {
 
     static responseFormats = ['json']

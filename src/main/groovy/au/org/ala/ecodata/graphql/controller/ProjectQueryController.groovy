@@ -166,7 +166,7 @@ class ProjectQueryController implements DataBinder {
 
         DataFetcherResult.Builder<Map> resultBuilder = DataFetcherResult.newResult()
 
-        Map paginationParams = pagination ? pagination.properties : new Pagination().properties
+        Map paginationParams = Pagination.asMap(pagination)
         Map searchParams = [projectId: project.projectId]
         if (includedDeleted) {
             searchParams.status = Status.DELETED
