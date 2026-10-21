@@ -23,16 +23,18 @@ class Output {
     String outputId
     String status = 'active'
     String activityId
-    Date assessmentDate
     String name
     Date dateCreated
     Date lastUpdated
+    String lastUpdatedUserId
     List tempArgs = []
     Map data
+    /** For activities with multiple outputs, outputNotCompleted records if a user has explicitly not entered data for this Output */
+    Boolean outputNotCompleted
 
     static constraints = {
-        assessmentDate nullable: true
         name nullable: true
+        outputNotCompleted nullable: true
     }
 
     static transients = ['tempArgs']

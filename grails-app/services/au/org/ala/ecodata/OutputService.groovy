@@ -106,17 +106,14 @@ class OutputService {
      * @return map of properties
      */
     def toMap(output, levelOfDetail = []) {
-        def mapOfProperties = output instanceof Output ?  GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(output)) : output
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-        mapOfProperties.remove("_id")
+        def mapOfProperties = output instanceof Output ? output.properties : output
+        mapOfProperties.remove('tempArgs')
         if (SCORES in levelOfDetail) {
             def scores = extractScores mapOfProperties.data, output.name
             mapOfProperties.scores = scores
             mapOfProperties.remove 'data'
         }
         mapOfProperties.findAll { k, v -> v != null }
-        //GormMongoUtil.deepPrune(mapOfProperties)
     }
 
     /**
