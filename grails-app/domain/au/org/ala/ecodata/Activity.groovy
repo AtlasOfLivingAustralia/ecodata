@@ -89,6 +89,9 @@ class Activity {
      */
     String verificationStatus
 
+    String mainTheme
+    String publicationStatus
+
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
         def completedStates = [FINISHED, DEFERRED, CANCELLED]
@@ -130,6 +133,8 @@ class Activity {
         bulkImportId nullable: true
         externalIds nullable: true
         organisationId nullable: true
+        mainTheme nullable: true
+        publicationStatus nullable: true, inList: ['', PublicationStatus.CANCELLED, PublicationStatus.DRAFT, PublicationStatus.PUBLISHED, PublicationStatus.SUBMITTED_FOR_REVIEW]
     }
 
     static Activity findByExternalId(String externalId) {
