@@ -638,7 +638,7 @@ class SiteService {
      */
     Map convertSpecialFeatureToGeoJSON(Map feature) {
         if (feature.geometry) {
-            if (feature.hasKey('properties')) {
+            if (feature.containsKey('properties')) {
                 Map featureProperties = (Map)feature.get('properties') ?: [:]
                 switch (featureProperties.type) {
                     case 'pid':
