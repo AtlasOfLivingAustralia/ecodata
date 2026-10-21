@@ -2,10 +2,7 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.GeometryUtils
 import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Site
 import au.org.ala.ecodata.SiteService
-import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.geom.MultiPolygon
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -16,6 +13,8 @@ import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.referencing.crs.DefaultGeographicCRS
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.MultiPolygon
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.type.FeatureType
@@ -78,12 +77,16 @@ class ShapefileBuilder {
     /**
      * Writes each of the sites for the supplied projectId into the shapefile.
      */
-    void addProject(String projectId) {
+    void addProject(String projectId, List siteIds = null) {
 
         Map project = projectService.get(projectId)
 
         if (!project) {
             return
+        }
+
+        if (siteIds) {
+            project.sites = project.sites?.findAll { site -> siteIds.contains(site.siteId) }
         }
 
         project.sites?.each { site ->

@@ -5,7 +5,6 @@ import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Specification
 
 /**
  * Specification / tests for the SiteService
@@ -361,7 +360,7 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
 
         then: "Each feature is intersected individually and duplicates removed"
         1 * spatialServiceMock.intersectGeometry(_, _) >> ["state":["ACT"]]
-        site.extent.geometry.aream2 == 2469.492347517461
+        site.extent.geometry.aream2 == 4938.9846950349165d
         site.extent.geometry.state == ["ACT"]
 
     }

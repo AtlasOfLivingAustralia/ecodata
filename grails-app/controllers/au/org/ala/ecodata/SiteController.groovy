@@ -4,6 +4,8 @@ import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
+import static au.org.ala.ecodata.SpatialService.INTERSECTION_AREA
+
 @Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SiteController {
@@ -250,7 +252,9 @@ class SiteController {
 
     def lookupLocationMetadataForSite() {
         def site = request.JSON
-        render siteService.lookupGeographicFacetsForSite(site) as JSON
+        def result = siteService.lookupGeographicFacetsForSite(site)
+        result[INTERSECTION_AREA] = result[INTERSECTION_AREA]?.asImmutable()
+        render result as JSON
     }
 
     def lookupLocationMetadataForSiteById(String id) {
@@ -307,5 +311,22 @@ class SiteController {
         List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(siteService.toMap(it, [SiteService.FLAT]))})
         Map result = [projectId:id, sites: features]
         render result as JSON
+    }
+
+
+    /**
+     * Standardise a GeoJSON geometry. This is useful for converting geometries of type circle and pid into GeoJSON.
+     * @return
+     */
+    def standardiseGeoJSON() {
+        def geoJSON = request.JSON
+        if (geoJSON) {
+            def result = siteService.convertSpecialGeoJSONToStandardGeoJSON(geoJSON)
+            render result as JSON
+            return
+        }
+        else
+            render status: HttpStatus.SC_BAD_REQUEST, text: [message: "No geometry supplied"] as JSON
+
     }
 }
