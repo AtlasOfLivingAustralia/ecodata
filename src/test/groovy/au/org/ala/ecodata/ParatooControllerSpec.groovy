@@ -3,12 +3,13 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.ISODateBindingConverter
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
+import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 
-class ParatooControllerSpec extends Specification implements ControllerUnitTest<ParatooController> { //, JsonViewUnitTest {
+class ParatooControllerSpec extends Specification implements ControllerUnitTest<ParatooController>, DataTest {
 
     UserService userService = Mock(UserService)
     ParatooService paratooService = Mock(ParatooService)
