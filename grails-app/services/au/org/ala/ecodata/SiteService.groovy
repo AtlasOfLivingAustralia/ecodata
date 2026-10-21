@@ -211,9 +211,12 @@ class SiteService {
 
         if (site.features) {
             // add siteId to each feature
-            site.features.eachWithIndex { feature, index ->
-                feature.properties = feature.properties ?: [:]
-                feature.properties.siteId = site.siteId
+            site.features.eachWithIndex { Map feature, Integer index ->
+                // We are using getOrDefault with a null default instead of get as if the feature is a JSONObject
+                // and the properties are null it will throw an exception.
+                Map featureProperties = (Map)feature.getOrDefault('properties', null) ?: [:]
+                feature.put('properties', featureProperties)
+                featureProperties.siteId = site.siteId
             }
 
             geojson = [
@@ -635,22 +638,23 @@ class SiteService {
      */
     Map convertSpecialFeatureToGeoJSON(Map feature) {
         if (feature.geometry) {
-            if (feature.properties) {
-                switch (feature.properties.type) {
+            if (feature.hasKey('properties')) {
+                Map featureProperties = (Map)feature.get('properties') ?: [:]
+                switch (featureProperties.type) {
                     case 'pid':
                         feature = JSON.parse((feature as JSON).toString())
-                        feature.geometry = geometryForPid(feature.properties.pid)
-                        feature.properties.remove('pid')
-                        feature.properties.remove('type')
+                        feature.geometry = geometryForPid(featureProperties.pid)
+                        featureProperties.remove('pid')
+                        featureProperties.remove('type')
                         break
                     case 'Circle':
                     case 'circle':
                         feature = JSON.parse((feature as JSON).toString())
                         // We support circles, but they are not valid geojson.
-                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
+                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], featureProperties.radius)
                         feature.geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
-                        feature.properties.remove('radius')
-                        feature.properties.remove('type')
+                        featureProperties.remove('radius')
+                        featureProperties.remove('type')
                         break
                 }
             }
