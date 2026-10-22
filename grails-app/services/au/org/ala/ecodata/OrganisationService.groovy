@@ -160,7 +160,7 @@ class OrganisationService implements DataBinder {
     }
 
     def toMap(Organisation org, levelOfDetail = []) {
-        def mapOfProperties = org.properties
+        def mapOfProperties = new HashMap(org.properties)
 
         if ('projects' in levelOfDetail) {
             mapOfProperties.projects = []

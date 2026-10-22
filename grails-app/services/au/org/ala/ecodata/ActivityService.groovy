@@ -286,7 +286,7 @@ class ActivityService {
      * @return map of properties
      */
     def toMap(act, levelOfDetail = ['all'], version = null) {
-        def mapOfProperties = act instanceof Activity ? act.properties : act
+        def mapOfProperties = act instanceof Activity ? new HashMap(act.properties) : act
         mapOfProperties.complete = act.complete // This is not a persistent property so is not in the dbo.
 
         if (levelOfDetail == SITE) {

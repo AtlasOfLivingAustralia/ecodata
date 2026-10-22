@@ -106,7 +106,7 @@ class OutputService {
      * @return map of properties
      */
     def toMap(output, levelOfDetail = []) {
-        def mapOfProperties = output instanceof Output ? output.properties : output
+        def mapOfProperties = output instanceof Output ? new HashMap(output.properties) : output
         mapOfProperties.remove('tempArgs')
         if (SCORES in levelOfDetail) {
             def scores = extractScores mapOfProperties.data, output.name

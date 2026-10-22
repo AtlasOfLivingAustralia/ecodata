@@ -35,6 +35,7 @@ class Output {
     static constraints = {
         name nullable: true
         outputNotCompleted nullable: true
+        lastUpdatedUserId nullable: true
     }
 
     static transients = ['tempArgs']

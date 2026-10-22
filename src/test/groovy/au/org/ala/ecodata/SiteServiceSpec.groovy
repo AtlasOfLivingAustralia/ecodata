@@ -296,12 +296,12 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
             session.flush()
         }
         then:
-        def sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1', ['sort': "lastUpdated", 'order': "desc"])
+        def sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1', ['sort': "name", 'order': "desc"])
         sites.size() == 2
-        sites[0].name == 'Site 2'
+        sites*.name == ['Site 2', 'Site 1']
         sites[0].externalIds.size() == 1
-        sites.externalIds.externalId == [['e1'], ['e1']]
-        sites.externalIds.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
+        sites*.externalIds*.externalId == [['e1'], ['e1']]
+        sites*.externalIds*.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
     }
 
     def "Site features with a 'properties' key can be read back from the database"() {
