@@ -84,6 +84,14 @@ class Document {
     /** The content type of the file related to this document */
     String contentType
 
+    String notes
+    Long filesize
+    String license
+    String licenseDescription
+    Boolean readOnly
+    String embeddedVideo
+    String description
+
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
     }
@@ -189,5 +197,12 @@ class Document {
         hubId nullable: true
         imageId nullable: true
         isbn nullable: true
+        notes nullable: true
+        filesize nullable: true
+        licence nullable: true
+        licenseDescription nullable: true
+        readOnly nullable: true
+        embeddedVideo nullable: true
+        description nullable: true
     }
 }
