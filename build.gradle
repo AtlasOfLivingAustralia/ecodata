@@ -232,17 +232,17 @@ bootRun {
 }
 
 
-tasks.withType(GroovyCompile) {
+tasks.withType(GroovyCompile).configureEach {
     configure(groovyOptions) {
         forkOptions.jvmArgs = ['-Xmx1024m', '-Xss2048k']
     }
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat 'full'

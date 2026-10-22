@@ -36,6 +36,9 @@ jobs:
           sudo sh -c 'echo ES_JAVA_OPTS=\"-Xmx1g -Xms1g\" >> /etc/default/elasticsearch'
           sudo service elasticsearch restart
 
+      - name: Pre-pull MongoDB Image due to startup timeouts
+        run: docker pull mongo:8.0.4
+
       - name: Install and start mongodb
         uses: supercharge/mongodb-github-action@1.12.1
         with:
