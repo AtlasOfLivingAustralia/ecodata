@@ -86,8 +86,6 @@ class Document {
 
     String notes
     Long filesize
-    String license
-    String licenseDescription
     Boolean readOnly
     String embeddedVideo
     String description
@@ -199,8 +197,6 @@ class Document {
         isbn nullable: true
         notes nullable: true
         filesize nullable: true
-        licence nullable: true
-        licenseDescription nullable: true
         readOnly nullable: true
         embeddedVideo nullable: true
         description nullable: true
