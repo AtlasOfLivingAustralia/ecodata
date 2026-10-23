@@ -42,7 +42,7 @@ apply plugin:"war"
 apply plugin: "groovy"
 apply plugin:"org.apache.grails.gradle.grails-web"
 apply plugin:"org.apache.grails.gradle.grails-gsp"
-//apply plugin: "org.grails.plugins.views-json"
+apply plugin: "org.apache.grails.gradle.grails-gson"
 apply plugin:"cloud.wondrify.asset-pipeline"
 
 if (Boolean.valueOf(enableJacoco)) {
