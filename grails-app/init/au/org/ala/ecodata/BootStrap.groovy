@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 
 import au.org.ala.ecodata.customcodec.AccessLevelCodec
-import au.org.ala.ecodata.data_migration.ActivityFormMigrator
+
 import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
@@ -141,13 +141,6 @@ class BootStrap {
         }
 
         ImageIO.scanForPlugins()
-
-
-        // Data migration of activities-model.json
-        int formCount = ActivityForm.count()
-        if (formCount == 0) {
-            new ActivityFormMigrator(grailsApplication.config.getProperty('app.external.model.dir')).migrateActivitiesModel()
-        }
     }
 
 
