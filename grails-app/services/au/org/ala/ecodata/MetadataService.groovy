@@ -1364,4 +1364,95 @@ class MetadataService implements DataBinder {
         term
     }
 
+    List<InvestmentPriority> findInvestmentPriorities(Map searchCriteria, Integer max = 1000, Integer offset = 0, String sort = 'name', String orderBy = 'asc') {
+        List<InvestmentPriority> investmentPriorities = InvestmentPriority.createCriteria().list {
+            searchCriteria.each { String prop, value ->
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+            ne('status', Status.DELETED)
+            order(sort, orderBy)
+        }
+        investmentPriorities
+    }
+
+    InvestmentPriority deleteInvestmentPriority(String investmentPriorityId) {
+
+        InvestmentPriority investmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityId, Status.ACTIVE)
+        if (!investmentPriority) {
+            return null
+        }
+
+        // Because of the unique constraint on Terms, if the same Term is deleted then
+        // re-added we can't soft delete it a second time without hard deleting any existing
+        // soft deleted Term.
+        InvestmentPriority deletedInvestmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(
+                investmentPriority.name, Status.DELETED)
+        if (deletedInvestmentPriority) {
+            deletedInvestmentPriority.delete(flush:true)
+        }
+
+        investmentPriority.status = Status.DELETED
+        investmentPriority.save(flush:true)
+
+        investmentPriority
+    }
+
+    InvestmentPriority updateInvestmentPriority(Map investmentPriorityProps) {
+        InvestmentPriority investmentPriority
+        if (!investmentPriorityProps?.investmentPriorityId) {
+            investmentPriority = new InvestmentPriority()
+        }
+        else {
+            investmentPriority = InvestmentPriority.findByInvestmentPriorityId(investmentPriorityProps.investmentPriorityId)
+        }
+
+        bindData(investmentPriority, investmentPriorityProps)
+        investmentPriority.save(flush:true)
+        investmentPriority
+    }
+
+    Map bulkUpdateInvestmentPriorityCategory(String category, List<String> investmentPriorityIds) {
+        Map result = [status: 'ok', updated: 0, errors: []]
+        // Now remove the category from any investment priorities that were not in the supplied list
+        InvestmentPriority.createCriteria().list {
+            if (investmentPriorityIds) {
+                not {
+                    inList('investmentPriorityId', investmentPriorityIds)
+                }
+            }
+
+            ne('status', Status.DELETED)
+            eq('categories', category)
+
+        }.each { InvestmentPriority ip ->
+            ip.categories.remove(category)
+            ip.save(flush: true)
+        }
+        investmentPriorityIds.each { String id ->
+            try {
+                InvestmentPriority ip = InvestmentPriority.findByInvestmentPriorityIdAndStatus(id, Status.ACTIVE)
+                if (ip) {
+                    if (!ip.categories) {
+                        ip.categories = []
+                    }
+                    if (!ip.categories.contains(category)) {
+                        ip.categories << category
+                        ip.save(flush: true)
+                        result.updated++
+                    }
+                } else {
+                    result.errors << "No active investment priority found for id ${id}"
+                }
+            } catch (Exception e) {
+                log.error("Error updating investment priority ${id} to add category ${category}", e)
+                result.errors << "Error updating investment priority ${id}: ${e.message}"
+            }
+        }
+
+        result
+    }
 }

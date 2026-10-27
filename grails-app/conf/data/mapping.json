@@ -537,6 +537,9 @@
         "meriPlanAssetFacet": {
           "type": "keyword"
         },
+        "meriPlanAssetTypeFacet": {
+          "type": "keyword"
+        },
         "partnerOrganisationTypeFacet": {
           "type":"keyword"
         },
@@ -550,7 +553,6 @@
                       "properties": {
                         "assets": {
                           "type":"keyword",
-                          "copy_to":"meriPlanAssetFacet"
                         },
                         "description": {
                           "type": "text"
@@ -739,7 +741,6 @@
                     },
                     "description": {
                       "type": "text",
-                      "copy_to": "meriPlanAssetFacet"
                     }
                   }
                 }
@@ -855,15 +856,6 @@
         }
       },
       "dynamic_templates": [
-        {
-          "investment_priorities_template": {
-            "path_match":"custom.details.outcomes.*.assets",
-            "mapping": {
-              "type":"keyword",
-              "copy_to":"meriPlanAssetFacet"
-            }
-          }
-        },
         {
           "output_template": {
             "path_match": "outputTargets.*",

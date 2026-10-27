@@ -115,7 +115,7 @@ class ProjectController {
 
         XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService, metadataService)
         projectExporter.export(project)
         exporter.sizeColumns()
 
@@ -261,7 +261,7 @@ class ProjectController {
                 xlsx {
                     XlsExporter exporter = new XlsExporter("results")
                     exporter.setResponseHeaders(response)
-                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter, managementUnitService, organisationService, programService, metadataService)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                     projectExporter.exportAllProjects(projects)

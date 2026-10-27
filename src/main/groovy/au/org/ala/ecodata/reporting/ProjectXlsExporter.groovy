@@ -121,8 +121,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> baselineProperties = commonProjectProperties + ['relatedOutcomes', 'method', 'baseline', 'code', 'evidence', 'monitoringDataStatus', 'protocols', 'relatedTargetMeasures']
 
     //Different data model   RLP outcomes show data on rows not cols
-    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority', 'Related Program Outcome']
-    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority','relatedOutcome']
+    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority/ies', 'Related Program Outcome']
+    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','investmentPriorities','relatedOutcome']
 
     List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology", "Related Project"]
     List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projectMethodology", "projectREI", "relatedProjects"]
@@ -166,6 +166,7 @@ class ProjectXlsExporter extends ProjectExporter {
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
     OrganisationService organisationService
+    MetadataService metadataService
 
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
@@ -182,10 +183,11 @@ class ProjectXlsExporter extends ProjectExporter {
     /** If set to true, activities containing more than one form section will be split over one tab per form section */
     boolean formSectionPerTab = false
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, MetadataService metadataService) {
         super(exporter)
         this.projectService = projectService
         this.organisationService = organisationService
+        this.metadataService = metadataService
         distinctElectorates = new ArrayList()
         addAdditionalSpeciesColumns = true
         setupManagementUnits(managementUnitService)
@@ -193,11 +195,12 @@ class ProjectXlsExporter extends ProjectExporter {
         setupProgramData(programService)
     }
 
-    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
+    ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, ManagementUnitService managementUnitService, OrganisationService organisationService, ProgramService programService, MetadataService metadataService, Map<String, DataDescription> downloadMetadata, boolean formSectionPerTab = false) {
         super(exporter, tabsToExport, [:], TimeZone.default)
         this.projectService = projectService
         this.organisationService = organisationService
         this.formSectionPerTab = formSectionPerTab
+        this.metadataService = metadataService
         addAdditionalSpeciesColumns = true
         addDataDescriptionToDownload(downloadMetadata)
         distinctElectorates = new ArrayList(electorates?:[])
@@ -1099,6 +1102,9 @@ class ProjectXlsExporter extends ProjectExporter {
             outcome.put('outcome',po.description)
             String assets = po.assets?.join(", ")
             outcome.put('priority',assets)
+            outcome.put('investmentPriorityIds', assets)
+            List investmentPriorities = investmentPriorityNames(po.assets)
+            outcome.put('investmentPriorities', investmentPriorities?.join(', '))
             data.add(project+outcome)
         }
         if (project?.custom?.details?.outcomes?.otherOutcomes){
@@ -1118,6 +1124,9 @@ class ProjectXlsExporter extends ProjectExporter {
                 outcome.put('outcome',oc.description)
                 String assets = oc.assets?.join(",")
                 outcome.put('priority',assets)
+                outcome.put('investmentPriorityIds', assets)
+                List investmentPriorities = investmentPriorityNames(oc.assets)
+                outcome.put('investmentPriorities', investmentPriorities?.join(', '))
                 outcome.put('relatedOutcome',oc.relatedOutcome)
                 data.add(project+outcome)
             }
@@ -1222,5 +1231,9 @@ class ProjectXlsExporter extends ProjectExporter {
             labels.add(au.org.ala.ecodata.Score.findByScoreId(scoreId)?.label)
         }
         return labels
+    }
+
+    private List<String> investmentPriorityNames(List<String> investmentPriorityIds) {
+        metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds])?.collect{it.name}
     }
 }

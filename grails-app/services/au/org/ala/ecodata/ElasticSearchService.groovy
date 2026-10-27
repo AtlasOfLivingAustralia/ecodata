@@ -1218,6 +1218,15 @@ class ElasticSearchService {
 
             // add algorithmically generated or manually selected states and electorates of a project
             projectMap << projectService.findStateAndElectorateForProject(projectMap)
+
+            // Convert investment priority ids into names for indexing.
+            List<String> investmentPriorityIds = project.getMeriPlan()?.getInvestmentPriorities()
+            if (investmentPriorityIds) {
+                List investmentPriorities = metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds])
+                projectMap.meriPlanAssetFacet = investmentPriorities.collect{it.name}
+                projectMap.meriPlanAssetTypeFacet = investmentPriorities.collect{it.type}
+            }
+
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has
