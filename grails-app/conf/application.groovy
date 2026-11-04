@@ -42,6 +42,7 @@ environments {
                 host = "localhost"
                 port = "27017"
                 databaseName = "ecodata"
+                indexOnStartup = false
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
