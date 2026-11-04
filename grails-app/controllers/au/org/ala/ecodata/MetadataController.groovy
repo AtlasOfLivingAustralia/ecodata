@@ -14,7 +14,7 @@ import static au.org.ala.ecodata.Status.DELETED
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
-    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE', 'updateInvestmentPriorityCategory':'POST']
+    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE', 'updateInvestmentPriorityCategory':'POST', 'mergeInvestmentPriority':'POST']
 
     def metadataService, activityService, commonService, projectService, webService
     ActivityFormService activityFormService
@@ -446,6 +446,35 @@ class MetadataController {
         }
         Map result = metadataService.bulkUpdateInvestmentPriorityCategory(investmentPriorityProperties.category, investmentPriorityProperties.investmentPriorityIds ?: [])
         render result as JSON
+    }
+
+    /**
+     * Merges one InvestmentPriority into another.  Projects referencing the investment priority to merge are
+     * updated to reference the investment priority to keep, and the merged investment priority is deleted.
+     * Expects a JSON body with investmentPriorityIdToKeep and investmentPriorityIdToMerge.
+     * @return a Map containing the kept investmentPriority and the list of affectedProjects.
+     */
+    @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
+    def mergeInvestmentPriorities() {
+        Map props = request.JSON
+        String investmentPriorityIdToReplaceWith = props?.investmentPriorityIdToReplaceWith
+        String investmentPriorityIdToDelete = props?.investmentPriorityIdToDelete
+
+        if (!investmentPriorityIdToReplaceWith || !investmentPriorityIdToDelete) {
+            response.status = HttpStatus.SC_BAD_REQUEST
+            Map result = [status:HttpStatus.SC_BAD_REQUEST, error:'investmentPriorityIdToReplaceWith and investmentPriorityIdToDelete are required']
+            render result as JSON
+            return
+        }
+
+        Map result = metadataService.mergeInvestmentPriority(investmentPriorityIdToReplaceWith, investmentPriorityIdToDelete)
+        if (result == null) {
+            response.status = HttpStatus.SC_BAD_REQUEST
+            Map error = [status:HttpStatus.SC_BAD_REQUEST, error:'The investment priority ids must be different and both must refer to active investment priorities']
+            render error as JSON
+            return
+        }
+        respond result
     }
 
 }

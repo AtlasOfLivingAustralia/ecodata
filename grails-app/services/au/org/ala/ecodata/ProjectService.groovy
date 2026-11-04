@@ -1619,4 +1619,91 @@ class ProjectService {
 
         featureCollection
     }
+
+    /**
+     * The paths (relative to Project) used by MeriPlan::getInvestmentPriorities to record investment priorities.
+     * Must be kept in sync with that method.
+     */
+    private static final List<String> MERI_PLAN_INVESTMENT_PRIORITY_PATHS = [
+            'custom.details.assets.description',
+            'custom.details.outcomes.primaryOutcome.assets',
+            'custom.details.outcomes.secondaryOutcomes.assets'
+    ].asImmutable()
+
+    List<Project> findProjectsUsingInvestmentPriority(String investmentPriorityId) {
+        List<Project> projects = Project.createCriteria().list {
+            ne('status', Status.DELETED)
+            or {
+                MERI_PLAN_INVESTMENT_PRIORITY_PATHS.each { String path ->
+                    eq(path, investmentPriorityId)
+                }
+            }
+        }
+        projects
+    }
+
+    List<Project> updateInvestmentPriorityInMeriPlan(String investmentPriorityIdToReplace, String investmentPriorityIdReplacement) {
+        List<Project> projectsToUpdate = findProjectsUsingInvestmentPriority(investmentPriorityIdToReplace)
+
+        List<Project> affectedProjects = []
+        projectsToUpdate.each { Project project ->
+            Map details = project.custom?.details as Map
+            if (details && replaceInvestmentPriorityInMeriPlan(details, investmentPriorityIdToReplace, investmentPriorityIdReplacement)) {
+                // The change is nested inside the custom Map so GORM won't detect it automatically.
+                project.markDirty('custom')
+                project.save(flush: true, failOnError: true)
+                affectedProjects << project
+            }
+        }
+        affectedProjects
+    }
+
+    /**
+     * Replaces references to one investment priority with another in the paths used by
+     * MeriPlan::getInvestmentPriorities.  The supplied details Map is modified in place.
+     * @return true if any value was changed.
+     */
+    private static boolean replaceInvestmentPriorityInMeriPlan(Map details, String idToReplace, String replacementId) {
+        boolean changed = false
+
+        // details.assets[*].description
+        details.assets?.each { Map asset ->
+            if (asset?.description == idToReplace) {
+                asset.description = replacementId
+                changed = true
+            }
+        }
+
+        // details.outcomes.primaryOutcome.assets
+        changed = replaceValue(details.outcomes?.primaryOutcome as Map, 'assets', idToReplace, replacementId) || changed
+
+        // details.outcomes.secondaryOutcomes[*].assets
+        details.outcomes?.secondaryOutcomes?.each { Map secondaryOutcome ->
+            changed = replaceValue(secondaryOutcome, 'assets', idToReplace, replacementId) || changed
+        }
+
+        changed
+    }
+
+    /**
+     * Replaces idToReplace with replacementId in container[key], which may be a single value or a List.
+     * Lists are de-duplicated after replacement, as the replacement may already be present.
+     * @return true if the value was changed.
+     */
+    private static boolean replaceValue(Map container, String key, String idToReplace, String replacementId) {
+        def value = container?.get(key)
+        if (value instanceof List) {
+            if (!value.contains(idToReplace)) {
+                return false
+            }
+            container[key] = value.collect { it == idToReplace ? replacementId : it }.unique()
+            return true
+        }
+        if (value == idToReplace) {
+            container[key] = replacementId
+            return true
+        }
+
+        false
+    }
 }

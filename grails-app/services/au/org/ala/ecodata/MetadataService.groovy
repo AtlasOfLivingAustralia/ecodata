@@ -9,13 +9,13 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import grails.validation.ValidationException
 import grails.web.databinding.DataBinder
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import grails.plugin.cache.Cacheable
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -1386,10 +1386,17 @@ class MetadataService implements DataBinder {
             return null
         }
 
-        // Because of the unique constraint on Terms, if the same Term is deleted then
+        List<Project> projects = projectService.findProjectsUsingInvestmentPriority(investmentPriorityId)
+
+        if (projects) {
+            log.error("Cannot delete investment priority with id = "+investmentPriorityId+" as it is in use")
+            return null
+        }
+
+        // Because of the unique constraint on the InvestmentPriority name / status field combination, if the same InvestmentPriority is deleted then
         // re-added we can't soft delete it a second time without hard deleting any existing
-        // soft deleted Term.
-        InvestmentPriority deletedInvestmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(
+        // soft deleted InvestmentPriority.
+        InvestmentPriority deletedInvestmentPriority = InvestmentPriority.findByNameAndStatus(
                 investmentPriority.name, Status.DELETED)
         if (deletedInvestmentPriority) {
             deletedInvestmentPriority.delete(flush:true)
@@ -1400,6 +1407,45 @@ class MetadataService implements DataBinder {
 
         investmentPriority
     }
+
+    /**
+     * Merges one InvestmentPriority into another.  All (non-deleted) projects whose MERI plan references the
+     * investment priority to merge are updated to reference the investment priority to keep, then the merged
+     * investment priority is deleted.
+     *
+     * @param investmentPriorityIdToKeep the id of the InvestmentPriority that will remain.
+     * @param investmentPriorityIdToDelete the id of the InvestmentPriority that will be replaced and deleted.
+     * @return a Map with keys:
+     *   investmentPriority: the InvestmentPriority that was kept,
+     *   affectedProjects: a List of [projectId, grantId, name] for each project that was updated.
+     *   Returns null if the ids are the same or either InvestmentPriority does not exist / is not active.
+     */
+    Map mergeInvestmentPriority(String investmentPriorityIdToKeep, String investmentPriorityIdToDelete) {
+
+        if (investmentPriorityIdToKeep == investmentPriorityIdToDelete) {
+            // Otherwise we would delete the investment priority we are trying to keep.
+            return null
+        }
+
+        InvestmentPriority investmentPriorityToKeep = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityIdToKeep, Status.ACTIVE)
+        InvestmentPriority investmentPriorityToMerge = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityIdToDelete, Status.ACTIVE)
+
+        if (!investmentPriorityToKeep || !investmentPriorityToMerge) {
+            return null
+        }
+
+        List<Project> affectedProjects = projectService.updateInvestmentPriorityInMeriPlan(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+        List<Map> affectedProjectsSummary = affectedProjects.collect { project ->
+            [projectId: project.projectId, grantId: project.grantId, name: project.name]
+        }
+        log.info("Merged investment priority ${investmentPriorityIdToDelete} into ${investmentPriorityIdToKeep}, ${affectedProjects.size()} project(s) updated")
+
+        deleteInvestmentPriority(investmentPriorityIdToDelete)
+
+        [investmentPriority: investmentPriorityToKeep, affectedProjects: affectedProjectsSummary]
+    }
+
+
 
     InvestmentPriority updateInvestmentPriority(Map investmentPriorityProps) {
         InvestmentPriority investmentPriority

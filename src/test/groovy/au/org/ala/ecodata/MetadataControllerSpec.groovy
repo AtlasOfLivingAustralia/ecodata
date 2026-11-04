@@ -181,4 +181,53 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         response.json.name == investmentPriorityProps.name
     }
 
+    def "The controller should delegate to the MetadataService to merge InvestmentPriorities and return the result"() {
+        setup:
+        InvestmentPriority kept = new InvestmentPriority(investmentPriorityId: 'keep', name: "investment priority to keep")
+        List affectedProjects = [[projectId: 'p1', grantId: 'g1', name: 'Project 1'], [projectId: 'p2', grantId: 'g2', name: 'Project 2']]
+
+        when:
+        request.method = "POST"
+        request.JSON = [investmentPriorityIdToKeep: 'keep', investmentPriorityIdToMerge: 'merge']
+        controller.mergeInvestmentPriority()
+
+        then:
+        1 * metadataService.mergeInvestmentPriority('keep', 'merge') >> [investmentPriority: kept, affectedProjects: affectedProjects]
+        response.status == HttpStatus.SC_OK
+        response.json.investmentPriority.name == "investment priority to keep"
+        response.json.affectedProjects == affectedProjects
+    }
+
+    def "The controller should return a 400 if the MetadataService cannot merge the InvestmentPriorities"() {
+        when:
+        request.method = "POST"
+        request.JSON = [investmentPriorityIdToKeep: 'keep', investmentPriorityIdToMerge: 'invalid']
+        controller.mergeInvestmentPriority()
+
+        then:
+        1 * metadataService.mergeInvestmentPriority('keep', 'invalid') >> null
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
+    def "The controller should return a 400 without calling the MetadataService if a required id is missing"(Map body) {
+        when:
+        request.method = "POST"
+        request.JSON = body
+        controller.mergeInvestmentPriority()
+
+        then:
+        0 * metadataService.mergeInvestmentPriority(_, _)
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+
+        where:
+        body << [
+                [investmentPriorityIdToKeep: 'keep'],
+                [investmentPriorityIdToMerge: 'merge'],
+                [investmentPriorityIdToKeep: '', investmentPriorityIdToMerge: 'merge'],
+                [:]
+        ]
+    }
+
 }
