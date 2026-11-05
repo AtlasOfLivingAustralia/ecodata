@@ -166,6 +166,28 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         response.json.status == Status.DELETED
     }
 
+    def "The controller should return a 400 without calling the MetadataService if no id is supplied to deleteInvestmentPriority"() {
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority(null)
+
+        then:
+        0 * metadataService.deleteInvestmentPriority(_)
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
+    def "The controller should return a 400 if the InvestmentPriority to delete cannot be found"() {
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority('invalid')
+
+        then:
+        1 * metadataService.deleteInvestmentPriority('invalid') >> null
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
     def "The controller should delegate to the MetadataService to update an InvestmentPriority"() {
         setup:
         Map investmentPriorityProps = [name: "test investment priority", hubId: "testHubId", categories: ["testCategory"]]
@@ -188,8 +210,8 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
 
         when:
         request.method = "POST"
-        request.JSON = [investmentPriorityIdToKeep: 'keep', investmentPriorityIdToMerge: 'merge']
-        controller.mergeInvestmentPriority()
+        request.JSON = [investmentPriorityIdToReplaceWith: 'keep', investmentPriorityIdToDelete: 'merge']
+        controller.mergeInvestmentPriorities()
 
         then:
         1 * metadataService.mergeInvestmentPriority('keep', 'merge') >> [investmentPriority: kept, affectedProjects: affectedProjects]
@@ -201,8 +223,8 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
     def "The controller should return a 400 if the MetadataService cannot merge the InvestmentPriorities"() {
         when:
         request.method = "POST"
-        request.JSON = [investmentPriorityIdToKeep: 'keep', investmentPriorityIdToMerge: 'invalid']
-        controller.mergeInvestmentPriority()
+        request.JSON = [investmentPriorityIdToReplaceWith: 'keep', investmentPriorityIdToDelete: 'invalid']
+        controller.mergeInvestmentPriorities()
 
         then:
         1 * metadataService.mergeInvestmentPriority('keep', 'invalid') >> null
@@ -214,7 +236,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         when:
         request.method = "POST"
         request.JSON = body
-        controller.mergeInvestmentPriority()
+        controller.mergeInvestmentPriorities()
 
         then:
         0 * metadataService.mergeInvestmentPriority(_, _)
@@ -223,9 +245,9 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
 
         where:
         body << [
-                [investmentPriorityIdToKeep: 'keep'],
-                [investmentPriorityIdToMerge: 'merge'],
-                [investmentPriorityIdToKeep: '', investmentPriorityIdToMerge: 'merge'],
+                [investmentPriorityIdToReplaceWith: 'keep'],
+                [investmentPriorityIdToDelete: 'merge'],
+                [investmentPriorityIdToReplaceWith: '', investmentPriorityIdToDelete: 'merge'],
                 [:]
         ]
     }

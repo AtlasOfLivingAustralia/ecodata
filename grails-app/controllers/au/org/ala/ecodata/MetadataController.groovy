@@ -417,9 +417,21 @@ class MetadataController {
     }
 
     @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.writeScope"])
-    def deleteInvestmentPriority(String investmentPriorityId) {
-        InvestmentPriority investmentPriority = metadataService.deleteInvestmentPriority(investmentPriorityId)
-        if (investmentPriority.hasErrors()) {
+    def deleteInvestmentPriority(String id) {
+        if (!id) {
+            response.status = HttpStatus.SC_BAD_REQUEST
+            Map result = [status:HttpStatus.SC_BAD_REQUEST, error:'The id is required']
+            render result as JSON
+            return
+        }
+        InvestmentPriority investmentPriority = metadataService.deleteInvestmentPriority(id)
+        if (!investmentPriority) {
+            response.status = HttpStatus.SC_BAD_REQUEST
+            Map result = [status:HttpStatus.SC_BAD_REQUEST, error:'No investment priority with id '+id+' was found']
+            render result as JSON
+            return
+        }
+        if (investmentPriority?.hasErrors()) {
             respond investmentPriority.errors
         }
         else {
