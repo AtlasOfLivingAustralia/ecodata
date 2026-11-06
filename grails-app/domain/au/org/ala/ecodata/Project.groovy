@@ -211,7 +211,25 @@ class Project {
         actualStartDate nullable:true
         actualEndDate nullable:true
         grantId nullable:true
-		custom nullable:true
+		custom nullable:true, validator: { Map custom, Project project, Errors errors ->
+            MeriPlan meriPlan = project.getMeriPlan()
+            if (!meriPlan) {
+                return
+            }
+            List<ProjectOutcome> outcomes = ([meriPlan.primaryOutcome] + meriPlan.secondaryOutcomes).findAll()
+            List<String> investmentPriorityIds = outcomes.collectMany { it.assets ?: [] }.findAll().unique()
+            if (!investmentPriorityIds) {
+                return
+            }
+            Set<String> validIds = InvestmentPriority.findAllByInvestmentPriorityIdInListAndStatusNotEqual(investmentPriorityIds, Status.DELETED)
+                    .collect { it.investmentPriorityId } as Set
+            List<String> invalidIds = investmentPriorityIds - validIds
+            if (invalidIds) {
+                String ids = invalidIds.join(', ')
+                errors.rejectValue('custom', 'investmentPriority.notFound', [ids] as Object[],
+                        "Invalid or deleted investment priorities: ${ids}")
+            }
+        }
 		risks nullable:true
         promoteOnHomepage nullable:true
         organisationId nullable:true
@@ -239,11 +257,9 @@ class Project {
         uNRegions nullable: true
         countries nullable: true
         tags nullable: true
-        alaHarvest nullable: true
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
-        isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
         config nullable: true

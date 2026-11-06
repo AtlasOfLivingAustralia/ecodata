@@ -52,6 +52,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
                 "checkForBoundaryIntersectionInLayers" : [ "cl927", "cl11163" ]
         ]
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
+        grailsApplication.mainContext.commonService.messageSource = messageSource
         grailsApplication.mainContext.collectoryService.grailsApplication = grailsApplication
         grailsApplication.mainContext.collectoryService.webService = webServiceStub
         grailsApplication.mainContext.collectoryService.projectService = service
@@ -78,6 +79,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         ManagementUnit.collection.remove(new BasicDBObject())
         AuditMessage.collection.remove(new BasicDBObject())
         Site.collection.remove(new BasicDBObject())
+        InvestmentPriority.collection.remove(new BasicDBObject())
     }
 
     def cleanup() {
@@ -86,6 +88,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         UserPermission.findAll().each { it.delete(flush:true) }
         ManagementUnit.findAll().each { it.delete(flush:true) }
         Site.findAll().each { it.delete(flush:true) }
+        InvestmentPriority.findAll().each { it.delete(flush:true) }
     }
 
     def "test create and update project"() {
@@ -920,6 +923,56 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         actual.custom.dataSets == project.custom.dataSets
         actual.custom.details == [name:'name 2']
 
+    }
+
+    void "A project cannot be updated to reference a missing or deleted investment priority in the MERI plan"(List primaryAssets, List secondaryAssets, String expectedStatus) {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'ip1', name: 'Active priority', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip2', name: 'Deleted priority', status: Status.DELETED).save(flush: true, failOnError: true)
+        Project project = new Project(projectId: '345', name: "Project 345", isMERIT: true, custom: [details: [name: 'name']])
+        project.save(flush: true, failOnError: true)
+        Map details = [outcomes: [
+                primaryOutcome   : [description: 'Primary outcome', assets: primaryAssets],
+                secondaryOutcomes: [[description: 'Secondary outcome', assets: secondaryAssets]]
+        ]]
+
+        when:
+        Map resp = service.update([custom: [details: details]], project.projectId, false)
+        Project actual
+        Project.withNewSession {
+            actual = Project.findByProjectId(project.projectId)
+        }
+
+        then:
+        resp.status == expectedStatus
+        if (expectedStatus == 'ok') {
+            assert actual.custom.details == details
+        } else {
+            assert resp.error.contains('Invalid or deleted investment priorities')
+            assert actual.custom.details == [name: 'name']
+        }
+
+        where:
+        primaryAssets | secondaryAssets | expectedStatus
+        ['ip1']       | []              | 'ok'
+        []            | ['ip1']         | 'ok'
+        ['ip2']       | []              | 'error'
+        []            | ['ip2']         | 'error'
+        ['ip3']       | []              | 'error'
+        ['ip1']       | ['ip3']         | 'error'
+    }
+
+    void "A project cannot be created referencing a deleted investment priority in the MERI plan"() {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'ip2', name: 'Deleted priority', status: Status.DELETED).save(flush: true, failOnError: true)
+        Map props = [projectId: 'p1', name: 'Project 1', custom: [details: [outcomes: [primaryOutcome: [description: 'Primary outcome', assets: ['ip2']]]]]]
+
+        when:
+        Map resp = service.create(props, false)
+
+        then:
+        resp.status == 'error'
+        resp.error.contains('Invalid or deleted investment priorities')
     }
 
     void "The updateDataSet method is safe for concurrent access of different data sets"() {
