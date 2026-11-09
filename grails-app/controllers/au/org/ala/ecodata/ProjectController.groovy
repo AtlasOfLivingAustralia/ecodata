@@ -13,6 +13,7 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 
+    static responseFormats = ['json', 'xml', 'xslx', 'shp']
     static allowedMethods = [scoreDataForActivity: "POST"]
 
     def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
@@ -239,7 +240,13 @@ class ProjectController {
             asJson(message)
         } else {
             log.error result.error.toString()
-            render status:400, text: result.error
+            if (result.errors) {
+                respond result.errors
+            }
+            else {
+                render status:400, text: result.error
+            }
+
         }
     }
 

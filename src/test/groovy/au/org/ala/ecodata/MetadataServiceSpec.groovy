@@ -560,7 +560,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     }
 
-    private static Map stubMeriPlanData(List<String> assetDescriptions, def primaryOutcomeAssets, List secondaryOutcomeAssets) {
+    private static Map stubMeriPlanData(List<String> assetDescriptions, List primaryOutcomeAssets, List secondaryOutcomeAssets) {
         [
                 assets  : assetDescriptions.collect { [description: it] },
                 outcomes: [
@@ -573,10 +573,11 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
     private void createInvestmentPriorities() {
         new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
         new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'other', name: 'Other', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
     }
 
     private void cleanupInvestmentPriorities() {
-        InvestmentPriority.findAllByInvestmentPriorityIdInList(['mergeKeep', 'mergeRemove']).each { it.delete(flush: true) }
+        InvestmentPriority.findAllByInvestmentPriorityIdInList(['mergeKeep', 'mergeRemove', 'other']).each { it.delete(flush: true) }
     }
 
     def "mergeInvestmentPriority updates every MeriPlan investment priority path and reports affected projects"() {
@@ -587,7 +588,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
                 custom: [details: stubMeriPlanData(
                         ['mergeKeep', 'mergeRemove', 'other'],
                         ['mergeRemove', 'mergeKeep', 'other'],
-                        [['mergeRemove', 'other'], 'mergeRemove', ['other']])]
+                        [['mergeRemove', 'other'], ['mergeRemove'], ['other']])]
         ).save(flush: true, failOnError: true)
         // References the investment priority to merge in only one path.
         new Project(projectId: 'p2', name: 'Project 2', grantId: 'GRANT_2', status: Status.ACTIVE,
@@ -619,7 +620,7 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Map p1 = Project.findByProjectId('p1').custom.details
         p1.assets*.description == ['mergeKeep', 'mergeKeep', 'other']
         p1.outcomes.primaryOutcome.assets == ['mergeKeep', 'other']
-        p1.outcomes.secondaryOutcomes*.assets == [['mergeKeep', 'other'], 'mergeKeep', ['other']]
+        p1.outcomes.secondaryOutcomes*.assets == [['mergeKeep', 'other'], ['mergeKeep'], ['other']]
         new MeriPlan(Project.findByProjectId('p1')).investmentPriorities.unique().sort() == ['mergeKeep', 'other']
 
         and:

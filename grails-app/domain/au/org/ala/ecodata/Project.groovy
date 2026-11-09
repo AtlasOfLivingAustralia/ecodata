@@ -1,10 +1,12 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.validation.InvestmentPriorityValidator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
+import org.springframework.validation.AbstractBindingResult
 import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
@@ -211,24 +213,17 @@ class Project {
         actualStartDate nullable:true
         actualEndDate nullable:true
         grantId nullable:true
-		custom nullable:true, validator: { Map custom, Project project, Errors errors ->
+		custom nullable:true, validator: { Map custom, Project project, AbstractBindingResult errors ->
             MeriPlan meriPlan = project.getMeriPlan()
             if (!meriPlan) {
                 return
             }
-            List<ProjectOutcome> outcomes = ([meriPlan.primaryOutcome] + meriPlan.secondaryOutcomes).findAll()
-            List<String> investmentPriorityIds = outcomes.collectMany { it.assets ?: [] }.findAll().unique()
-            if (!investmentPriorityIds) {
-                return
-            }
-            Set<String> validIds = InvestmentPriority.findAllByInvestmentPriorityIdInListAndStatusNotEqual(investmentPriorityIds, Status.DELETED)
-                    .collect { it.investmentPriorityId } as Set
-            List<String> invalidIds = investmentPriorityIds - validIds
-            if (invalidIds) {
-                String ids = invalidIds.join(', ')
-                errors.rejectValue('custom', 'investmentPriority.notFound', [ids] as Object[],
-                        "Invalid or deleted investment priorities: ${ids}")
-            }
+
+            List<String> investmentPriorityIds = meriPlan.primaryOutcome?.assets?.findAll()?.unique()
+            InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.outcomes.primaryOutcome.assets', investmentPriorityIds, errors)
+
+            investmentPriorityIds = meriPlan.secondaryOutcomes?.collectMany{ it?.assets ?: [] }?.findAll()?.unique()
+            InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.outcomes.secondaryOutcomes.assets', investmentPriorityIds, errors)
         }
 		risks nullable:true
         promoteOnHomepage nullable:true

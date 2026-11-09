@@ -4,6 +4,7 @@ import au.org.ala.ecodata.converter.SciStarterConverter
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.gorm.PagedResultList
+import grails.validation.ValidationException
 import groovy.json.JsonSlurper
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
@@ -528,6 +529,11 @@ class ProjectService {
                         updateCollectoryLinkForProject(project, props)
                     }
                     return [status: 'ok']
+                } catch (ValidationException e) {
+                    Project.withSession { session -> session.clear() }
+                    def error = "Error updating project ${id} - ${e.message}"
+                    log.error error, e
+                    return [status: 'error', error: error, errors: e.errors]
                 } catch (Exception e) {
                     Project.withSession { session -> session.clear() }
                     def error = "Error updating project ${id} - ${e.message}"

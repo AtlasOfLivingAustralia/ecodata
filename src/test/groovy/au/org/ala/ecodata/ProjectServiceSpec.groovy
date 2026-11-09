@@ -948,7 +948,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
         if (expectedStatus == 'ok') {
             assert actual.custom.details == details
         } else {
-            assert resp.error.contains('Invalid or deleted investment priorities')
+            assert resp.error.contains('Investment priorities have been deleted') || resp.error.contains('Invalid investment priorities')
             assert actual.custom.details == [name: 'name']
         }
 
@@ -972,7 +972,7 @@ class ProjectServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectSer
 
         then:
         resp.status == 'error'
-        resp.error.contains('Invalid or deleted investment priorities')
+        resp.error.contains('Investment priorities have been deleted') || resp.error.contains('Invalid investment priorities')
     }
 
     void "The updateDataSet method is safe for concurrent access of different data sets"() {
