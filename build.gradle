@@ -66,6 +66,29 @@ configurations {
 }
 
 dependencies {
+    components {
+        // cache-ehcache requests capability ehcache-jakarta. ala-ws-security requests
+        // org.ehcache:ehcache, which selects the non-Jakarta variant. Those variants share
+        // capabilities such as ehcache-api, so Gradle rejects the module. Move the module
+        // capability onto the Jakarta variants so every request resolves to one jar.
+        withModule('org.ehcache:ehcache') {
+            String ehcacheVersion = id.version
+            ['apiElements', 'runtimeElements'].each { variantName ->
+                withVariant(variantName) {
+                    withCapabilities {
+                        removeCapability('org.ehcache', 'ehcache')
+                    }
+                }
+            }
+            ['jakartaApiElements', 'jakartaRuntimeElements'].each { variantName ->
+                withVariant(variantName) {
+                    withCapabilities {
+                        addCapability('org.ehcache', 'ehcache', ehcacheVersion)
+                    }
+                }
+            }
+        }
+    }
     skill 'org.apache.grails.skills:grails-developer:8.0.0'
     skill 'org.apache.grails.skills:grails-8-upgrade:8.0.0'
 
@@ -84,6 +107,14 @@ dependencies {
     implementation "org.apache.grails:grails-url-mappings"
     implementation "org.apache.grails:grails-interceptors"
     implementation "org.apache.grails:grails-cache"
+    // Ehcache 3 via the Grails cache plugin. The plugin selects the ehcache-jakarta
+    // capability (JAXB only; JSR-107 stays javax.cache and is pulled transitively).
+    // Configured via grails.cache.ehcache.ehcacheXmlLocation (biocollect-ehcache.xml).
+    implementation("org.grails.plugins:cache-ehcache:5.0.0-RC1") {
+        // ehcache-jakarta metadata wants jaxb-runtime [3,3.1); Grails 7 uses JAXB 4
+        exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime'
+        exclude group: 'javax.xml.bind', module: 'jaxb-api'
+    }
     implementation "org.ehcache:ehcache:3.10.8"
     implementation "org.apache.grails:grails-async"
     implementation "org.apache.grails:grails-scaffolding"
@@ -92,7 +123,6 @@ dependencies {
     implementation "org.apache.grails:grails-databinding"
     implementation "org.apache.grails:grails-codecs"
     implementation "org.apache.grails:grails-data-mongodb"
-    implementation "org.apache.grails:grails-cache"
     implementation "org.commonmark:commonmark:0.24.0"
     implementation "org.apache.commons:commons-lang3:3.20.0"
     implementation "org.apache.commons:commons-text:1.15.0"
@@ -120,7 +150,10 @@ dependencies {
     implementation('org.apache.groovy:groovy-dateutil')
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
-    implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
+    implementation("org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion") {
+        exclude module: "ehcache"
+    }
+
     implementation("org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion") {
         // http-builder-helper 1.1.0 is a Grails 3 plugin whose descriptor registers rest.Application as a
         // provided artefact. Its static initialiser references grails.dev.Support (removed in Grails 7) and

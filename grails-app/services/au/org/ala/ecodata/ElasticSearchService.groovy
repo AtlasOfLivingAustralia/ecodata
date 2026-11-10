@@ -932,7 +932,7 @@ class ElasticSearchService {
             }
         }
 
-        Project.withNewSession {
+        Project.withNewSession { session ->
             def batchParams = [offset: 0, max: 50, sort: 'projectId']
             List projects = query(batchParams)
 
@@ -947,6 +947,8 @@ class ElasticSearchService {
                         log.error("Unable to index project:  " + project?.projectId, e)
                     }
                 }
+                // Release entities (sites, activities, etc) loaded for the batch from the session cache
+                session.clear()
 
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = query(batchParams)
@@ -1005,7 +1007,7 @@ class ElasticSearchService {
         ).build()
 
         int count = 0
-        Project.withNewSession {
+        Project.withNewSession { session ->
 
             def batchParams = [offset: 0, max: 50, sort: 'projectId']
             def projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
@@ -1021,6 +1023,8 @@ class ElasticSearchService {
                     }
                     count++
                 }
+                // Release entities (sites, activities, etc) loaded for the batch from the session cache
+                session.clear()
                 batchParams.offset = batchParams.offset + batchParams.max
                 projects = Project.findAllByStatusNotEqual(DELETED, batchParams)
                 log.info("Processed " + count + " projects")
