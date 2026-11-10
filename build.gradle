@@ -109,7 +109,7 @@ dependencies {
     implementation "org.apache.grails:grails-cache"
     // Ehcache 3 via the Grails cache plugin. The plugin selects the ehcache-jakarta
     // capability (JAXB only; JSR-107 stays javax.cache and is pulled transitively).
-    // Configured via grails.cache.ehcache.ehcacheXmlLocation (biocollect-ehcache.xml).
+    // Configured via grails.cache.ehcache.ehcacheXmlLocation (ecodata-ehcache.xml).
     implementation("org.grails.plugins:cache-ehcache:5.0.0-RC1") {
         // ehcache-jakarta metadata wants jaxb-runtime [3,3.1); Grails 7 uses JAXB 4
         exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime'
