@@ -1434,6 +1434,20 @@ class MetadataService implements DataBinder {
             return null
         }
 
+        // Update the investment priority to keep with any categories and management units from the investment priority to delete that it doesn't already have.
+        investmentPriorityToMerge.categories?.each { category ->
+            if (!investmentPriorityToKeep.categories?.contains(category)) {
+                investmentPriorityToKeep.categories << category
+            }
+        }
+
+        investmentPriorityToMerge.managementUnits?.each { managementUnit ->
+            if (!investmentPriorityToKeep.managementUnits?.contains(managementUnit)) {
+                investmentPriorityToKeep.managementUnits << managementUnit
+            }
+        }
+        investmentPriorityToKeep.save(flush:true, failOnError:true)
+
         List<Project> affectedProjects = projectService.updateInvestmentPriorityInMeriPlan(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
         List<Map> affectedProjectsSummary = affectedProjects.collect { project ->
             [projectId: project.projectId, grantId: project.grantId, name: project.name]

@@ -654,6 +654,51 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         cleanupInvestmentPriorities()
     }
 
+    def "mergeInvestmentPriority adds any missing categories and management units from the merged investment priority to the kept one"() {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c1', 'c2'], managementUnits: ['mu1', 'mu2'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', categories: ['c2', 'c3'], managementUnits: ['mu2', 'mu3', 'mu4'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+
+        then: "The returned investment priority includes the union of categories and management units with no duplicates"
+        result.investmentPriority.categories == ['c1', 'c2', 'c3']
+        result.investmentPriority.managementUnits == ['mu1', 'mu2', 'mu3', 'mu4']
+
+        and: "The changes have been persisted"
+        InvestmentPriority.withNewSession {
+            InvestmentPriority kept = InvestmentPriority.findByInvestmentPriorityId('mergeKeep')
+            assert kept.categories == ['c1', 'c2', 'c3']
+            assert kept.managementUnits == ['mu1', 'mu2', 'mu3', 'mu4']
+            assert kept.status == Status.ACTIVE
+            true
+        }
+
+        and: "The merged investment priority is deleted"
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
+    def "mergeInvestmentPriority leaves the kept investment priority categories and management units unchanged if the merged one has none"() {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c1'], managementUnits: ['mu1'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+
+        then:
+        result.investmentPriority.categories == ['c1']
+        result.investmentPriority.managementUnits == ['mu1']
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
     def "mergeInvestmentPriority returns null and changes nothing when the ids are invalid or the same"() {
         setup:
         createInvestmentPriorities()
