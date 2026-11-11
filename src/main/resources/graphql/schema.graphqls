@@ -420,8 +420,11 @@ type StatesAndElectorates {
 }
 
 enum SitePurpose {
+    "A PLANNING site is used for the purpose of planning and design of a project.  Planning sites can be edited at any time and a copy of them can be taken during reporting."
     PLANNING,
+    "A REPORTING site is created during reporting.  It captures the location and extent of the area where project activities have taken place during the reporting period.  REPORTING sites become read-only once the report has been submitted."
     REPORTING,
+    "An EMSA site is a site that was created in the Monitor application and imported into MERIT.  EMSA sites are read-only and cannot be edited in MERIT.  They are used during project reporting."
     EMSA
 }
 
@@ -431,12 +434,16 @@ type Site {
     lastUpdated: DateTime
     status: Status
     name: String
+    "The purpose of the site.  A site can be used for planning, reporting or imported from EMSA"
     purposeCode: SitePurpose
     geoJson: GeoJson
 
+    "The area of the site in square metres.  Site area is calculated by projecting the site geometry into the appropriate UTM zone and calculating the area of the projected geometry.  This means that the area is only an approximation of the true area on the ground and does not take into account landscape features such as slopes.  Errors can also be introduced during re-projection and for large sites that cross UTM zones."
     areaM2: Float
     centroid: [Float]
+    "The Australian States and Territories that the site overlaps with and the percentage of the site that overlaps with each state or territory"
     states : [IntersectionArea]
+    "The Australian Federal electorates that the site overlaps with and the percentage of the site that overlaps with each electorate"
     electorates: [IntersectionArea]
 }
 
