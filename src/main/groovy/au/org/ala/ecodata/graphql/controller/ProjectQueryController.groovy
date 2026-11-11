@@ -80,7 +80,7 @@ class ProjectQueryController implements DataBinder {
         if (!hub) {
             throw new IllegalArgumentException("A hub context is required to access project data")
         }
-        Project project = Project.findByProjectIdAndHubIdAndStatusNotEqual(projectId, hub.hubId, Status.DELETED)
+        Project project = Project.findByProjectIdAndHubIdAndStatusNotEqual(projectId, (String)hub.hubId, Status.DELETED)
         if (!project) {
             return null
         }
@@ -252,7 +252,7 @@ class ProjectQueryController implements DataBinder {
         site.intersectingElectorates()
     }
 
-    @SchemaMapping(typeName = "Site", field = "purpose")
+    @SchemaMapping(typeName = "Site", field = "purposeCode")
     String purposeCode(Site site) {
         siteService.getPurpose([type:site.type, externalIds: site.externalIds])
     }
