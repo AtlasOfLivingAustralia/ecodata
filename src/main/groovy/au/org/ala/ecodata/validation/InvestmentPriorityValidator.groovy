@@ -34,13 +34,14 @@ class InvestmentPriorityValidator {
         }
         if (deletedInvestmentPriorities) {
             String ids = deletedInvestmentPriorities.collect{it.investmentPriorityId}.join(', ')
+            String names = deletedInvestmentPriorities.collect{it.name}.join(', ')
             errors.addError(new FieldError(
                     'project',
                     path,
                     ids,
                     false,
                     ['investmentPriority.deleted'] as String[],
-                    [ids] as Object[],
+                    [names] as Object[],
                     "Investment priorities have been deleted: ${deletedInvestmentPriorities.collect{it.name}}".toString()))
         }
     }
