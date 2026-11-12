@@ -25,7 +25,7 @@ abstract class MongoSpec extends Specification implements GrailsUnitTest {
     void setupSpec() {
         String host = config.getProperty("grails.mongodb.host", String, "localhost")
         int port = config.getProperty("grails.mongodb.port", Integer, 27017)
-        String databaseName = config.getProperty("grails.mongodb.database", String, "test")
+        String databaseName = config.getProperty("grails.mongodb.databaseName", String, "test")
         Map<String, Object> configuration = ['grails.mongodb.url': createConnectionString(host, port, databaseName)]
         // Grails 8 made domain properties nullable by default; the application restores required-by-default via
         // grails.gorm.default.nullable (application.yml), so the test datastore must honour the same setting.
