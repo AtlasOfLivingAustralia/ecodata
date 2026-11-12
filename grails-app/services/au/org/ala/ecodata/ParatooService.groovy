@@ -1881,7 +1881,7 @@ class ParatooService {
         List paths = findPathFromRelationship(modelToFind, apiOutputRelationship)
         String path = paths.size() ? paths.first() : null
         if (path) {
-            path = path.replaceAll(".get('properties')", "")
+            path = path.replace('.properties', '')
             // get model definition for the parent
             try {
                 def result = getValueAtPath(data, path)
