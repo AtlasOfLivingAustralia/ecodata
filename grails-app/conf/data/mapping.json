@@ -552,7 +552,7 @@
                     "rows1": {
                       "properties": {
                         "assets": {
-                          "type":"keyword",
+                          "type":"keyword"
                         },
                         "description": {
                           "type": "text"
@@ -740,7 +740,7 @@
                       "type": "keyword"
                     },
                     "description": {
-                      "type": "text",
+                      "type": "text"
                     }
                   }
                 }
