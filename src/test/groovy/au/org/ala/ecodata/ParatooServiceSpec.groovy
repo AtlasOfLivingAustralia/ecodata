@@ -9,7 +9,7 @@ import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 import static grails.async.Promises.waitAll
 

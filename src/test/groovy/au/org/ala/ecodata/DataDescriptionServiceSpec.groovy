@@ -4,7 +4,7 @@ import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.apache.poi.ss.usermodel.DateUtil
 import org.grails.plugins.testing.GrailsMockMultipartFile
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 class DataDescriptionServiceSpec extends MongoSpec implements ServiceUnitTest<DataDescriptionService>, DataTest {
 

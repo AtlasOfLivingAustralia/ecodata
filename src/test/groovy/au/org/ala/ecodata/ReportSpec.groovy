@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
 import grails.testing.gorm.DomainUnitTest
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 /**
  * See the API for {@link grails.test.mixin.domain.DomainClassUnitTestMixin} for usage instructions

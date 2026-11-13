@@ -7,7 +7,7 @@ import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 /**
  * Specification for the ReportService.

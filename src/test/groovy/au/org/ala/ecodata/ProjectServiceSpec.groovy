@@ -8,7 +8,7 @@ import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Ignore
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService

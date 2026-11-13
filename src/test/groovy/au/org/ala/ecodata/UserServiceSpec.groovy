@@ -6,7 +6,7 @@ import au.org.ala.ws.security.profile.AlaM2MUserProfile
 import grails.testing.services.ServiceUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import org.pac4j.core.config.Config
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 import spock.lang.Unroll
 
 /**
