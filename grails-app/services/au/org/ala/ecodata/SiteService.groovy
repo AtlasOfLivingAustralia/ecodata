@@ -168,7 +168,7 @@ class SiteService {
      * @return map of properties
      */
     def toMap(site, levelOfDetail = [], version = null) {
-        def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(site.getProperty("dbo")) : site
+        def mapOfProperties = site instanceof Site ? GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(site)) : site
         // Treat the default externalId as the externalId property for backwards
         // compatibility with the MERIT and BioCollect UI
         if (site instanceof Site) {
@@ -211,9 +211,12 @@ class SiteService {
 
         if (site.features) {
             // add siteId to each feature
-            site.features.eachWithIndex { feature, index ->
-                feature.properties = feature.properties ?: [:]
-                feature.properties.siteId = site.siteId
+            site.features.eachWithIndex { Map feature, Integer index ->
+                // We are using getOrDefault with a null default instead of get as if the feature is a JSONObject
+                // and the properties are null it will throw an exception.
+                Map featureProperties = (Map)feature.getOrDefault('properties', null) ?: [:]
+                feature.put('properties', featureProperties)
+                featureProperties.siteId = site.siteId
             }
 
             geojson = [
@@ -248,7 +251,7 @@ class SiteService {
         Map geometry = geoJson
 
         if (geoJson.type == "Feature") {
-            properties = geoJson.properties
+            properties = geoJson.get('properties')
             geometry = geoJson.geometry
         }
         Map site = [name:properties.name, description:properties.description, notes:properties.notes]
@@ -635,22 +638,23 @@ class SiteService {
      */
     Map convertSpecialFeatureToGeoJSON(Map feature) {
         if (feature.geometry) {
-            if (feature.properties) {
-                switch (feature.properties.type) {
+            if (feature.containsKey('properties')) {
+                Map featureProperties = (Map)feature.get('properties') ?: [:]
+                switch (featureProperties.type) {
                     case 'pid':
                         feature = JSON.parse((feature as JSON).toString())
-                        feature.geometry = geometryForPid(feature.properties.pid)
-                        feature.properties.remove('pid')
-                        feature.properties.remove('type')
+                        feature.geometry = geometryForPid(feature.get('properties').pid)
+                        feature.get('properties').remove('pid')
+                        feature.get('properties').remove('type')
                         break
                     case 'Circle':
                     case 'circle':
                         feature = JSON.parse((feature as JSON).toString())
                         // We support circles, but they are not valid geojson.
-                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.properties.radius)
+                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.get('properties').radius)
                         feature.geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
-                        feature.properties.remove('radius')
-                        feature.properties.remove('type')
+                        feature.get('properties').remove('radius')
+                        feature.get('properties').remove('type')
                         break
                 }
             }

@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
-
 import grails.testing.services.ServiceUnitTest
 import grails.core.GrailsApplication
 import spock.lang.Specification
@@ -10,6 +8,7 @@ import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import grails.test.mongodb.MongoSpec
 
 import static au.org.ala.ecodata.Status.ACTIVE
 

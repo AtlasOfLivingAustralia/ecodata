@@ -8,8 +8,8 @@ import grails.converters.JSON
 import grails.util.Holders
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringEscapeUtils
-import org.apache.commons.lang.time.DateUtils
+import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.lang3.time.DateUtils
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.HttpMultipartMode
 import org.apache.http.entity.mime.MultipartEntity
@@ -740,7 +740,7 @@ class RecordService {
     }
 
     def toMap(record) {
-        def mapOfProperties = GormMongoUtil.extractDboProperties(record.getProperty("dbo"))
+        def mapOfProperties = GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(record))
         //def mapOfProperties = dbo.toMap()
         mapOfProperties.recordNumber = record.getRecordNumber(grailsApplication.config.getProperty('biocollect.activity.sightingsUrl')) //record.recordNumber
         mapOfProperties.remove("_id")

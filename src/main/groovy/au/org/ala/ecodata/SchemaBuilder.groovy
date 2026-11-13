@@ -98,7 +98,7 @@ class SchemaBuilder {
         ]
 
         if (allowedOutputs.size() > 0) {
-            schema.properties << [outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]]
+            schema.get('properties') << [outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]]
         }
         schema
     }

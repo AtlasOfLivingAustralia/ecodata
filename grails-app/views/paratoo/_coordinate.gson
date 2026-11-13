@@ -4,6 +4,6 @@ model {
 }
 
 json {
-    lat coordinates[1]
-    lng coordinates[0]
+    lat coordinates.get(1)
+    lng coordinates.get(0)
 }

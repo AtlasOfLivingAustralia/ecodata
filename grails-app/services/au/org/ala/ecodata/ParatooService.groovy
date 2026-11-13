@@ -6,9 +6,9 @@ import au.org.ala.ws.tokens.TokenService
 import grails.async.Promise
 import grails.converters.JSON
 import grails.core.GrailsApplication
-import grails.plugin.cache.Cacheable
 import groovy.util.logging.Slf4j
 import javassist.NotFoundException
+import grails.plugin.cache.Cacheable
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -599,7 +599,7 @@ class ParatooService {
                     String updatedPath = model.name
                     def rows =[]
                     try {
-                        rows = getProperty(output, updatedPath, true, false)
+                        rows = getValueAtPath(output, updatedPath, true, false)
                     }
                     catch (Exception e) {
                         log.info("Error getting list for ${model.name}: ${e.message}")
@@ -619,9 +619,9 @@ class ParatooService {
                     String speciesName
                     try {
                         if(model.containsKey(PARATOO_LUT_REF)) {
-                            speciesName = getProperty(output, model.name)?.label?.first()
+                            speciesName = getValueAtPath(output, model.name)?.label?.first()
                         } else {
-                            speciesName = getProperty(output, model.name)?.first()
+                            speciesName = getValueAtPath(output, model.name)?.first()
                         }
 
                         output[model.name] = transformSpeciesName(speciesName)
@@ -695,7 +695,7 @@ class ParatooService {
             siteProps.type = Site.TYPE_COMPOUND
             siteProps.publicationStatus = PublicationStatus.PUBLISHED
             siteProps.projects = [project.projectId]
-            String externalId = geoJson.properties?.externalId
+            String externalId = geoJson.get('properties')?.externalId
             if (config.usesPlotLayout) {
                 if (externalId) {
                     siteProps.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_GUID, externalId: externalId)]
@@ -1019,7 +1019,7 @@ class ParatooService {
         site.projects = []
         // get all projects for the user I suppose - not sure why this isn't in the payload as it's in the UI...
         site.type = Site.TYPE_SURVEY_AREA
-        site.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, externalId: geoJson.properties.externalId)]
+        site.externalIds = [new ExternalId(idType: ExternalId.IdType.MONITOR_PLOT_SELECTION_GUID, externalId: geoJson.get('properties').externalId)]
         site.publicationStatus = PublicationStatus.PUBLISHED
         // Mark the plot as read only as it is managed by the Monitor app
 
@@ -1114,11 +1114,11 @@ class ParatooService {
 
     def getModelStructureFromDefinition(def definition) {
         if (definition instanceof Map)
-            definition?.properties?.data?.properties ?: definition?.items?.properties?.data?.properties ?: definition?.items?.properties ?: definition?.properties ?: definition?.items
+            MapKeyAccess.valueAt(definition, 'properties')?.data?.get('properties') ?: MapKeyAccess.valueAt(definition, 'items')?.get('properties')?.data?.get('properties') ?: MapKeyAccess.valueAt(definition, 'items')?.get('properties') ?: MapKeyAccess.valueAt(definition, 'properties') ?: MapKeyAccess.valueAt(definition, 'items')
     }
 
     def getRequiredModels(Map properties) {
-        properties.properties?.data?.required ?: properties.items?.properties?.data?.required ?: properties.items?.required ?: properties.properties?.required ?: properties?.required ?: []
+        MapKeyAccess.valueAt(properties, 'properties')?.data?.required ?: MapKeyAccess.valueAt(properties, 'items')?.get('properties')?.data?.required ?: MapKeyAccess.valueAt(properties, 'items')?.required ?: MapKeyAccess.valueAt(properties, 'properties')?.required ?: MapKeyAccess.valueAt(properties, 'required') ?: []
     }
 
     Map simplifyModelStructure(Map definition) {
@@ -1132,7 +1132,7 @@ class ParatooService {
         String componentName = definition[PARATOO_COMPONENT]
         if (properties) {
             simplifiedDefinition.type = definition.type ?: "object"
-            simplifiedDefinition.properties = properties
+            simplifiedDefinition.put('properties', properties)
         } else {
             simplifiedDefinition << definition
         }
@@ -1152,9 +1152,9 @@ class ParatooService {
         def cleanedDefinition
         if (definition instanceof Map) {
             cleanedDefinition = simplifyModelStructure(definition)
-            if (cleanedDefinition.properties) {
-                cleanedDefinition.properties?.each { String name, def value ->
-                    cleanedDefinition.properties[name] = cleanSwaggerDefinition(value)
+            if (cleanedDefinition.get('properties')) {
+                cleanedDefinition.get('properties')?.each { String name, def value ->
+                    cleanedDefinition.get('properties')[name] = cleanSwaggerDefinition(value)
                 }
             } else {
                 cleanedDefinition?.each { String name, def value ->
@@ -1207,7 +1207,7 @@ class ParatooService {
                         }
                     }
                 }
-            } else if (definition.properties && definition.properties[PARATOO_MODEL_REF]) {
+            } else if (MapKeyAccess.valueAt(definition, 'properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
                 // For representation like
                 //   {
                 //         "quad" : {
@@ -1218,7 +1218,7 @@ class ParatooService {
                 //          }
                 //      }
                 //   }
-                buildChildParentRelationship(definition.properties, currentNodes, relationship)
+                buildChildParentRelationship(definition.get('properties'), currentNodes, relationship)
             } else {
                 if (definition instanceof Map) {
                     definition?.each { String name, model ->
@@ -1260,7 +1260,7 @@ class ParatooService {
                         }
                     }
                 }
-            } else if (definition.properties && definition.properties[PARATOO_MODEL_REF]) {
+            } else if (MapKeyAccess.valueAt(definition, 'properties') && definition.get('properties')[PARATOO_MODEL_REF]) {
                 // For representation like
                 //   {
                 //         "quad" : {
@@ -1271,9 +1271,9 @@ class ParatooService {
                 //          }
                 //      }
                 //  }
-                buildParentChildRelationship(definition.properties, ancestorNodes, relationships)
+                buildParentChildRelationship(MapKeyAccess.valueAt(definition, 'properties'), ancestorNodes, relationships)
             } else {
-                def iteratingObject = definition.properties ?: definition
+                def iteratingObject = MapKeyAccess.valueAt(definition, 'properties') ?: definition
                 if (iteratingObject instanceof Map) {
                     iteratingObject?.each { String modelName, model ->
                         ancestorNodes.push(modelName)
@@ -1485,8 +1485,8 @@ class ParatooService {
     Map findProtocolEndpointDefinition (Map protocol, Map documentation) {
         (Map) documentation.paths.findResult { String pathName, Map path ->
             if (pathName == "${protocol.attributes.endpointPrefix}/bulk") {
-                return path.post.requestBody.content['application/json'].schema.properties
-                        .data.properties.collections.items.properties
+                return path.post.requestBody.content['application/json'].schema.get('properties')
+                        .data.get('properties').collections.items.get('properties')
             }
         }
     }
@@ -1511,8 +1511,8 @@ class ParatooService {
                 resolveReferences(value, components)
             } else if (value.items) {
                 resolveReferences(value, components)
-            } else if (value.properties && value.properties.data && value.properties.data.properties) {
-                resolveReferences(value.properties.data, components)
+            } else if (value.get('properties') && value.get('properties').data && value.get('properties').data.get('properties')) {
+                resolveReferences(value.get('properties').data, components)
             } else if (value.anyOf) {
                 def definition = value.anyOf.find {
                     it['$ref'] !== null
@@ -1552,8 +1552,8 @@ class ParatooService {
              }
          }
          */
-        if (!modelName && (component.properties?.getAt(PARATOO_MODEL_REF) == PARATOO_FILE_MODEL_NAME)) {
-            component = component.properties
+        if (!modelName && (component.get('properties')?.getAt(PARATOO_MODEL_REF) == PARATOO_FILE_MODEL_NAME)) {
+            component = component.get('properties')
             modelName = component[PARATOO_MODEL_REF]
         }
 
@@ -1840,7 +1840,7 @@ class ParatooService {
                     // get model definition for the parent
                     def value = [:]
                     try {
-                        value = getProperty(properties, path)?.first() ?: [:]
+                        value = getValueAtPath(properties, path)?.first() ?: [:]
                         // remove parent from children
                         paths?.each { String propertyPath ->
                             removeProperty(properties, propertyPath)
@@ -1854,22 +1854,22 @@ class ParatooService {
                     }
 
                     // reorder
-                    newOrder.properties = newOrder.properties ?: [:]
-                    newOrder.properties[parent] = newOrder.properties[parent] ?: [:]
-                    newOrder.properties[parent].putAll(value ?: [:])
+                    newOrder.put('properties', newOrder.get('properties') ?: [:])
+                    newOrder.get('properties')[parent] = newOrder.get('properties')[parent] ?: [:]
+                    newOrder.get('properties')[parent].putAll(value ?: [:])
                     removeProperty(properties, path)
                 } else {
                     // if path is not found, then check if parent is in root model
-                    newOrder.properties = newOrder.properties ?: [:]
-                    newOrder.properties[parent] = newOrder.properties[parent] ?: [:]
+                    newOrder.put('properties', newOrder.get('properties') ?: [:])
+                    newOrder.get('properties')[parent] = newOrder.get('properties')[parent] ?: [:]
                     properties = properties ?: [:]
-                    newOrder.properties[parent].putAll((properties[parent] ?: [:]))
+                    newOrder.get('properties')[parent].putAll((properties[parent] ?: [:]))
                 }
 
                 if (children) {
                     // if children are present, then recurse the process through each children
-                    newOrder.properties[parent] = newOrder.properties[parent] ?: [type: "object", properties: [:]]
-                    newOrder.properties[parent].properties.putAll(rearrangePropertiesAccordingToModelRelationship(properties, apiOutput, children, newOrder.properties[parent]).properties)
+                    newOrder.get('properties')[parent] = newOrder.get('properties')[parent] ?: [type: "object", properties: [:]]
+                    newOrder.get('properties')[parent].get('properties').putAll(rearrangePropertiesAccordingToModelRelationship(properties, apiOutput, children, newOrder.get('properties')[parent]).get('properties'))
                 }
             }
         }
@@ -1881,10 +1881,10 @@ class ParatooService {
         List paths = findPathFromRelationship(modelToFind, apiOutputRelationship)
         String path = paths.size() ? paths.first() : null
         if (path) {
-            path = path.replaceAll(".properties", "")
+            path = path.replace('.properties', '')
             // get model definition for the parent
             try {
-                def result = getProperty(data, path)
+                def result = getValueAtPath(data, path)
                 return [path: path, data: result]
             }
             catch (Exception e) {
@@ -1915,10 +1915,10 @@ class ParatooService {
                 }
             }
         } else if (object instanceof Map)
-            removeProperty(object[part], key, parts)
+            removeProperty(MapKeyAccess.mapEntry(object, part), key, parts)
         else if (object instanceof List) {
             object.each { def item ->
-                removeProperty(item[part], key, parts.clone())
+                removeProperty(MapKeyAccess.valueAt(item, part), key, parts.clone())
             }
         }
     }
@@ -2198,7 +2198,7 @@ class ParatooService {
         modelName?.toLowerCase()?.replaceAll("[^a-zA-Z0-9]+", ' ')?.tokenize(' ')?.collect { it.capitalize() }?.join()
     }
 
-    def getProperty(def surveyData, String path, boolean useAccessor = false, boolean isDeepCopy = true) {
+    def getValueAtPath(def surveyData, String path, boolean useAccessor = false, boolean isDeepCopy = true) {
         if (!path || surveyData == null) {
             return null
         }

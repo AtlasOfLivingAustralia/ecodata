@@ -1,5 +1,7 @@
 package au.org.ala.ecodata.metadata
 
+import au.org.ala.ecodata.MapKeyAccess
+
 /**
  * Get a property from an object.
  * <p>
@@ -38,7 +40,7 @@ class PropertyAccessor {
         for (String property: path) {
             if (object == null)
                 return null
-            object = object[property]
+            object = MapKeyAccess.valueAt(object, property)
         }
         return object
     }

@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
@@ -7,7 +8,7 @@ import spock.lang.Specification
 import xyz.capybara.clamav.ScanFailureException
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 
-class DocumentControllerSpec extends Specification implements ControllerUnitTest<DocumentController> {
+class DocumentControllerSpec extends Specification implements ControllerUnitTest<DocumentController>, DomainUnitTest<Document> {
 
     DocumentService documentService = Mock(DocumentService)
     StorageService storageService = new FileSystemService()
@@ -97,7 +98,9 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         documentService.isDocumentInfected(_) >> ScanResult.OK.INSTANCE
 
         when:
-        controller.scanDocument()
+        Document.withSession {
+            controller.scanDocument()
+        }
 
         then:
         response.status == HttpStatus.SC_OK
@@ -111,7 +114,9 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         documentService.isDocumentInfected(_) >> new ScanResult.VirusFound(["test.txt": ["EICAR-Test-File"]])
 
         when:
-        controller.scanDocument()
+        Document.withSession {
+            controller.scanDocument()
+        }
 
         then:
         response.status == HttpStatus.SC_UNPROCESSABLE_ENTITY
@@ -125,7 +130,9 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
         documentService.isDocumentInfected(_) >> { throw new ScanFailureException("Error scanning file") }
 
         when:
-        controller.scanDocument()
+        Document.withSession {
+            controller.scanDocument()
+        }
 
         then:
         response.status == HttpStatus.SC_INTERNAL_SERVER_ERROR
@@ -134,7 +141,9 @@ class DocumentControllerSpec extends Specification implements ControllerUnitTest
 
     def "scanDocument should return BAD_REQUEST when no file is provided"() {
         when:
-        controller.scanDocument()
+        Document.withSession {
+            controller.scanDocument()
+        }
 
         then:
         response.status == HttpStatus.SC_BAD_REQUEST

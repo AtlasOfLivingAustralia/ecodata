@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.ecodata.paratoo.*
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -22,10 +23,10 @@ import io.swagger.v3.oas.annotations.servers.ServerVariable
 import org.apache.http.HttpStatus
 import org.springframework.validation.Errors
 
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
+import jakarta.ws.rs.Path
 
 // Requiring these scopes will guarantee we can get a valid userId out of the process.
 @Slf4j
@@ -73,6 +74,7 @@ import javax.ws.rs.Path
                 scheme = "bearer"
         )])
 @Path("/ws/paratoo")
+@Transactional
 class ParatooController {
 
     static responseFormats = ['json']

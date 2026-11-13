@@ -31,17 +31,13 @@ class ActivityServiceIntegrationSpec extends Specification {
 
     void "test create an activity"() {
         setup:
-        def activity = [type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty']
-        //activityController.request.json = (activity as JSON).toString()
+        def activity = [type: 'Revegetation', projectId:'a project', description: 'Test activity']
 
         when: "creating the activity"
         def response
         Activity.withTransaction {
             response = activityService.create(activity)
         }
-        //message = [message: 'created', activityId: result.activityId]
-        //activityController.update('')
-        // def response = extractJson(activityController.response.text)
         def activityId = response.activityId
 
         then:
@@ -60,7 +56,6 @@ class ActivityServiceIntegrationSpec extends Specification {
         savedActivity.projectId == activity.projectId
         savedActivity.description == activity.description
         savedActivity.type == activity.type
-        savedActivity.dynamicProperty == activity.dynamicProperty
 
     }
 

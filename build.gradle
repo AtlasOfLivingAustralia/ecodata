@@ -1,48 +1,33 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url "https://nexus.ala.org.au/content/groups/public/" }
+        mavenCentral()
         maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://nexus.ala.org.au/content/groups/public/" }
         maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
-        classpath 'org.grails.plugins:quartz:2.0.13' // Needed to compile *Job classes
-        classpath "org.grails.plugins:views-gradle:$grailsViewsVersion"
-
+        // Grails 8: the Gradle plugin classpath uses the Grails Gradle BOM (Gradle 9 embeds Groovy 4).
+        classpath platform("org.apache.grails:grails-gradle-bom:$grailsVersion")
+        classpath "org.apache.grails:grails-gradle-plugins:$grailsVersion"
+        classpath "cloud.wondrify:asset-pipeline-gradle:$assetPipelineVersion"
+        classpath "cloud.wondrify:sass-asset-pipeline:$assetPipelineVersion"
     }
 }
 
 plugins {
-    id "com.github.node-gradle.node" version "3.4.0"
+    id "com.github.node-gradle.node" version "7.1.0"
     id 'jacoco'
-    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id "com.gorylenko.gradle-git-properties" version "2.5.2"
+    id 'com.skillsjars.gradle-plugin' version '0.1.4'
 }
 
 
-version "$ecodataVersion"
-group "au.org.ala"
-description "Ecodata"
+version = "$ecodataVersion"
+group = "au.org.ala"
+description = "Ecodata"
 
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"war"
-apply plugin: "groovy"
-apply plugin:"org.grails.grails-web"
-apply plugin:"org.grails.grails-gsp"
-apply plugin: "org.grails.plugins.views-json"
-apply plugin:"asset-pipeline"
-
-if (Boolean.valueOf(enableJacoco)) {
-    apply from: "${project.projectDir}/gradle/jacoco.gradle"
-}
-
-sourceCompatibility = '11'
-targetCompatibility = '17'
-
-apply from: "${project.projectDir}/gradle/publish.gradle"
-
+// Declared before the Grails plugin is applied so the Grails BOM / CLI companions can be resolved.
 repositories {
     mavenLocal()
     maven { url "https://repo.osgeo.org/repository/release/" }
@@ -50,6 +35,28 @@ repositories {
     maven { url "https://nexus.ala.org.au/content/groups/public/" }
     mavenCentral()
 }
+
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"war"
+apply plugin: "groovy"
+apply plugin:"org.apache.grails.gradle.grails-web"
+apply plugin:"org.apache.grails.gradle.grails-gsp"
+apply plugin: "org.apache.grails.gradle.grails-gson"
+apply plugin:"cloud.wondrify.asset-pipeline"
+
+if (Boolean.valueOf(enableJacoco)) {
+    apply from: "${project.projectDir}/gradle/jacoco.gradle"
+}
+
+// Grails 8 requires JDK 21+; this application targets Java 25.
+// (Gradle 9 removed the top-level sourceCompatibility/targetCompatibility convention properties.)
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+apply from: "${project.projectDir}/gradle/publish.gradle"
 
 configurations {
     developmentOnly
@@ -59,61 +66,109 @@ configurations {
 }
 
 dependencies {
+    components {
+        // cache-ehcache requests capability ehcache-jakarta. ala-ws-security requests
+        // org.ehcache:ehcache, which selects the non-Jakarta variant. Those variants share
+        // capabilities such as ehcache-api, so Gradle rejects the module. Move the module
+        // capability onto the Jakarta variants so every request resolves to one jar.
+        withModule('org.ehcache:ehcache') {
+            String ehcacheVersion = id.version
+            ['apiElements', 'runtimeElements'].each { variantName ->
+                withVariant(variantName) {
+                    withCapabilities {
+                        removeCapability('org.ehcache', 'ehcache')
+                    }
+                }
+            }
+            ['jakartaApiElements', 'jakartaRuntimeElements'].each { variantName ->
+                withVariant(variantName) {
+                    withCapabilities {
+                        addCapability('org.ehcache', 'ehcache', ehcacheVersion)
+                    }
+                }
+            }
+        }
+    }
+    skill 'org.apache.grails.skills:grails-developer:8.0.0'
+    skill 'org.apache.grails.skills:grails-8-upgrade:8.0.0'
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
-    implementation "org.grails:grails-core"
+    implementation "org.apache.grails:grails-core"
     implementation 'javax.media:jai-core:1.1.3'
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-tomcat"
-    implementation "org.grails:grails-web-boot"
-    implementation "org.grails:grails-logging"
-    implementation "org.grails:grails-plugin-rest"
-    implementation "org.grails:grails-plugin-databinding"
-    implementation "org.grails:grails-plugin-i18n"
-    implementation "org.grails:grails-plugin-services"
-    implementation "org.grails:grails-plugin-url-mappings"
-    implementation "org.grails:grails-plugin-interceptors"
-    implementation "org.grails.plugins:cache-ehcache:3.0.0"
+    implementation "org.apache.grails:grails-web-boot"
+    implementation "org.apache.grails:grails-logging"
+    implementation "org.apache.grails:grails-rest-transforms"
+    implementation "org.apache.grails:grails-databinding"
+    implementation "org.apache.grails:grails-services"
+    implementation "org.apache.grails:grails-url-mappings"
+    implementation "org.apache.grails:grails-interceptors"
+    implementation "org.apache.grails:grails-cache"
+    // Ehcache 3 via the Grails cache plugin. The plugin selects the ehcache-jakarta
+    // capability (JAXB only; JSR-107 stays javax.cache and is pulled transitively).
+    // Configured via grails.cache.ehcache.ehcacheXmlLocation (ecodata-ehcache.xml).
+    implementation("org.grails.plugins:cache-ehcache:5.0.0-RC1") {
+        // ehcache-jakarta metadata wants jaxb-runtime [3,3.1); Grails 7 uses JAXB 4
+        exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime'
+        exclude group: 'javax.xml.bind', module: 'jaxb-api'
+    }
     implementation "org.ehcache:ehcache:3.10.8"
-    implementation "org.grails.plugins:async"
-    implementation "org.grails.plugins:scaffolding"
-    implementation "org.grails.plugins:events"
-    implementation "org.grails:grails-plugin-datasource"
-    implementation "org.grails:grails-plugin-databinding"
-    implementation "org.grails:grails-plugin-codecs"
-    implementation "org.grails.plugins:mongodb:$gormMongoVersion"
+    implementation "org.apache.grails:grails-async"
+    implementation "org.apache.grails:grails-scaffolding"
+    implementation "org.apache.grails:grails-events"
+    implementation "org.apache.grails:grails-datasource"
+    implementation "org.apache.grails:grails-databinding"
+    implementation "org.apache.grails:grails-codecs"
+    implementation "org.apache.grails:grails-data-mongodb"
     implementation "org.commonmark:commonmark:0.24.0"
+    implementation "org.apache.commons:commons-lang3:3.20.0"
+    implementation "org.apache.commons:commons-text:1.15.0"
 
-    implementation 'com.graphql-java:graphql-java:21.5'
+    //implementation 'com.graphql-java:graphql-java:21.5'
     implementation 'com.graphql-java:graphql-java-extended-scalars:24.0'
-    implementation "org.grails.plugins:gsp"
-    console "org.grails:grails-console"
-    profile "org.grails.profiles:web"
-    implementation "org.grails.plugins:views-json:$grailsViewsVersion"
-    implementation "org.grails.plugins:views-json-templates:$grailsViewsVersion"
-    testImplementation "org.grails:views-json-testing-support:$grailsViewsVersion"
+    implementation "org.apache.grails:grails-gsp"
+    console "org.apache.grails:grails-console"
+    profile "org.apache.grails.profiles:web"
+    implementation "org.apache.grails:grails-views-gson"
+    implementation "org.apache.grails:grails-data-mongodb-gson-templates"
 
-    implementation 'dk.glasius:external-config:3.0.0'
-    implementation "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
+    implementation 'org.grails.plugins:grails-mail:5.0.3'
+    implementation "cloud.wondrify:asset-pipeline-grails:$assetPipelineVersion"
 
     implementation "org.elasticsearch:elasticsearch:$elasticsearchVersion"
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "org.elasticsearch.client:elasticsearch-rest-client:$elasticsearchVersion"
 
-    implementation group: 'org.locationtech.spatial4j', name: 'spatial4j', version: '0.8'
+    implementation "org.locationtech.spatial4j:spatial4j:0.8"
 
     implementation 'org.apache.poi:poi:5.4.1'
     implementation 'org.apache.poi:poi-ooxml:5.4.1'
     implementation 'org.apache.poi:poi-ooxml-full:5.4.1'
-    implementation 'org.codehaus.groovy:groovy-dateutil:3.0.8'
+    implementation('org.apache.groovy:groovy-dateutil')
 
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
-    implementation "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
-    implementation "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
+    implementation("org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion") {
+        exclude module: "ehcache"
+    }
+
+    implementation("org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion") {
+        // http-builder-helper 1.1.0 is a Grails 3 plugin whose descriptor registers rest.Application as a
+        // provided artefact. Its static initialiser references grails.dev.Support (removed in Grails 7) and
+        // overwrites the grails.main.class system property, which breaks startup once grails-quartz
+        // (whose JobArtefactHandler initialises every provided artefact class) is on the classpath.
+        exclude group: 'org.grails.plugins', module: 'http-builder-helper'
+    }
+    // Previously a transitive dependency of http-builder-helper; still required by ala-ws-plugin's WebService.
+    implementation("org.codehaus.groovy.modules.http-builder:http-builder:0.7.1") {
+        exclude group: 'org.codehaus.groovy'
+    }
     implementation "au.org.ala:userdetails-service-client:$alaSecurityLibsVersion"
 
-    implementation "au.org.ala.grails:interceptor-annotation-matcher:1.0.0"
+    implementation "au.org.ala.grails:interceptor-annotation-matcher:2.0.0-SNAPSHOT"
+
     implementation "org.codehaus.gpars:gpars:1.1.0"
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation "org.imgscalr:imgscalr-lib:4.2"
@@ -121,32 +176,35 @@ dependencies {
     implementation ("com.github.fge:json-schema-validator:2.1.6")  {
         exclude module: "mailapi"
     }
+    // Jackson 2 CSV module; version aligned through the jackson-2-bom managed by the Grails BOM.
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
 
     implementation 'org.grails.plugins:excel-export:2.1'
     implementation "org.locationtech.jts:jts-core:${jtsVersion}"
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation "org.apache.httpcomponents:httpmime:4.2.1"
-    implementation 'org.grails.plugins:csv:1.0.1'
     implementation "org.geotools.xsd:gt-xsd-kml:${geoToolsVersion}"
     implementation "org.geotools:gt-shapefile:${geoToolsVersion}"
     implementation "org.geotools:gt-geojson:${geoToolsVersion}"
     implementation "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
     implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.12.0'
-    implementation 'org.grails.plugins:mail:3.0.0'
+    implementation 'org.apache.grails:grails-mail'
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'
-    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
+    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260101.1'
 
-    implementation 'org.grails.plugins:quartz:2.0.13'
-    implementation 'org.quartz-scheduler:quartz:2.2.1' // Need transitive dependency from plugin
+    implementation 'org.apache.grails:grails-quartz'
 
     // For logback filter
     implementation 'org.codehaus.janino:janino:3.0.6'
 
     // Added due to previous reliance on transitive dependencies from plugins
     implementation 'au.com.bytecode:opencsv:2.4'
-    implementation "com.bertramlabs.plugins:asset-pipeline-core:$assetPipelineVersion"
-    implementation 'au.org.ala.plugins:openapi:1.3.0'
-    implementation "org.hibernate:hibernate-validator:6.2.0.Final"
+    implementation "cloud.wondrify:asset-pipeline-core:$assetPipelineVersion"
+    implementation 'au.org.ala.plugins:openapi:2.0.0-SNAPSHOT'
+    implementation "io.swagger.core.v3:swagger-annotations:2.2.23"
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+    // Jakarta-based Hibernate Validator; version managed by Spring Boot 4 (6.2.x was javax-based).
+    implementation "org.hibernate.validator:hibernate-validator"
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'xyz.capybara:clamav-client:2.1.2'
 
@@ -157,9 +215,17 @@ dependencies {
     implementation "software.amazon.awssdk:sso:$awsSdkVersion"
     implementation "software.amazon.awssdk:ssooidc:$awsSdkVersion"
 
-    testImplementation "org.grails:grails-gorm-testing-support"
-    testImplementation "org.grails.plugins:geb"
-    testImplementation "org.grails:grails-web-testing-support"
+    testImplementation "org.apache.grails:grails-testing-support-datamapping"
+    testImplementation "org.apache.grails:grails-geb"
+    // grails-geb only exposes the Geb library (geb-spock, geb.* classes) via its test
+    // fixtures in Grails 7; without this the integration tests fail to compile.
+    testImplementation testFixtures("org.apache.grails:grails-geb")
+    // Grails 8 moved grails.util.GrailsWebMockUtil into the grails-web-common test fixtures.
+    testImplementation testFixtures("org.apache.grails.web:grails-web-common")
+    testImplementation testFixtures("org.apache.grails:grails-data-mongodb")
+    testImplementation "org.apache.grails:grails-testing-support-web"
+    testImplementation "org.apache.grails:grails-testing-support-views-gson"
+    testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
 
     testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.1'
     testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
@@ -169,15 +235,15 @@ dependencies {
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
-    testRuntimeOnly "net.sourceforge.htmlunit:htmlunit:2.18"
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
 
-    // This is needed to support test execution based on @Tag
-    testImplementation "org.spockframework:spock-core:2.2-groovy-3.0"
-
     runtimeOnly "org.slf4j:jul-to-slf4j:1.7.7"
     runtimeOnly 'org.hsqldb:hsqldb:2.7.1'
+    // TEMPORARY (Grails 8 migration): remove once startup reports no property-migration warnings.
+    runtimeOnly 'org.springframework.boot:spring-boot-properties-migrator'
+    // Gradle 9 no longer supplies an implicit JUnit Platform launcher.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 springBoot {
@@ -199,20 +265,17 @@ bootRun {
 }
 
 
-tasks.withType(GroovyCompile) {
+tasks.withType(GroovyCompile).configureEach {
     configure(groovyOptions) {
         forkOptions.jvmArgs = ['-Xmx1024m', '-Xss2048k']
     }
 }
 
-tasks.withType(Test) {
-    useJUnitPlatform() {
-        excludeTags("mongo")
-    }
-
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat 'full'
@@ -233,8 +296,7 @@ npm_run_bundle {
 bootJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     enabled = true
-    classifier = 'exec'
-    launchScript()
+    // launchScript() removed: Spring Boot 4 no longer supports fully executable jars.
 }
 
 assetCompile {
@@ -253,5 +315,8 @@ publish {
     dependsOn assemble
 }
 
+skillsjars {
+    outputDir = layout.projectDirectory.dir('.agents/skills')
+}
 
 

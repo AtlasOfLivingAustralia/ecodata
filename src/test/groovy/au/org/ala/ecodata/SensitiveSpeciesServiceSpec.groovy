@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.testing.services.ServiceUnitTest
+import groovy.xml.XmlParser
 
 //import grails.test.mixin.TestFor
 import spock.lang.Specification

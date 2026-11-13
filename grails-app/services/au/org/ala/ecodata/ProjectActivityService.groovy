@@ -247,7 +247,7 @@ class ProjectActivityService {
      */
     Map toMap(projectActivity, levelOfDetail = []) {
         Map mapOfProperties = projectActivity instanceof ProjectActivity ?
-                GormMongoUtil.extractDboProperties(projectActivity.getProperty("dbo")) : projectActivity
+                GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(projectActivity)) : projectActivity
 
         if (levelOfDetail == DOCS) {
             mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)

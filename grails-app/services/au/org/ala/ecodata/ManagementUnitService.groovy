@@ -138,8 +138,8 @@ class ManagementUnitService {
                         // The program sites are very high resolution which would result in very large response to the
                         // client, so we are simplifying them for this map.
                         json.geometry = GeometryUtils.simplify(json.geometry, MANAGEMENT_UNIT_SITE_TOLERANCE)
-                        json.properties.name = managementUnit.name
-                        json.properties.managementUnitId = managementUnit.managementUnitId
+                        json.get('properties').name = managementUnit.name
+                        json.get('properties').managementUnitId = managementUnit.managementUnitId
                         featureCollection.features << json
                     }
                     else {

@@ -2,11 +2,12 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
+import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import spock.lang.Specification
 
-class AdminControllerSpec extends Specification implements ControllerUnitTest<AdminController> {
+class AdminControllerSpec extends Specification implements DataTest, ControllerUnitTest<AdminController> {
 
     ParatooService paratooService = Mock(ParatooService)
     UserService userService = Mock(UserService)

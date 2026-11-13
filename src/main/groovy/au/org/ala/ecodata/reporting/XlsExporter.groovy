@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.*
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponse
 /**
  * Does basic header styling for an Xls spreadsheet.
  */

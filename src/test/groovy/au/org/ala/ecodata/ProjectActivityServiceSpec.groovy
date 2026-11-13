@@ -1,7 +1,8 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
+
 import grails.testing.services.ServiceUnitTest
+import grails.test.mongodb.MongoSpec
 
 class ProjectActivityServiceSpec extends MongoSpec implements ServiceUnitTest<ProjectActivityService> {
     void "PA embargoed if embargoForDays is ahead of current date" () {

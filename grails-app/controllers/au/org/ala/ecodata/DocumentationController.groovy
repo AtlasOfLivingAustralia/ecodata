@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 
+@Transactional
 @PreAuthorise(basicAuth = false)
 class DocumentationController {
 
@@ -127,7 +129,7 @@ class DocumentationController {
 
         def overview = [:]
         def required = schema.required?:[]
-        schema.properties.each{key, value ->
+        schema.get('properties').each{key, value ->
             if (value.enum || (value.type != 'object' && value.type != 'array' )) {
                 def name = required.contains(key)?key+'*':key
                 overview << [(name):value.type?:'string']

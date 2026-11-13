@@ -18,7 +18,7 @@ class FileScanInterceptor {
             return true
         }
 
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             List results = []
             def files = request.getFileNames()
             while(files.hasNext()) {

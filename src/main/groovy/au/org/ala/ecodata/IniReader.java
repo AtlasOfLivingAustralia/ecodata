@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +109,7 @@ public class IniReader {
             }
             in.close();
         } catch (Exception e) {
-            logger.error(ExceptionUtils.getFullStackTrace(e));
+            logger.error("Error loading INI file: " + e.getMessage(), e);
         }
     }
 

@@ -4,10 +4,12 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ProjectController {
 

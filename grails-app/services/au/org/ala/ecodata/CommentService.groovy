@@ -17,7 +17,7 @@ class CommentService {
      * @return
      */
     Map getPropertiesOfDomainObject(Comment it) {
-        def mapOfProperties = it.getProperty("dbo")
+        def mapOfProperties = GormMongoUtil.getDbo(it)
         //Map mapOfProperties = dbo.toMap()
         mapOfProperties.id = mapOfProperties._id
         mapOfProperties.remove("_id")
@@ -77,7 +77,6 @@ class CommentService {
      * @param json
      * @return
      */
-    @Transactional
     Comment create(Object json){
         Comment newComment = new Comment(json)
         Comment parent;
@@ -101,7 +100,6 @@ class CommentService {
      * @param json
      * @return
      */
-    @Transactional
     Comment update(Object json){
         Boolean update = false
         Comment comment = Comment.get(json.id);

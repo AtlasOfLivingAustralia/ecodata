@@ -44,7 +44,7 @@ class DocumentService {
      * @return map of properties
      */
     def toMap(Document document, levelOfDetail = []) {
-        def mapOfProperties = document instanceof Document ? GormMongoUtil.extractDboProperties(document.getProperty("dbo")) : document
+        def mapOfProperties = document instanceof Document ? GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(document)) : document
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")

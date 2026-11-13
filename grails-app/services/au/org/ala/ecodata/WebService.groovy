@@ -21,8 +21,8 @@ import org.grails.web.converters.exceptions.ConverterException
 import grails.web.http.HttpHeaders
 import org.springframework.http.MediaType
 
-import javax.servlet.http.HttpServletResponse
-import javax.annotation.PostConstruct
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.annotation.PostConstruct
 
 /**
  * Helper class for invoking web services.

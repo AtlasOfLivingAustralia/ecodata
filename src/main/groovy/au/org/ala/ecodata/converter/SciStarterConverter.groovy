@@ -3,7 +3,7 @@ package au.org.ala.ecodata.converter
 import grails.util.Holders
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.text.SimpleDateFormat
 

@@ -2,11 +2,13 @@ package au.org.ala.ecodata
 
 import au.ala.org.ws.security.SkipApiKeyCheck
 import au.org.ala.web.AlaSecured
+import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 /**
  * Responds to requests related to activity forms in ecodata.
  */
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ActivityFormController {
 

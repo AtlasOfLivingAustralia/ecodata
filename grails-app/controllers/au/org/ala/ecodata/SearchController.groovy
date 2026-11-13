@@ -5,6 +5,7 @@ import au.org.ala.ecodata.command.TargetReportCommand
 import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.*
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.*
 
 @Slf4j
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class SearchController {
 

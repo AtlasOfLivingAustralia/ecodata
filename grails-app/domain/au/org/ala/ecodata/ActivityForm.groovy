@@ -115,11 +115,11 @@ class ActivityForm {
     }
 
     void publish() {
-        publicationStatus = PublicationStatus.PUBLISHED
+        setPublicationStatus(PublicationStatus.PUBLISHED)
     }
 
     void unpublish() {
-        publicationStatus = PublicationStatus.DRAFT
+        setPublicationStatus(PublicationStatus.DRAFT)
     }
 
     private String currentUserId() {
@@ -127,12 +127,12 @@ class ActivityForm {
     }
 
     def beforeInsert() {
-        createdUserId = currentUserId()
-        lastUpdatedUserId = currentUserId()
+        setCreatedUserId(currentUserId())
+        setLastUpdatedUserId(currentUserId())
     }
 
     def beforeUpdate() {
-        lastUpdatedUserId = currentUserId()
+        setLastUpdatedUserId(currentUserId())
     }
 
     FormSection getFormSection(String name) {

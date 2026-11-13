@@ -7,7 +7,7 @@ import grails.core.GrailsApplication
 import grails.util.Holders
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import org.apache.commons.lang.WordUtils
+import org.apache.commons.text.WordUtils
 import org.elasticsearch.action.search.SearchResponse
 import org.springframework.context.MessageSource
 
@@ -91,7 +91,7 @@ class ActivityFetcher implements DataFetcher<List<Activity>> {
         Schema schemaEntity = new Schema()
         schemaEntity.type = schema.type
         schemaEntity.id = schema.id
-        schemaEntity.propertyList = schema.properties
+        schemaEntity.propertyList = schema.get('properties') // Groovy 5: map.properties is the bean property
         return schemaEntity
     }
 

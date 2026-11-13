@@ -1,57 +1,71 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.AccessLevel
-import au.org.ala.ecodata.ActivityForm
-import au.org.ala.ecodata.AuditEventType
-import au.org.ala.ecodata.GormEventListener
-import au.org.ala.ecodata.Hub
-import au.org.ala.ecodata.Program
-import au.org.ala.ecodata.ManagementUnit
+
 import au.org.ala.ecodata.customcodec.AccessLevelCodec
-import au.org.ala.ecodata.data_migration.ActivityFormMigrator
+
 import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
-import static grails.async.Promises.task
-//import net.sf.json.JSONNull
-import org.bson.BSON
-import org.bson.Transformer
+import jakarta.servlet.ServletContext
 import org.bson.types.ObjectId
-import grails.core.ApplicationAttributes
-import org.grails.datastore.mapping.mongo.MongoDatastore
-import org.grails.plugin.cache.GrailsCacheManager
-import org.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
+import org.grails.datastore.mapping.mongo.MongoDatastore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.context.WebApplicationContext
 
 import javax.imageio.ImageIO
 
+import static grails.async.Promises.task
+
+//import net.sf.json.JSONNull
+
 class BootStrap {
+
+    /** Lower than the default (0) so the type-specific marshallers registered here take precedence. */
+    static final int ENUM_FALLBACK_MARSHALLER_PRIORITY = -1
+
+    /**
+     * Registers the JSON enum formats returned by the ecodata API.
+     *
+     * Grails 8 made SimpleEnumMarshaller (enum rendered as a plain string) the default and removed the previous
+     * EnumMarshaller, which rendered {"enumType": "<class name>", "name": "<constant>"}. MERIT and BioCollect consume
+     * the existing format, so it is registered explicitly as a fallback for all enums.
+     */
+    static void registerEnumMarshallers() {
+        JSON.registerObjectMarshaller(Enum, ENUM_FALLBACK_MARSHALLER_PRIORITY) { Enum value ->
+            [enumType: value.getDeclaringClass().name, name: value.name()]
+        }
+
+        /**
+         * Custom JSON serializer for {@link AccessLevel} enum
+         */
+        JSON.registerObjectMarshaller( AccessLevel ) { AccessLevel al ->
+            return [
+                    class: al.getClass().canonicalName,
+                    name : al.name(),
+                    code : al.getCode()
+            ]
+        }
+    }
 
     def elasticSearchService
     def grailsApplication
     def auditService
     def hubService
-    def messageSource
     def grailsCacheManager
     SpatialService spatialService
     MetadataService metadataService
+    ServletContext servletContext
+
     @Autowired
     MongoDatastore mongoDatastore
 
-    def init = { servletContext ->
+    def init = {
         // Don't pre-scache spatial layers during development due to frequent restarts
         if (Environment.DEVELOPMENT != Environment.current) {
             initializeSpatialIntersection()
         }
 
-        messageSource.setBasenames(
-                "file:///var/opt/atlas/i18n/ecodata/messages",
-                "file:///opt/atlas/i18n/ecodata/messages",
-                "WEB-INF/grails-app/i18n/messages",
-                "classpath:messages"
-        )
 
         // Add custom GORM event listener for ES indexing
         def ctx = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
@@ -72,16 +86,7 @@ class BootStrap {
         // Registering it here seems to resolve the issue.
         mongoDatastore.setCodecs([new AccessLevelCodec()])
 
-        /**
-         * Custom JSON serializer for {@link AccessLevel} enum
-         */
-        JSON.registerObjectMarshaller( AccessLevel ) { AccessLevel al ->
-            return [
-                    class: al.getClass().canonicalName,
-                    name : al.name(),
-                    code : al.getCode()
-            ]
-        }
+        registerEnumMarshallers()
 
         JSON.registerObjectMarshaller(Program) {
             return it.toMap()
@@ -107,6 +112,12 @@ class BootStrap {
             return it.toMap()
         }
 
+        // Grails 7 now serializes java.util.Date with milliseconds which MERIT and BioCollect do not expect.
+        JSON.registerObjectMarshaller(Date) {
+            DateUtil.format(it)
+        }
+
+
       //  JSON.registerObjectMarshaller(JSONNull, {return ""})
 
         // Setup the default ALA hub if necessary as BioCollect won't load without it.
@@ -130,13 +141,6 @@ class BootStrap {
         }
 
         ImageIO.scanForPlugins()
-
-
-        // Data migration of activities-model.json
-        int formCount = ActivityForm.count()
-        if (formCount == 0) {
-            new ActivityFormMigrator(grailsApplication.config.getProperty('app.external.model.dir')).migrateActivitiesModel()
-        }
     }
 
 
@@ -154,8 +158,6 @@ class BootStrap {
     }
 
     def destroy = {
-        // Close ehcache so that disk cached items are persisted. Otherwise, it will clear it the next time it starts up.
-        grailsCacheManager.destroy()
         // shutdown ES server
         elasticSearchService.destroy()
         log.info "Shutting down - completed destroy method"

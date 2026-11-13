@@ -2,13 +2,11 @@ package au.org.ala.ecodata
 
 
 import grails.converters.JSON
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import grails.test.mongodb.MongoSpec
 
-/*import grails.test.mixin.TestMixin
-import grails.test.mixin.mongodb.MongoDbTestMixin*/
 /**
  * Specification / tests for the SiteService
  */
@@ -299,12 +297,31 @@ class SiteServiceSpec extends MongoSpec implements ServiceUnitTest<SiteService> 
             session.flush()
         }
         then:
-        def sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1', ['sort': "lastUpdated", 'order': "desc"])
+        def sites = Site.findAllByExternalId(ExternalId.IdType.MONITOR_PLOT_GUID, 'e1', ['sort': "name", 'order': "desc"])
         sites.size() == 2
-        sites[0].name == 'Site 2'
+        sites*.name == ['Site 2', 'Site 1']
         sites[0].externalIds.size() == 1
-        sites.externalIds.externalId == [['e1'], ['e1']]
-        sites.externalIds.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
+        sites*.externalIds*.externalId == [['e1'], ['e1']]
+        sites*.externalIds*.idType == [[ExternalId.IdType.MONITOR_PLOT_GUID], [ExternalId.IdType.MONITOR_PLOT_GUID]]
+    }
+
+    def "Site features with a 'properties' key can be read back from the database"() {
+        setup:
+        Map feature = [type:'Feature', geometry:[type:'Point', coordinates:[149.06538752124, -35.25925241653464]], properties:[name:'Point 1', id:'p1']]
+
+        when:
+        Site.withSession { session ->
+            new Site(siteId:'s1', name:'Site 1', projects:['p1'], features:[feature]).save(flush:true, failOnError:true)
+            session.clear()
+        }
+        List<Site> sites = Site.findAllByProjects('p1')
+
+        then:
+        sites.size() == 1
+        sites[0].features.size() == 1
+        sites[0].features[0].type == 'Feature'
+        sites[0].features[0].geometry.coordinates == [149.06538752124, -35.25925241653464]
+        sites[0].features[0].get('properties') == [name:'Point 1', id:'p1']
     }
 
     def "The site area is calculated from the FeatureCollection for a compound site"() {

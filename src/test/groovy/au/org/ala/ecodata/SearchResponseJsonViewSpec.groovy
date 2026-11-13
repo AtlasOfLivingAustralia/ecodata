@@ -15,21 +15,18 @@ class SearchResponseJsonViewSpec extends Specification implements JsonViewTest, 
         when:"A gson view is rendered"
         Holders.grailsApplication = grailsApplication
         SearchResponse searchResponse = Mock(SearchResponse)
-        SearchHits hits = GroovyMock(SearchHits)
-        SearchHit hit = GroovyMock(SearchHit)
+        SearchHit hit = new SearchHit(1, "1", null, null, null)
         SearchHit[] searchHits = [hit] as SearchHit[]
-        hit.getId() >> "1"
-        hit.docId() >> 1
-        hit.getIndex() >> "homepage"
-
-        hits.getTotalHits() >> new TotalHits(10, TotalHits.Relation.EQUAL_TO)
-        hits.getHits() >> searchHits
+        SearchHits hits = new SearchHits(searchHits, new TotalHits(10, TotalHits.Relation.EQUAL_TO), 1.0f)
         searchResponse.getHits() >> hits
 
         def result = render(template: "/search/searchResponse", model:[searchResponse:searchResponse])
 
         then:"The json is correct"
-        println result.json
-        result.json.hits == [total:10, hits:[[_id:"1", _source:null, highlightFields:null]]]
+        result.json.hits.total == 10
+        result.json.hits.hits.size() == 1
+        result.json.hits.hits[0]._id == "1"
+        result.json.hits.hits[0]._source == null
+        result.json.hits.hits[0].highlightFields == [:]
     }
 }

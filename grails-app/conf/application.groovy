@@ -1,5 +1,6 @@
 import au.org.ala.ecodata.Document
 import grails.util.Holders
+import org.grails.web.config.http.GrailsFilters
 
 import static au.org.ala.ecodata.Status.DELETED
 import org.joda.time.DateTime
@@ -41,6 +42,7 @@ environments {
                 host = "localhost"
                 port = "27017"
                 databaseName = "ecodata"
+                indexOnStartup = false
                 options {
                     autoConnectRetry = true
                     connectionsPerHost = 100
@@ -602,7 +604,6 @@ if (!grails.cache.ehcache) {
 }
 ehcache.directory='/data/ecodata/ehcache'
 
-
 security {
     cas {
         enabled = false
@@ -633,6 +634,7 @@ security {
         callUserInfoEndpoint = false
         alaUseridClaim = "username"
         userIdClaim = "username"
+        requestWrapperFilterOrder = GrailsFilters.GRAILS_WEB_REQUEST_FILTER.order - 1
     }
 }
 webservice.jwt = false

@@ -3,10 +3,12 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 import static au.org.ala.ecodata.Status.DELETED
 
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
@@ -228,7 +230,7 @@ class MetadataController {
     def extractOutputDataFromExcelOutputTemplate() {
 
         MultipartFile file = null
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             file = request.getFile('data')
         }
         String outputName = params.type
@@ -261,7 +263,7 @@ class MetadataController {
     def extractOutputDataFromActivityExcelTemplate() {
 
         MultipartFile file = null
-        if (request.respondsTo('getFile')) {
+        if (MultipartRequestUtils.isMultipart(request)) {
             file = request.getFile('data')
         }
         String outputName = params.type

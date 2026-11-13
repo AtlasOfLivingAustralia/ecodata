@@ -5,10 +5,10 @@ import au.org.ala.ecodata.CacheService
 import au.org.ala.ecodata.ProjectActivity
 import au.org.ala.ecodata.ProjectActivityService
 import au.org.ala.ecodata.UpdateProjectActivityStatsJob
-import grails.test.mongodb.MongoSpec
 import org.grails.testing.GrailsUnitTest
+import spock.lang.Specification
 
-class UpdateProjectActivityStatsJobSpec extends MongoSpec implements GrailsUnitTest {
+class UpdateProjectActivityStatsJobSpec extends Specification implements GrailsUnitTest {
     UpdateProjectActivityStatsJob job = new UpdateProjectActivityStatsJob()
 
     def setup () {

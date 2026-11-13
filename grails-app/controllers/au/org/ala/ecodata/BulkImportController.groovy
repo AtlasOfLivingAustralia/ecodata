@@ -1,9 +1,11 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
 
 import static org.apache.http.HttpStatus.*
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class BulkImportController {
 

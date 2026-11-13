@@ -347,8 +347,8 @@ class GeometryUtils {
         }
 
         featureMap.each { Map feature, Geometry geom ->
-            feature.properties[(property)] = featureMap.findAll { Map f, Geometry otherGeom -> otherGeom != geom && otherGeom.intersects(geom) }.collect {
-                it.key.properties.id
+            feature.get('properties')[(property)] = featureMap.findAll { Map f, Geometry otherGeom -> otherGeom != geom && otherGeom.intersects(geom) }.collect {
+                it.key.get('properties').id
             }
         }
     }
@@ -368,13 +368,13 @@ class GeometryUtils {
 
         // for each feature,  assign it the first distinct value not used by any of it's neighbours.
         features.each { Map feature ->
-            List neighbourIds = feature.properties.remove(neighboursProperty)
+            List neighbourIds = feature.get('properties').remove(neighboursProperty)
 
             Set availableValues = 1..maxDistinctValues
             neighbourIds.each {String id ->
-                Map neighbouringFeature = features.find{it.properties.id == id}
-                if (neighbouringFeature && neighbouringFeature.properties[(property)]) {
-                    availableValues.remove(neighbouringFeature.properties[(property)])
+                Map neighbouringFeature = features.find{it.get('properties').id == id}
+                if (neighbouringFeature && neighbouringFeature.get('properties')[(property)]) {
+                    availableValues.remove(neighbouringFeature.get('properties')[(property)])
                 }
             }
 
@@ -383,7 +383,7 @@ class GeometryUtils {
                 log.info("Unable to assign a distinct value <= ${maxDistinctValues}, increasing the maximum.")
                 value = ++maxDistinctValues
             }
-            feature.properties[(property)] = value
+            feature.get('properties')[(property)] = value
         }
     }
 

@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
-import grails.validation.ValidationException
+
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Specification

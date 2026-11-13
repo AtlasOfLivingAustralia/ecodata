@@ -23,7 +23,7 @@
             <heap unit="entries">50</heap>
         </resources>
     </cache>
-    <cache alias="preparedSpatialGeometryFromPid">
+    <cache alias="preparedGeometryFromPid">
         <key-type>java.lang.String</key-type>
         <value-type>java.lang.Object</value-type>
         <expiry>
