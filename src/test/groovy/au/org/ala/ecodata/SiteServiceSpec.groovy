@@ -5,6 +5,7 @@ import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
+import grails.test.mongodb.MongoSpec
 
 /**
  * Specification / tests for the SiteService

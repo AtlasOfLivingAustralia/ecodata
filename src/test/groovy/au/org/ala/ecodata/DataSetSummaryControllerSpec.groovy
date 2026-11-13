@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
+import grails.test.mongodb.MongoSpec
 
 class DataSetSummaryControllerSpec extends MongoSpec implements ControllerUnitTest<DataSetSummaryController> {
 

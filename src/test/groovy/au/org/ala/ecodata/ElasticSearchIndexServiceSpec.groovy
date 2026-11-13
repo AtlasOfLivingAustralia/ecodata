@@ -13,7 +13,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 /**
  * Created by sat01a on 24/11/15.

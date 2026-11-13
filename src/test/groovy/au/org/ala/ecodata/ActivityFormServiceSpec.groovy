@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 
 import grails.testing.services.ServiceUnitTest
 import groovy.json.JsonSlurper
+import grails.test.mongodb.MongoSpec
 
 class ActivityFormServiceSpec extends MongoSpec implements ServiceUnitTest<ActivityFormService> {
 

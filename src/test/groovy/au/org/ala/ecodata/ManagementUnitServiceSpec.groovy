@@ -5,7 +5,7 @@ import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.springframework.context.MessageSource
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 class ManagementUnitServiceSpec extends MongoSpec implements ServiceUnitTest<ManagementUnitService> {
 

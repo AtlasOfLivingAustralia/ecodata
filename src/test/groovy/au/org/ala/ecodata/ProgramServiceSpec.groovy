@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 
 import grails.testing.services.ServiceUnitTest
 import org.springframework.context.MessageSource
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 class ProgramServiceSpec extends MongoSpec implements ServiceUnitTest<ProgramService> {
 

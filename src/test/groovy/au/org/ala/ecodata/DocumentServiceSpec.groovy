@@ -4,7 +4,7 @@ package au.org.ala.ecodata
 import grails.testing.gorm.DomainUnitTest
 import grails.testing.services.ServiceUnitTest
 import grails.util.Holders
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 /**
  * Tests the DocumentService.

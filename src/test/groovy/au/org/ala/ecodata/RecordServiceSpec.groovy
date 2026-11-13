@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 
 import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 /**
  * Created by sat01a on 14/07/16.

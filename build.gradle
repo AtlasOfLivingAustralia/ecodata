@@ -222,6 +222,7 @@ dependencies {
     testImplementation testFixtures("org.apache.grails:grails-geb")
     // Grails 8 moved grails.util.GrailsWebMockUtil into the grails-web-common test fixtures.
     testImplementation testFixtures("org.apache.grails.web:grails-web-common")
+    testImplementation testFixtures("org.apache.grails:grails-data-mongodb")
     testImplementation "org.apache.grails:grails-testing-support-web"
     testImplementation "org.apache.grails:grails-testing-support-views-gson"
     testImplementation "org.apache.grails.testing:grails-testing-support-mongodb"
@@ -234,7 +235,6 @@ dependencies {
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
-    //testRuntimeOnly "net.sourceforge.htmlunit:htmlunit:2.18"
 
     testImplementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
 

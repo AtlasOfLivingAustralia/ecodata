@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import com.mongodb.MongoBulkWriteException
 import grails.testing.services.ServiceUnitTest
 import jakarta.persistence.PessimisticLockException
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 class LockServiceSpec extends MongoSpec implements ServiceUnitTest<LockService> {
 

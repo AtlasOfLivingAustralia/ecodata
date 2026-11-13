@@ -3,7 +3,7 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.util.ExportTestUtils
 import com.mongodb.BasicDBObject
-import grails.testing.gorm.DataTest
+import grails.core.GrailsApplication
 import grails.util.Holders
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -26,14 +26,14 @@ import org.apache.poi.ss.usermodel.Sheet
 
 import org.apache.poi.ss.usermodel.Workbook
 import org.grails.testing.GrailsUnitTest
-import spock.lang.Specification
+import grails.test.mongodb.MongoSpec
 
 import java.time.ZoneId
 
 /**
  * Spec for the csProjectXlsExporter
  */
-class CSProjectXlsExporterSpec extends MongoSpec {
+class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest {
 
     def projectService = Mock(ProjectService)
     def projectActivityService = Mock(ProjectActivityService)

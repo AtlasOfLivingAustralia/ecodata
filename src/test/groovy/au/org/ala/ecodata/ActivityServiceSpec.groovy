@@ -8,6 +8,7 @@ import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import grails.test.mongodb.MongoSpec
 
 import static au.org.ala.ecodata.Status.ACTIVE
 

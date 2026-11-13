@@ -8,6 +8,7 @@ import org.grails.web.converters.marshaller.json.MapMarshaller
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.springframework.context.MessageSource
+import grails.test.mongodb.MongoSpec
 
 class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataService>, DataTest {
 

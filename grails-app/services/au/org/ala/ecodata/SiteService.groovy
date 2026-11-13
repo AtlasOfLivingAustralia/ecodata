@@ -643,18 +643,18 @@ class SiteService {
                 switch (featureProperties.type) {
                     case 'pid':
                         feature = JSON.parse((feature as JSON).toString())
-                        feature.geometry = geometryForPid(featureProperties.pid)
-                        featureProperties.remove('pid')
-                        featureProperties.remove('type')
+                        feature.geometry = geometryForPid(feature.get('properties').pid)
+                        feature.get('properties').remove('pid')
+                        feature.get('properties').remove('type')
                         break
                     case 'Circle':
                     case 'circle':
                         feature = JSON.parse((feature as JSON).toString())
                         // We support circles, but they are not valid geojson.
-                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], featureProperties.radius)
+                        Geometry geom = GeometryUtils.geometryForCircle(feature.geometry.coordinates[1], feature.geometry.coordinates[0], feature.get('properties').radius)
                         feature.geometry = [type: 'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect { [it.x, it.y] }]]
-                        featureProperties.remove('radius')
-                        featureProperties.remove('type')
+                        feature.get('properties').remove('radius')
+                        feature.get('properties').remove('type')
                         break
                 }
             }
