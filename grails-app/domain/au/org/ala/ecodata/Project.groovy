@@ -1,10 +1,12 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.validation.InvestmentPriorityValidator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.Interval
+import org.springframework.validation.AbstractBindingResult
 import org.springframework.validation.Errors
 
 import static au.org.ala.ecodata.Status.COMPLETED
@@ -211,7 +213,18 @@ class Project {
         actualStartDate nullable:true
         actualEndDate nullable:true
         grantId nullable:true
-		custom nullable:true
+		custom nullable:true, validator: { Map custom, Project project, AbstractBindingResult errors ->
+            MeriPlan meriPlan = project.getMeriPlan()
+            if (!meriPlan) {
+                return
+            }
+
+            List<String> investmentPriorityIds = meriPlan.primaryOutcome?.assets?.findAll()?.unique()
+            InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.outcomes.primaryOutcome.assets', investmentPriorityIds, errors)
+
+            investmentPriorityIds = meriPlan.secondaryOutcomes?.collectMany{ it?.assets ?: [] }?.findAll()?.unique()
+            InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.outcomes.secondaryOutcomes.assets', investmentPriorityIds, errors)
+        }
 		risks nullable:true
         promoteOnHomepage nullable:true
         organisationId nullable:true
@@ -239,11 +252,9 @@ class Project {
         uNRegions nullable: true
         countries nullable: true
         tags nullable: true
-        alaHarvest nullable: true
         industries nullable: true
         programId nullable: true
         baseLayer nullable: true
-        isBushfire nullable: true
         bushfireCategories nullable: true
         mapLayersConfig nullable: true
         config nullable: true

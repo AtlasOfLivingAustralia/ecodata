@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.validation.ValidationException
 import org.grails.core.artefact.DomainClassArtefactHandler
 import org.springframework.context.MessageSourceResolvable
 
@@ -75,7 +76,7 @@ class CommonService {
                 }
             }
 
-            throw new Exception( messages.join(', '));
+            throw new ValidationException(messages.join(', '), o.errors)
         }
     }
 

@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 
-import au.org.ala.ecodata.graphql.models.TargetMeasure
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 class KeyEvaluationQuestion {

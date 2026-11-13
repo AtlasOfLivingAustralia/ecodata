@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
-import grails.gorm.transactions.Transactional
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
 import org.grails.web.converters.marshaller.json.CollectionMarshaller
@@ -21,15 +20,24 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
 
     def setupSpec() {
         setupTerms()
+        setupInvestmentPriorities()
     }
 
     private void setupTerms() {
-            // Mock test data
-            new Term(termId: 't1', term: "testTerm1", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't2', term: "testTerm2", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't3', term: "testTerm3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't4', term: "testTerm4", category: "testCategory", hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError:true)
-            new Term(termId: 't5', term: "testTerm5", category: "testCategory", hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError:true)
+        // Mock test data
+        new Term(termId: 't1', term: "testTerm1", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't2', term: "testTerm2", category: "testCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't3', term: "testTerm3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't4', term: "testTerm4", category: "testCategory", hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError:true)
+        new Term(termId: 't5', term: "testTerm5", category: "testCategory", hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError:true)
+    }
+
+    private void setupInvestmentPriorities() {
+        new InvestmentPriority(investmentPriorityId: 'ip1', name: "testInvestmentPriority1", categories: ["testCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip2', name: "testInvestmentPriority2", categories: ["testCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip3', name: "testInvestmentPriority3", categories: ["otherCategory"], hubId: "hub1", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip4', name: "testInvestmentPriority4", categories: ["testCategory2"], hubId: "hub2", status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'ip5', name: "testInvestmentPriority5", categories: ["testCategory2"], hubId: "hub1", status: Status.DELETED).save(flush: true, failOnError: true)
     }
 
     def setup() {
@@ -42,7 +50,10 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         service.activityFormService = activityFormService
         service.messageSource = messageSource
         service.hubService = hubService
-
+        // We are deliberately using the real ProjectService here because we want to test the interaction between
+        // MetadataService and ProjectService using the real findProjectsUsingInvestmentPriority method.
+        // We don't want to mock that out because we want to test the actual behaviour of the method.
+        service.projectService = new ProjectService()
         JSON.registerObjectMarshaller(new MapMarshaller())
         JSON.registerObjectMarshaller(new CollectionMarshaller())
     }
@@ -52,10 +63,12 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         Score.findAll().each{ it.delete(flush:true) }
         ActivityForm.findAll().each{ it.delete(flush:true) }
         Program.findAll().each { it.delete(flush:true) }
+        Project.findAll().each { it.delete(flush:true) }
     }
 
     def cleanupSpec() {
         Term.findAll().each { it.delete(flush:true) }
+        InvestmentPriority.findAll().each { it.delete(flush:true) }
     }
 
     private void setupServices() {
@@ -463,6 +476,245 @@ class MetadataServiceSpec extends MongoSpec implements ServiceUnitTest<MetadataS
         then:
         !deletedTerm.hasErrors()
 
+    }
+
+
+    def "findInvestmentPriorities should find investment priorities filtered by supplied categories"() {
+
+        when: "findInvestmentPrioritiesByCategory is called with a category"
+        List<Term> result = service.findInvestmentPriorities([categories:"testCategory"])
+
+        then: "Only investment priorities matching the category are returned, excluding deleted ones"
+        result.size() == 2
+        result*.name.containsAll(["testInvestmentPriority1", "testInvestmentPriority2"])
+
+        when: "findInvestmentPrioritiesByCategory is called with a multiple categories"
+        result = service.findInvestmentPriorities([categories:["testCategory", "otherCategory"]])
+
+        then: "Investment priorities matching either category are returned, excluding deleted ones"
+        result.size() == 3
+        result*.name.containsAll(["testInvestmentPriority1", "testInvestmentPriority2", "testInvestmentPriority3"])
+
+    }
+
+    def "The metadataservice will update the status to deleted when asked to delete a investment priority"() {
+        setup:
+        String investmentPriorityId = 'ip2'
+        when:
+        InvestmentPriority deletedInvestmentPriority = service.deleteInvestmentPriority(investmentPriorityId)
+
+        then:
+        deletedInvestmentPriority.status == Status.DELETED
+        InvestmentPriority.findByInvestmentPriorityId(investmentPriorityId).status == Status.DELETED
+
+    }
+
+    def "An investment priority can be updated"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip1', name: "Investment priority - updated", hubId: "hub1", categories: ["testCategory"])
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.updateInvestmentPriority(investmentPriority.properties)
+        InvestmentPriority.withSession{
+            it.clear()
+        }
+
+        then:
+        !updatedInvestmentPriority.hasErrors()
+        InvestmentPriority.findByInvestmentPriorityId(investmentPriority.investmentPriorityId).name == investmentPriority.name
+
+    }
+
+    def "An InvestmentPriority hubId should not be able to be overwritten once set"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip1', name: "Investment priority - updated", hubId: "hub2", categories: ["testCategory"])
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.updateInvestmentPriority(investmentPriority.properties)
+
+        then:
+        updatedInvestmentPriority.hasErrors()
+        updatedInvestmentPriority.errors.getFieldErrorCount('hubId') == 1
+
+    }
+
+    /**
+     * This test is because the unique constraint on InvestmentPriority name/status prevents multiple deleted investment priorities in the
+     * same name
+     */
+    def "An InvestmentPriority can be deleted more than once"() {
+        setup:
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: 'ip3', name: "investmentPriority3", category: "otherCategory", hubId: "hub1", status: Status.ACTIVE)
+
+        when:
+        InvestmentPriority updatedInvestmentPriority = service.deleteInvestmentPriority(investmentPriority.investmentPriorityId)
+
+        then:
+        !updatedInvestmentPriority.hasErrors()
+
+        when: "We re-add then re-delete the InvestmentPriority"
+        InvestmentPriority newInvestmentPriority = service.updateInvestmentPriority([name:investmentPriority.name, description: investmentPriority.description, categories: investmentPriority.categories, hubId: investmentPriority.hubId])
+        InvestmentPriority deletedInvestmentPriority = service.deleteInvestmentPriority(newInvestmentPriority.investmentPriorityId)
+
+        then:
+        !deletedInvestmentPriority.hasErrors()
+
+    }
+
+    private static Map stubMeriPlanData(List<String> assetDescriptions, List primaryOutcomeAssets, List secondaryOutcomeAssets) {
+        [
+                assets  : assetDescriptions.collect { [description: it] },
+                outcomes: [
+                        primaryOutcome   : [description: 'Primary outcome', assets: primaryOutcomeAssets],
+                        secondaryOutcomes: secondaryOutcomeAssets.collect { [description: 'Secondary outcome', assets: it] }
+                ]
+        ]
+    }
+
+    private void createInvestmentPriorities() {
+        new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'other', name: 'Other', categories: ['c'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+    }
+
+    private void cleanupInvestmentPriorities() {
+        InvestmentPriority.findAllByInvestmentPriorityIdInList(['mergeKeep', 'mergeRemove', 'other']).each { it.delete(flush: true) }
+    }
+
+    def "mergeInvestmentPriority updates every MeriPlan investment priority path and reports affected projects"() {
+        setup:
+        createInvestmentPriorities()
+        // References the investment priority to merge in every path, and already references the one to keep in some.
+        new Project(projectId: 'p1', name: 'Project 1', grantId: 'GRANT_1', status: Status.ACTIVE,
+                custom: [details: stubMeriPlanData(
+                        ['mergeKeep', 'mergeRemove', 'other'],
+                        ['mergeRemove', 'mergeKeep', 'other'],
+                        [['mergeRemove', 'other'], ['mergeRemove'], ['other']])]
+        ).save(flush: true, failOnError: true)
+        // References the investment priority to merge in only one path.
+        new Project(projectId: 'p2', name: 'Project 2', grantId: 'GRANT_2', status: Status.ACTIVE,
+                custom: [details: stubMeriPlanData([], [], [['mergeRemove']])]
+        ).save(flush: true, failOnError: true)
+        // Does not reference the investment priority to merge.
+        new Project(projectId: 'p3', name: 'Project 3', status: Status.ACTIVE,
+                custom: [details: stubMeriPlanData(['other'], ['other'], [['other']])]
+        ).save(flush: true, failOnError: true)
+        // Deleted projects are not updated.
+        new Project(projectId: 'p4', name: 'Project 4', status: Status.DELETED,
+                custom: [details: stubMeriPlanData(['mergeRemove'], ['mergeRemove'], [['mergeRemove']])]
+        ).save(flush: true, failOnError: true)
+        // Projects without a MERI plan are ignored.
+        new Project(projectId: 'p5', name: 'Project 5', status: Status.ACTIVE).save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+        Project.withSession { it.clear() } // Ensure the assertions below check what was persisted.
+
+        then:
+        result.investmentPriority.investmentPriorityId == 'mergeKeep'
+        result.affectedProjects.sort { it.projectId } == [
+                [projectId: 'p1', grantId: 'GRANT_1', name: 'Project 1'],
+                [projectId: 'p2', grantId: 'GRANT_2', name: 'Project 2']
+        ]
+
+        and: "All paths are updated and lists are de-duplicated"
+        Map p1 = Project.findByProjectId('p1').custom.details
+        p1.assets*.description == ['mergeKeep', 'mergeKeep', 'other']
+        p1.outcomes.primaryOutcome.assets == ['mergeKeep', 'other']
+        p1.outcomes.secondaryOutcomes*.assets == [['mergeKeep', 'other'], ['mergeKeep'], ['other']]
+        new MeriPlan(Project.findByProjectId('p1')).investmentPriorities.unique().sort() == ['mergeKeep', 'other']
+
+        and:
+        Project.findByProjectId('p2').custom.details.outcomes.secondaryOutcomes*.assets == [['mergeKeep']]
+
+        and: "Unrelated and deleted projects are not modified"
+        Project.findByProjectId('p3').custom.details == stubMeriPlanData(['other'], ['other'], [['other']])
+        Project.findByProjectId('p4').custom.details == stubMeriPlanData(['mergeRemove'], ['mergeRemove'], [['mergeRemove']])
+
+        and: "The merged investment priority is deleted and the kept one is not"
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+        InvestmentPriority.findByInvestmentPriorityId('mergeKeep').status == Status.ACTIVE
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
+    def "mergeInvestmentPriority deletes the merged investment priority even if no projects reference it"() {
+        setup:
+        createInvestmentPriorities()
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+
+        then:
+        result.investmentPriority.investmentPriorityId == 'mergeKeep'
+        result.affectedProjects == []
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
+    def "mergeInvestmentPriority adds any missing categories and management units from the merged investment priority to the kept one"() {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c1', 'c2'], managementUnits: ['mu1', 'mu2'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', categories: ['c2', 'c3'], managementUnits: ['mu2', 'mu3', 'mu4'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+
+        then: "The returned investment priority includes the union of categories and management units with no duplicates"
+        result.investmentPriority.categories == ['c1', 'c2', 'c3']
+        result.investmentPriority.managementUnits == ['mu1', 'mu2', 'mu3', 'mu4']
+
+        and: "The changes have been persisted"
+        InvestmentPriority.withNewSession {
+            InvestmentPriority kept = InvestmentPriority.findByInvestmentPriorityId('mergeKeep')
+            assert kept.categories == ['c1', 'c2', 'c3']
+            assert kept.managementUnits == ['mu1', 'mu2', 'mu3', 'mu4']
+            assert kept.status == Status.ACTIVE
+            true
+        }
+
+        and: "The merged investment priority is deleted"
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
+    def "mergeInvestmentPriority leaves the kept investment priority categories and management units unchanged if the merged one has none"() {
+        setup:
+        new InvestmentPriority(investmentPriorityId: 'mergeKeep', name: 'Merge keep', categories: ['c1'], managementUnits: ['mu1'], hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+        new InvestmentPriority(investmentPriorityId: 'mergeRemove', name: 'Merge remove', hubId: 'hub1', status: Status.ACTIVE).save(flush: true, failOnError: true)
+
+        when:
+        Map result = service.mergeInvestmentPriority('mergeKeep', 'mergeRemove')
+
+        then:
+        result.investmentPriority.categories == ['c1']
+        result.investmentPriority.managementUnits == ['mu1']
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.DELETED
+
+        cleanup:
+        cleanupInvestmentPriorities()
+    }
+
+    def "mergeInvestmentPriority returns null and changes nothing when the ids are invalid or the same"() {
+        setup:
+        createInvestmentPriorities()
+
+        expect:
+        service.mergeInvestmentPriority('mergeKeep', 'does-not-exist') == null
+        service.mergeInvestmentPriority('does-not-exist', 'mergeKeep') == null
+        service.mergeInvestmentPriority('mergeKeep', 'mergeKeep') == null
+
+        and:
+        InvestmentPriority.findByInvestmentPriorityId('mergeKeep').status == Status.ACTIVE
+        InvestmentPriority.findByInvestmentPriorityId('mergeRemove').status == Status.ACTIVE
+
+        cleanup:
+        cleanupInvestmentPriorities()
     }
 
 }
