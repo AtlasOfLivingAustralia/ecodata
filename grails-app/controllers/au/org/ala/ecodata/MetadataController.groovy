@@ -14,7 +14,7 @@ import static au.org.ala.ecodata.Status.DELETED
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class MetadataController {
     static responseFormats = ['json']
-    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE', 'updateInvestmentPriorityCategory':'POST', 'mergeInvestmentPriority':'POST']
+    static allowedMethods = ['updateTerm':'POST', 'deleteTerm':'DELETE', 'updateInvestmentPriority':"POST", 'deleteInvestmentPriority':'DELETE', 'updateInvestmentPriorityCategory':'POST', 'mergeInvestmentPriorities':'POST']
 
     def metadataService, activityService, commonService, projectService, webService
     ActivityFormService activityFormService
