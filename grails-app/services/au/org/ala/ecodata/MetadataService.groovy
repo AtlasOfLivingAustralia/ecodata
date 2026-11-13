@@ -1470,7 +1470,7 @@ class MetadataService implements DataBinder {
             investmentPriority = InvestmentPriority.findByInvestmentPriorityId(investmentPriorityProps.investmentPriorityId)
         }
 
-        bindData(investmentPriority, investmentPriorityProps)
+        bindData(investmentPriority, investmentPriorityProps, [exclude: ['status']])
         investmentPriority.save(flush:true)
         investmentPriority
     }
