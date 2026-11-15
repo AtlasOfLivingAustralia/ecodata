@@ -184,7 +184,7 @@ class MeriPlan {
     List<ProjectOutcome> getSecondaryOutcomes() {
         List<ProjectOutcome> outcomes = []
         details.outcomes?.secondaryOutcomes?.each { Map outcome ->
-            if (outcome && outcome.description) {
+            if (outcome && (outcome.description || outcome.assets)) {
                 outcomes.add(new ProjectOutcome(outcome))
             }
         }

@@ -224,6 +224,9 @@ class Project {
 
             investmentPriorityIds = meriPlan.secondaryOutcomes?.collectMany{ it?.assets ?: [] }?.findAll()?.unique()
             InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.outcomes.secondaryOutcomes.assets', investmentPriorityIds, errors)
+
+            investmentPriorityIds = meriPlan.details.assets?.collect { it?.description }?.findAll()?.unique()
+            InvestmentPriorityValidator.validateInvestmentPriorities('custom.details.assets.description', investmentPriorityIds, errors)
         }
 		risks nullable:true
         promoteOnHomepage nullable:true
