@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
+import org.grails.datastore.mapping.engine.event.EventType
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -46,6 +47,7 @@ class MetadataService implements DataBinder {
     HubService hubService
     ProjectService projectService
     RecordService recordService
+    ElasticSearchService elasticSearchService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -1473,8 +1475,18 @@ class MetadataService implements DataBinder {
             }
         }
 
+        boolean indexedFieldsChanged = investmentPriority.name != investmentPriorityProps.name || investmentPriority.type != investmentPriorityProps.type
+
         bindData(investmentPriority, investmentPriorityProps, [exclude: ['status']])
         investmentPriority.save(flush:true)
+        if (indexedFieldsChanged && !investmentPriority.hasErrors()) {
+            // If the name or type has changed, we need to re-index any projects that
+            // use that priority so that the search index is up to date.
+            projectService.findProjectsUsingInvestmentPriority(investmentPriority.investmentPriorityId).each { Project project ->
+                def message = new IndexDocMsg(docType: Project.class.name, docId: project.projectId, indexType: EventType.PostUpdate)
+                elasticSearchService.queueIndexingEvent(message)
+            }
+        }
         investmentPriority
     }
 
