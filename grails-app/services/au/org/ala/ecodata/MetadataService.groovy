@@ -1468,6 +1468,9 @@ class MetadataService implements DataBinder {
         }
         else {
             investmentPriority = InvestmentPriority.findByInvestmentPriorityId(investmentPriorityProps.investmentPriorityId)
+            if (!investmentPriority) {
+                return null
+            }
         }
 
         bindData(investmentPriority, investmentPriorityProps, [exclude: ['status']])
