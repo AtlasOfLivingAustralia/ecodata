@@ -1437,13 +1437,13 @@ class MetadataService implements DataBinder {
         // Update the investment priority to keep with any categories and management units from the investment priority to delete that it doesn't already have.
         investmentPriorityToMerge.categories?.each { category ->
             if (!investmentPriorityToKeep.categories?.contains(category)) {
-                investmentPriorityToKeep.categories << category
+                investmentPriorityToKeep.categories = (investmentPriorityToKeep.categories ?: []) + category
             }
         }
 
         investmentPriorityToMerge.managementUnits?.each { managementUnit ->
             if (!investmentPriorityToKeep.managementUnits?.contains(managementUnit)) {
-                investmentPriorityToKeep.managementUnits << managementUnit
+                investmentPriorityToKeep.managementUnits = (investmentPriorityToKeep.managementUnits ?: []) + managementUnit
             }
         }
         investmentPriorityToKeep.save(flush:true, failOnError:true)
