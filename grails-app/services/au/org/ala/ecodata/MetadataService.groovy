@@ -1365,7 +1365,7 @@ class MetadataService implements DataBinder {
     }
 
     List<InvestmentPriority> findInvestmentPriorities(Map searchCriteria, Integer max = 1000, Integer offset = 0, String sort = 'name', String orderBy = 'asc') {
-        List<InvestmentPriority> investmentPriorities = InvestmentPriority.createCriteria().list {
+        List<InvestmentPriority> investmentPriorities = InvestmentPriority.createCriteria().list(max: max, offset: offset) {
             searchCriteria.each { String prop, value ->
                 if (value instanceof List) {
                     inList(prop, value)
