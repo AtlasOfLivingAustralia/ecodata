@@ -209,7 +209,7 @@ class MeriPlan {
     List <String> getInvestmentPriorities() {
         List assets = []
         assets.addAll(details.assets?.collect{it.description}?:[])
-        assets.addAll(getPrimaryOutcome()?.assets)
+        assets.addAll(getPrimaryOutcome()?.assets ?: [])
         getSecondaryOutcomes()?.each { ProjectOutcome outcome ->
             assets.addAll(outcome?.assets)
         }
