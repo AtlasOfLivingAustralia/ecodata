@@ -1468,15 +1468,35 @@ class MetadataService implements DataBinder {
         }
         investmentPriorityToKeep.save(flush:true, failOnError:true)
 
+        List<Map> affectedProjectsSummary = updateProjectsAffectedByMergeAndDeleteInvestmentPriority(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+        InvestmentPriority deleted = deleteInvestmentPriority(investmentPriorityIdToDelete)
+        if (!deleted) {
+            log.warn("Failed to delete investment priority ${investmentPriorityIdToDelete} after merging into ${investmentPriorityIdToKeep}")
+
+            // This should only occur during a very rare race condition where a project is updated concurrently with the merge.
+            // In that case, the project will be re-indexed and the search index will be correct, but the investment priority will remain in the database.
+            // Likely in this case, trying again will succeed, so we don't throw an error or fail the merge,
+            // but we log a warning so that it can be investigated if it happens frequently.
+            List newlyAffectedProjectsSummary = updateProjectsAffectedByMergeAndDeleteInvestmentPriority(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+            if (newlyAffectedProjectsSummary) {
+                affectedProjectsSummary += newlyAffectedProjectsSummary
+            }
+            else {
+                log.warn("No addtional projects were updated when re-checking for projects using investment priority ${investmentPriorityIdToDelete} after failed deletion")
+            }
+            // Re-try the deletion, but don't fail the merge if it fails again.
+            deleted = deleteInvestmentPriority(investmentPriorityIdToDelete)
+        }
+        [investmentPriority: investmentPriorityToKeep, affectedProjects: affectedProjectsSummary, deletedInvestmentPriority: deleted]
+    }
+
+    private List updateProjectsAffectedByMergeAndDeleteInvestmentPriority(String investmentPriorityIdToDelete, String investmentPriorityIdToKeep) {
         List<Project> affectedProjects = projectService.updateInvestmentPriorityInMeriPlan(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
         List<Map> affectedProjectsSummary = affectedProjects.collect { project ->
             [projectId: project.projectId, grantId: project.grantId, name: project.name]
         }
         log.info("Merged investment priority ${investmentPriorityIdToDelete} into ${investmentPriorityIdToKeep}, ${affectedProjects.size()} project(s) updated")
-
-        deleteInvestmentPriority(investmentPriorityIdToDelete)
-
-        [investmentPriority: investmentPriorityToKeep, affectedProjects: affectedProjectsSummary]
+        affectedProjectsSummary
     }
 
 
