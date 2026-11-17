@@ -1243,6 +1243,15 @@ class ElasticSearchService {
                 List investmentPriorities = metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds])
                 projectMap.meriPlanAssetFacet = investmentPriorities.collect{it.name}
                 projectMap.meriPlanAssetTypeFacet = investmentPriorities.collect{it.type}
+
+                // For the very rare case an investment priority has been deleted during a project
+                // write (in between the validate and save operations), we are performing a check here.
+                investmentPriorities.findAll{it.status == Status.DELETED}.each {
+                    emailService.sendEmail(
+                            "Deleted investment priority used in project ${project.projectId}",
+                            "The investment priority with id ${it.investmentPriorityId} has been deleted but is still being used in project ${project.projectId}. Please investigate.",
+                            [grailsApplication.config.getProperty('ecodata.support.email.address')])
+                }
             }
 
         } else {

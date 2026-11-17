@@ -1653,12 +1653,18 @@ class ProjectService {
 
         List<Project> affectedProjects = []
         projectsToUpdate.each { Project project ->
-            Map details = project.custom?.details as Map
-            if (details && replaceInvestmentPriorityInMeriPlan(details, investmentPriorityIdToReplace, investmentPriorityIdReplacement)) {
-                // The change is nested inside the custom Map so GORM won't detect it automatically.
-                project.markDirty('custom')
-                project.save(flush: true, failOnError: true)
-                affectedProjects << project
+            synchronized (PROJECT_UPDATE_LOCKS.get(project.projectId)) {
+                Project.withNewSession {
+                    Project requeriedProject = Project.findByProjectId(project.projectId)
+                    Map details = requeriedProject.custom?.details as Map
+                    if (details && replaceInvestmentPriorityInMeriPlan(details, investmentPriorityIdToReplace, investmentPriorityIdReplacement)) {
+
+                        // The change is nested inside the custom Map so GORM won't detect it automatically.
+                        requeriedProject.markDirty('custom')
+                        requeriedProject.save(flush: true, failOnError: true)
+                        affectedProjects << project
+                    }
+                }
             }
         }
         affectedProjects

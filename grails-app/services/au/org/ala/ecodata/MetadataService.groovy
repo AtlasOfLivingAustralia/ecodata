@@ -1404,8 +1404,26 @@ class MetadataService implements DataBinder {
             deletedInvestmentPriority.delete(flush:true)
         }
 
+        // Write the deletion first, then re-check for projects using the investment priority.
+        // Because this is a very rare situation (deleting Investment priorities which weren't created in error
+        // and are actually used by projects), we don't do the reverse check in the Project update (or introduce
+        // thread synchronization or locking ) as it would slow down a very frequent write operation and increase
+        // complexity.  If somehow the a Project manages to validate before
+        // the deletion completes but still hasn't written after we re-check the result, we catch it at indexing
+        // time.
         investmentPriority.status = Status.DELETED
         investmentPriority.save(flush:true)
+        if (investmentPriority.hasErrors()) {
+            return investmentPriority
+        }
+
+        projects = projectService.findProjectsUsingInvestmentPriority(investmentPriorityId)
+        if (projects) {
+            log.error("Cannot delete investment priority with id = "+investmentPriorityId+" as it was used by a concurrent project update")
+            investmentPriority.status = Status.ACTIVE
+            investmentPriority.save(flush:true, failOnError:true)
+            return null
+        }
 
         investmentPriority
     }
