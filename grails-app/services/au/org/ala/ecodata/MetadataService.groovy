@@ -1501,7 +1501,7 @@ class MetadataService implements DataBinder {
             // If the name or type has changed, we need to re-index any projects that
             // use that priority so that the search index is up to date.
             projectService.findProjectsUsingInvestmentPriority(investmentPriority.investmentPriorityId).each { Project project ->
-                def message = new IndexDocMsg(docType: Project.class.name, docId: project.projectId, indexType: EventType.PostUpdate)
+                def message = new IndexDocMsg(docType: Project.class.name, docId: project.projectId, indexType: EventType.PostUpdate, docIds: [])
                 elasticSearchService.queueIndexingEvent(message)
             }
         }
