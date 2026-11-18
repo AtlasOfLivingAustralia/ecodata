@@ -93,7 +93,7 @@ class AuditService {
      *
      * This method is called on a background thread scheduled by the Quartz job scheduler
      */
-    public int flushMessageQueue(int maxMessagesToFlush = 1000) {
+    int flushMessageQueue(int maxMessagesToFlush = 1000) {
         int messageCount = 0
         AuditMessage.withNewSession { session ->
             try {

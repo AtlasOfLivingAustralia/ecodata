@@ -7,7 +7,7 @@ import grails.gorm.transactions.Transactional
 class ManagementUnitController {
 
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST'], findAllForUser:'GET', managementUnitSiteMap: ['GET', 'POST']]
+    static allowedMethods = [get:'GET', findByName: 'GET', search:'GET', findAllForUser: 'GET', list:'GET', update:['PUT', 'POST'], delete:'DELETE',getManagementUnits: ['POST'], findAllForUser:'GET', managementUnitSiteMap: ['GET', 'POST']]
 
     ManagementUnitService managementUnitService
     ElasticSearchService elasticSearchService
@@ -42,6 +42,10 @@ class ManagementUnitController {
         else{
             respond []
         }
+    }
+
+    def list() {
+        respond ManagementUnit.findAllByStatusNotEqual(Status.DELETED, [sort: 'name', order: 'asc', max: 100])
     }
 
     def findByName(String name) {

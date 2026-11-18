@@ -20,6 +20,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         outputFile = File.createTempFile('test', '.xlsx')
         excelImportService = new ExcelImportService()
         mockDomain(Term)
+        mockDomain(InvestmentPriority)
     }
 
     def "Get excel template that can be populated with output data and uploaded"() {
@@ -107,6 +108,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         Term term = new Term(term: "testTerm", hubId: "testHubId", category: "testCategory", status:Status.DELETED)
 
         when:
+        request.method = "DELETE"
         controller.deleteTerm(term.termId)
 
         then:
@@ -121,6 +123,7 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         Map term = [term: "testTerm", hubId: "testHubId", category: "testCategory"]
 
         when:
+        request.method = "POST"
         request.JSON = term
         controller.updateTerm()
 
@@ -128,6 +131,125 @@ class MetadataControllerSpec extends Specification implements ControllerUnitTest
         1 * metadataService.updateTerm(term) >> new Term(term)
         response.status == HttpStatus.SC_OK
         response.json.term == "testTerm"
+    }
+
+    def "The controller should delegate to the MetadataService to find InvestmentPriorities"() {
+        setup:
+        String category = "testCategory"
+        def investmentPriorities = [[name: "investment priority 1"], [name: "investment priority 2"]]
+
+        when:
+        request.method = "POST"
+        request.JSON = [categories: category]
+
+        controller.investmentPriorities()
+
+        then:
+        1 *  metadataService.findInvestmentPriorities([categories:category], 1000, 0 , 'name', 'asc') >> investmentPriorities
+        response.status == HttpStatus.SC_OK
+        response.json == investmentPriorities
+    }
+
+    def "The controller should delegate to the MetadataService to delete an InvestmentPriority"() {
+        setup:
+        String investmentPriorityId = 'ip2'
+        InvestmentPriority investmentPriority = new InvestmentPriority(investmentPriorityId: investmentPriorityId, name:"investment priority")
+
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority(investmentPriorityId)
+
+        then:
+        1 * metadataService.deleteInvestmentPriority(investmentPriorityId) >> investmentPriority
+
+        response.status == HttpStatus.SC_OK
+        response.json.status == Status.DELETED
+    }
+
+    def "The controller should return a 400 without calling the MetadataService if no id is supplied to deleteInvestmentPriority"() {
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority(null)
+
+        then:
+        0 * metadataService.deleteInvestmentPriority(_)
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
+    def "The controller should return a 400 if the InvestmentPriority to delete cannot be found"() {
+        when:
+        request.method = "DELETE"
+        controller.deleteInvestmentPriority('invalid')
+
+        then:
+        1 * metadataService.deleteInvestmentPriority('invalid') >> null
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
+    def "The controller should delegate to the MetadataService to update an InvestmentPriority"() {
+        setup:
+        Map investmentPriorityProps = [name: "test investment priority", hubId: "testHubId", categories: ["testCategory"]]
+
+        when:
+        request.method = "POST"
+        request.JSON = investmentPriorityProps
+        controller.updateInvestmentPriority()
+
+        then:
+        1 * metadataService.updateInvestmentPriority(investmentPriorityProps) >> new InvestmentPriority(investmentPriorityProps)
+        response.status == HttpStatus.SC_OK
+        response.json.name == investmentPriorityProps.name
+    }
+
+    def "The controller should delegate to the MetadataService to merge InvestmentPriorities and return the result"() {
+        setup:
+        InvestmentPriority kept = new InvestmentPriority(investmentPriorityId: 'keep', name: "investment priority to keep")
+        List affectedProjects = [[projectId: 'p1', grantId: 'g1', name: 'Project 1'], [projectId: 'p2', grantId: 'g2', name: 'Project 2']]
+
+        when:
+        request.method = "POST"
+        request.JSON = [investmentPriorityIdToReplaceWith: 'keep', investmentPriorityIdToDelete: 'merge']
+        controller.mergeInvestmentPriorities()
+
+        then:
+        1 * metadataService.mergeInvestmentPriority('keep', 'merge') >> [investmentPriority: kept, affectedProjects: affectedProjects]
+        response.status == HttpStatus.SC_OK
+        response.json.investmentPriority.name == "investment priority to keep"
+        response.json.affectedProjects == affectedProjects
+    }
+
+    def "The controller should return a 400 if the MetadataService cannot merge the InvestmentPriorities"() {
+        when:
+        request.method = "POST"
+        request.JSON = [investmentPriorityIdToReplaceWith: 'keep', investmentPriorityIdToDelete: 'invalid']
+        controller.mergeInvestmentPriorities()
+
+        then:
+        1 * metadataService.mergeInvestmentPriority('keep', 'invalid') >> null
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+    }
+
+    def "The controller should return a 400 without calling the MetadataService if a required id is missing"(Map body) {
+        when:
+        request.method = "POST"
+        request.JSON = body
+        controller.mergeInvestmentPriorities()
+
+        then:
+        0 * metadataService.mergeInvestmentPriority(_, _)
+        response.status == HttpStatus.SC_BAD_REQUEST
+        response.json.error != null
+
+        where:
+        body << [
+                [investmentPriorityIdToReplaceWith: 'keep'],
+                [investmentPriorityIdToDelete: 'merge'],
+                [investmentPriorityIdToReplaceWith: '', investmentPriorityIdToDelete: 'merge'],
+                [:]
+        ]
     }
 
 }

@@ -66,6 +66,7 @@ import org.elasticsearch.xcontent.XContentType
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import org.springframework.beans.factory.annotation.Value
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -117,6 +118,9 @@ class ElasticSearchService {
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Document.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name, Output.class.name, ProjectActivity.class.name]
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
+    long mostRecentIndexMessageFlushTimeMillis = 0
+    @Value('${audit.thread.schedule.interval:5000}')
+    long indexingThreadScheduleInterval
 
     /**
      * List of indexed fields we apply a compatibility layer to so we accept "T" and "F" as terms when filtering on these fields.
@@ -514,6 +518,16 @@ class ElasticSearchService {
      * @return
      */
     public int flushIndexMessageQueue(int maxMessagesToFlush = 1000) {
+        long now = System.currentTimeMillis()
+        if (now - mostRecentIndexMessageFlushTimeMillis > 2*indexingThreadScheduleInterval) {
+            log.warn("Gap between index message queue flushes is ${now-mostRecentIndexMessageFlushTimeMillis}ms. Last flush was at ${mostRecentIndexMessageFlushTimeMillis}, now is ${now}")
+            log.warn("Message queue size is ${_messageQueue.size()}")
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("Flushing index message queue. Queue size is ${_messageQueue.size()}. Max messages to flush is ${maxMessagesToFlush}")
+        }
+        mostRecentIndexMessageFlushTimeMillis = System.currentTimeMillis()
+
         int messageCount = 0
 
         try {
@@ -1222,6 +1236,26 @@ class ElasticSearchService {
 
             // add algorithmically generated or manually selected states and electorates of a project
             projectMap << projectService.findStateAndElectorateForProject(projectMap)
+
+            // Convert investment priority ids into names for indexing.
+            List<String> investmentPriorityIds = project.getMeriPlan()?.getInvestmentPriorities()
+            if (investmentPriorityIds) {
+                // We are deliberately including deleted investment priorities here so that we can send
+                // an email to the support team if a deleted investment priority is being used in a project.
+                List investmentPriorities = InvestmentPriority.findAllByInvestmentPriorityIdInList(investmentPriorityIds)
+                projectMap.meriPlanAssetFacet = investmentPriorities.collect{it.name}
+                projectMap.meriPlanAssetTypeFacet = investmentPriorities.collect{it.type}
+
+                // For the very rare case an investment priority has been deleted during a project
+                // write (in between the validate and save operations), we are performing a check here.
+                investmentPriorities.findAll{it.status == Status.DELETED}.each {
+                    emailService.sendEmail(
+                            "Deleted investment priority used in project ${project.projectId}",
+                            "The investment priority with id ${it.investmentPriorityId} has been deleted but is still being used in project ${project.projectId}. Please investigate.",
+                            [grailsApplication.config.getProperty('ecodata.support.email.address')])
+                }
+            }
+
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
             // GeoServer requires a single attribute with project area. Cannot use `sites` property (above) since it has

@@ -590,6 +590,9 @@ auth.baseUrl = 'https://auth-test.ala.org.au'
 userDetails.web.url = "${auth.baseUrl}/userdetails/"
 userDetails.api.url = "${auth.baseUrl}/userdetails/userDetails/"
 
+audit.thread.schedule.interval = 2000l
+audit.thread.max.messages = 500
+
 if (!grails.cache.ehcache) {
     grails {
         cache {

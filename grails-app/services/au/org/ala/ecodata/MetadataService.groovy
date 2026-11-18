@@ -9,13 +9,14 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import grails.converters.JSON
 import grails.core.GrailsApplication
+import grails.plugin.cache.Cacheable
 import grails.validation.ValidationException
 import grails.web.databinding.DataBinder
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import grails.plugin.cache.Cacheable
+import org.grails.datastore.mapping.engine.event.EventType
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipEntry
@@ -46,6 +47,7 @@ class MetadataService implements DataBinder {
     HubService hubService
     ProjectService projectService
     RecordService recordService
+    ElasticSearchService elasticSearchService
 
     /**
      * @deprecated use versioned API to retrieve activity form definitions
@@ -1364,4 +1366,206 @@ class MetadataService implements DataBinder {
         term
     }
 
+    List<InvestmentPriority> findInvestmentPriorities(Map searchCriteria, Integer max = 1000, Integer offset = 0, String sort = 'name', String orderBy = 'asc') {
+        List<InvestmentPriority> investmentPriorities = InvestmentPriority.createCriteria().list(max: max, offset: offset) {
+            searchCriteria.each { String prop, value ->
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+            ne('status', Status.DELETED)
+            order(sort, orderBy)
+        }
+        investmentPriorities
+    }
+
+    InvestmentPriority deleteInvestmentPriority(String investmentPriorityId) {
+
+        InvestmentPriority investmentPriority = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityId, Status.ACTIVE)
+        if (!investmentPriority) {
+            return null
+        }
+
+        List<Project> projects = projectService.findProjectsUsingInvestmentPriority(investmentPriorityId)
+
+        if (projects) {
+            log.error("Cannot delete investment priority with id = "+investmentPriorityId+" as it is in use")
+            return null
+        }
+
+        // Because of the unique constraint on the InvestmentPriority name / status field combination, if the same InvestmentPriority is deleted then
+        // re-added we can't soft delete it a second time without hard deleting any existing
+        // soft deleted InvestmentPriority.
+        InvestmentPriority deletedInvestmentPriority = InvestmentPriority.findByNameAndStatus(
+                investmentPriority.name, Status.DELETED)
+        if (deletedInvestmentPriority) {
+            deletedInvestmentPriority.delete(flush:true)
+        }
+
+        // Write the deletion first, then re-check for projects using the investment priority.
+        // Because this is a very rare situation (deleting Investment priorities which weren't created in error
+        // and are actually used by projects), we don't do the reverse check in the Project update (or introduce
+        // thread synchronization or locking ) as it would slow down a very frequent write operation and increase
+        // complexity.  If somehow the a Project manages to validate before
+        // the deletion completes but still hasn't written after we re-check the result, we catch it at indexing
+        // time.
+        investmentPriority.status = Status.DELETED
+        investmentPriority.save(flush:true)
+        if (investmentPriority.hasErrors()) {
+            return investmentPriority
+        }
+
+        projects = projectService.findProjectsUsingInvestmentPriority(investmentPriorityId)
+        if (projects) {
+            log.error("Cannot delete investment priority with id = "+investmentPriorityId+" as it was used by a concurrent project update")
+            investmentPriority.status = Status.ACTIVE
+            investmentPriority.save(flush:true, failOnError:true)
+            return null
+        }
+
+        investmentPriority
+    }
+
+    /**
+     * Merges one InvestmentPriority into another.  All (non-deleted) projects whose MERI plan references the
+     * investment priority to merge are updated to reference the investment priority to keep, then the merged
+     * investment priority is deleted.
+     *
+     * @param investmentPriorityIdToKeep the id of the InvestmentPriority that will remain.
+     * @param investmentPriorityIdToDelete the id of the InvestmentPriority that will be replaced and deleted.
+     * @return a Map with keys:
+     *   investmentPriority: the InvestmentPriority that was kept,
+     *   affectedProjects: a List of [projectId, grantId, name] for each project that was updated.
+     *   Returns null if the ids are the same or either InvestmentPriority does not exist / is not active.
+     */
+    Map mergeInvestmentPriority(String investmentPriorityIdToKeep, String investmentPriorityIdToDelete) {
+
+        if (investmentPriorityIdToKeep == investmentPriorityIdToDelete) {
+            // Otherwise we would delete the investment priority we are trying to keep.
+            return null
+        }
+
+        InvestmentPriority investmentPriorityToKeep = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityIdToKeep, Status.ACTIVE)
+        InvestmentPriority investmentPriorityToMerge = InvestmentPriority.findByInvestmentPriorityIdAndStatus(investmentPriorityIdToDelete, Status.ACTIVE)
+
+        if (!investmentPriorityToKeep || !investmentPriorityToMerge) {
+            return null
+        }
+
+        // Update the investment priority to keep with any categories and management units from the investment priority to delete that it doesn't already have.
+        investmentPriorityToMerge.categories?.each { category ->
+            if (!investmentPriorityToKeep.categories?.contains(category)) {
+                investmentPriorityToKeep.categories = (investmentPriorityToKeep.categories ?: []) + category
+            }
+        }
+
+        investmentPriorityToMerge.managementUnits?.each { managementUnit ->
+            if (!investmentPriorityToKeep.managementUnits?.contains(managementUnit)) {
+                investmentPriorityToKeep.managementUnits = (investmentPriorityToKeep.managementUnits ?: []) + managementUnit
+            }
+        }
+        investmentPriorityToKeep.save(flush:true, failOnError:true)
+
+        List<Map> affectedProjectsSummary = updateProjectsAffectedByMergeAndDeleteInvestmentPriority(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+        InvestmentPriority deleted = deleteInvestmentPriority(investmentPriorityIdToDelete)
+        if (!deleted) {
+            log.warn("Failed to delete investment priority ${investmentPriorityIdToDelete} after merging into ${investmentPriorityIdToKeep}")
+
+            // This should only occur during a very rare race condition where a project is updated concurrently with the merge.
+            // In that case, the project will be re-indexed and the search index will be correct, but the investment priority will remain in the database.
+            // Likely in this case, trying again will succeed, so we don't throw an error or fail the merge,
+            // but we log a warning so that it can be investigated if it happens frequently.
+            List newlyAffectedProjectsSummary = updateProjectsAffectedByMergeAndDeleteInvestmentPriority(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+            if (newlyAffectedProjectsSummary) {
+                affectedProjectsSummary += newlyAffectedProjectsSummary
+            }
+            else {
+                log.warn("No addtional projects were updated when re-checking for projects using investment priority ${investmentPriorityIdToDelete} after failed deletion")
+            }
+            // Re-try the deletion, but don't fail the merge if it fails again.
+            deleted = deleteInvestmentPriority(investmentPriorityIdToDelete)
+        }
+        [investmentPriority: investmentPriorityToKeep, affectedProjects: affectedProjectsSummary, deletedInvestmentPriority: deleted]
+    }
+
+    private List updateProjectsAffectedByMergeAndDeleteInvestmentPriority(String investmentPriorityIdToDelete, String investmentPriorityIdToKeep) {
+        List<Project> affectedProjects = projectService.updateInvestmentPriorityInMeriPlan(investmentPriorityIdToDelete, investmentPriorityIdToKeep)
+        List<Map> affectedProjectsSummary = affectedProjects.collect { project ->
+            [projectId: project.projectId, grantId: project.grantId, name: project.name]
+        }
+        log.info("Merged investment priority ${investmentPriorityIdToDelete} into ${investmentPriorityIdToKeep}, ${affectedProjects.size()} project(s) updated")
+        affectedProjectsSummary
+    }
+
+
+
+    InvestmentPriority updateInvestmentPriority(Map investmentPriorityProps) {
+        InvestmentPriority investmentPriority
+        if (!investmentPriorityProps?.investmentPriorityId) {
+            investmentPriority = new InvestmentPriority()
+        }
+        else {
+            investmentPriority = InvestmentPriority.findByInvestmentPriorityId(investmentPriorityProps.investmentPriorityId)
+            if (!investmentPriority) {
+                return null
+            }
+        }
+
+        boolean indexedFieldsChanged = investmentPriority.name != investmentPriorityProps.name || investmentPriority.type != investmentPriorityProps.type
+
+        bindData(investmentPriority, investmentPriorityProps, [exclude: ['status']])
+        investmentPriority.save(flush:true)
+        if (indexedFieldsChanged && !investmentPriority.hasErrors()) {
+            // If the name or type has changed, we need to re-index any projects that
+            // use that priority so that the search index is up to date.
+            projectService.findProjectsUsingInvestmentPriority(investmentPriority.investmentPriorityId).each { Project project ->
+                def message = new IndexDocMsg(docType: Project.class.name, docId: project.projectId, indexType: EventType.PostUpdate, docIds: [])
+                elasticSearchService.queueIndexingEvent(message)
+            }
+        }
+        investmentPriority
+    }
+
+    Map bulkUpdateInvestmentPriorityCategory(String category, List<String> investmentPriorityIds) {
+        Map result = [status: 'ok', updated: 0, errors: []]
+        // Now remove the category from any investment priorities that were not in the supplied list
+        InvestmentPriority.createCriteria().list {
+            if (investmentPriorityIds) {
+                not {
+                    inList('investmentPriorityId', investmentPriorityIds)
+                }
+            }
+
+            ne('status', Status.DELETED)
+            eq('categories', category)
+
+        }.each { InvestmentPriority ip ->
+            ip.categories.remove(category)
+            ip.save(flush: true)
+        }
+        investmentPriorityIds.each { String id ->
+            try {
+                InvestmentPriority ip = InvestmentPriority.findByInvestmentPriorityIdAndStatus(id, Status.ACTIVE)
+                if (ip) {
+                    if (!ip.categories) {
+                        ip.categories = []
+                    }
+                    if (!ip.categories.contains(category)) {
+                        ip.categories << category
+                        ip.save(flush: true)
+                        result.updated++
+                    }
+                } else {
+                    result.errors << "No active investment priority found for id ${id}"
+                }
+            } catch (Exception e) {
+                log.error("Error updating investment priority ${id} to add category ${category}", e)
+                result.errors << "Error updating investment priority ${id}: ${e.message}"
+            }
+        }
+
+        result
+    }
 }
