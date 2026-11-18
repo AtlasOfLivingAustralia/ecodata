@@ -1240,7 +1240,9 @@ class ElasticSearchService {
             // Convert investment priority ids into names for indexing.
             List<String> investmentPriorityIds = project.getMeriPlan()?.getInvestmentPriorities()
             if (investmentPriorityIds) {
-                List investmentPriorities = metadataService.findInvestmentPriorities([investmentPriorityId:investmentPriorityIds])
+                // We are deliberately including deleted investment priorities here so that we can send
+                // an email to the support team if a deleted investment priority is being used in a project.
+                List investmentPriorities = InvestmentPriority.findAllByInvestmentPriorityIdInList(investmentPriorityIds)
                 projectMap.meriPlanAssetFacet = investmentPriorities.collect{it.name}
                 projectMap.meriPlanAssetTypeFacet = investmentPriorities.collect{it.type}
 
