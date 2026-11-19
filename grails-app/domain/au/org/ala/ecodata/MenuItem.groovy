@@ -5,6 +5,7 @@ class MenuItem implements ProcessEmbedded {
     String role
     String displayName
     String href
+    String target
     String contentType
     String introductoryText
 
@@ -12,6 +13,7 @@ class MenuItem implements ProcessEmbedded {
         role nullable: true
         displayName nullable: true
         href nullable: true
+        target nullable: true, inList: ['_self', '_blank']
         contentType nullable: true
         introductoryText nullable: true
     }
