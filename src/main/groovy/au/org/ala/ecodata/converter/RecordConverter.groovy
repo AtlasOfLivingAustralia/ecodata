@@ -2,9 +2,7 @@ package au.org.ala.ecodata.converter
 
 import au.org.ala.ecodata.*
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang.StringUtils
-
-import static au.org.ala.ecodata.converter.ListConverter.PROP_MEASUREMENTS_OR_FACTS
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Utility for converting the data submitted for an Output into one or more Records with the correct Darwin Core fields
@@ -49,7 +47,10 @@ class RecordConverter {
     static final String SYSTEMATIC_SURVEY = "systematic"
     static final List MACHINE_SURVEY_TYPES = ["Bat survey - Echolocation recorder","Fauna survey - Call playback","Fauna survey - Camera trapping"]
     static final List LIST_COMBINE_EXCEPTION = ["multimedia"]
-    static final List MERGEABLE_COLLECTION_KEYS = [PROP_MEASUREMENTS_OR_FACTS]
+    // Groovy 5 cannot statically import a static property declared on a trait (RecordFieldConverter),
+    // so the shared key is declared here. Keep in sync with RecordFieldConverter.PROP_MEASUREMENTS_OR_FACTS.
+    //static final String PROP_MEASUREMENTS_OR_FACTS = "measurementsOrFacts"
+    static final List MERGEABLE_COLLECTION_KEYS = [ListConverter.PROP_MEASUREMENTS_OR_FACTS]
 
     /**
      * Creates darwin core fields from output data. It behaviour is controlled by recordGeneration attribute.
@@ -116,7 +117,7 @@ class RecordConverter {
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel, context)
             baseRecord = overrideAllExceptLists(baseRecord, recordFieldSets[0])
-            updateEventIdToMeasurements(baseRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
+            updateEventIdToMeasurements(baseRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
         }
 
         List<Map> records = []
@@ -130,7 +131,7 @@ class RecordConverter {
                     records << speciesRecord
             }
             else {
-                updateSpeciesIdToMeasurements(speciesRecord[PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
+                updateSpeciesIdToMeasurements(speciesRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], speciesRecord.occurrenceID)
                 records << speciesRecord
             }
         }
@@ -154,7 +155,7 @@ class RecordConverter {
                         }
                     }
                     else {
-                        updateEventIdToMeasurements(rowRecord[PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
+                        updateEventIdToMeasurements(rowRecord[ListConverter.PROP_MEASUREMENTS_OR_FACTS], baseRecord.activityId)
                         records << rowRecord
                     }
                 }
@@ -173,7 +174,7 @@ class RecordConverter {
 
     static List convertMeasurementsOrFactsToList (List records) {
         records?.each { record ->
-            record[PROP_MEASUREMENTS_OR_FACTS] = record[PROP_MEASUREMENTS_OR_FACTS]?.collect { it.value } ?: []
+            record[ListConverter.PROP_MEASUREMENTS_OR_FACTS] = record[ListConverter.PROP_MEASUREMENTS_OR_FACTS]?.collect { it.value } ?: []
         }
 
         records

@@ -71,11 +71,14 @@ class ActivityFormService {
      * @return
      */
     ActivityForm unpublish(String activityFormName, Integer version) {
-        ActivityForm form = ActivityForm.findByNameAndFormVersion(activityFormName, version)
-        if (form) {
-            form.unpublish()
-            form.save()
-        }
+        ActivityForm form = null
+        //ActivityForm.withSession { session ->
+            form = ActivityForm.findByNameAndFormVersion(activityFormName, version)
+            if (form) {
+                form.unpublish()
+                form.save(flush:true, failOnError:true)
+            }
+        //}
         form
     }
 

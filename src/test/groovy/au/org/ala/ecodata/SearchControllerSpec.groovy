@@ -5,6 +5,7 @@ import au.org.ala.ecodata.command.UserSummaryReportCommand
 import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
+import grails.testing.gorm.DomainUnitTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.apache.http.HttpStatus
 import org.apache.lucene.search.TotalHits
@@ -17,7 +18,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import spock.lang.Specification
 import grails.util.Holders
 
-class SearchControllerSpec extends Specification implements ControllerUnitTest<SearchController> {
+class SearchControllerSpec extends Specification implements ControllerUnitTest<SearchController>, DomainUnitTest<UserPermission> {
 
     DownloadService downloadService = Mock(DownloadService)
     UserService userService = Mock(UserService)
@@ -53,7 +54,9 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
 
         when:
         params.email = 'test@test.org'
-        controller.downloadAllData()
+        UserPermission.withSession {
+            controller.downloadAllData()
+        }
 
         then:
         1 * downloadService.getProjectIdsForDownload(_, ElasticIndex.HOMEPAGE_INDEX)
@@ -122,7 +125,9 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
 
         when:
         params.query = "*:*"
-        controller.elasticGeo()
+        UserPermission.withSession {
+            controller.elasticGeo()
+        }
 
         then:
         1 * elasticSearchService.search( "*:*", params, ElasticIndex.HOMEPAGE_INDEX, null) >> searchResponse
@@ -174,8 +179,9 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
         when:
         params.query = "*:*"
         params.markBy = markBy
-        controller.elasticGeo()
-
+        UserPermission.withSession {
+            controller.elasticGeo()
+        }
         then:
         1 * elasticSearchService.search("*:*", params, ElasticIndex.HOMEPAGE_INDEX, null) >> searchResponse
         response.json == [
@@ -191,7 +197,9 @@ class SearchControllerSpec extends Specification implements ControllerUnitTest<S
 
         when:
         request.json = [query:'*:*']
-        controller.elasticPost()
+        UserPermission.withSession {
+            controller.elasticPost()
+        }
 
         then:
         1 * elasticSearchService.search('*:*', _, ElasticIndex.DEFAULT_INDEX) >> searchResponse

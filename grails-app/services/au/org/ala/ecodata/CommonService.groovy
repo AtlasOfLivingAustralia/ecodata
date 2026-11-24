@@ -91,7 +91,7 @@ class CommonService {
      */
     @Deprecated
     def toBareMap(o) {
-        def mapOfProperties = GormMongoUtil.extractDboProperties(o.getProperty("dbo"))
+        def mapOfProperties = GormMongoUtil.extractDboProperties(GormMongoUtil.getDbo(o))
      //   def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id

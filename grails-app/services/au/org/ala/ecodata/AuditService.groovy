@@ -67,7 +67,7 @@ class AuditService {
             def props = [:]
             // Exclude any properties that should not be logged
             // dbo is a magical bag of all the properties as far as Mongo is concerned, including dynamically added ones
-            def map = entity.dbo ?: entity.properties
+            def map = GormMongoUtil.getDbo(entity) ?: entity.properties
             map.keySet().each { key ->
                 if (!EXCLUDED_ENTITY_PROPERTIES.contains(key)) {
                      props[key] = map[key]

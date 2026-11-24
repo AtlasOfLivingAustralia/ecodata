@@ -240,9 +240,9 @@ class MapServiceSpec extends Specification implements ServiceUnitTest<MapService
         features.type == "FeatureCollection"
         features.features.size() == 1
         features.features[0].type == "Feature"
-        features.features[0].properties.count == 1
-        features.features[0].properties.key == gridName
-        features.features[0].properties.colour != null
+        features.features[0].get('properties').count == 1
+        features.features[0].get('properties').key == gridName
+        features.features[0].get('properties').colour != null
         features.features[0].geometry.type == "Polygon"
         features.features[0].geometry.coordinates == boundary
     }
@@ -322,7 +322,7 @@ class MapServiceSpec extends Specification implements ServiceUnitTest<MapService
     def "should get field mapping from mappings"() {
         def res
         when:
-        res = service.getFieldsMapping(getMapping()["properties"])
+        res = service.getFieldsMapping(getMapping().get('properties'))
 
         then:
         res["surveyYearFacetField"]  == ["type": "string", "index" : "not_analyzed", path:"surveyYearFacet"]

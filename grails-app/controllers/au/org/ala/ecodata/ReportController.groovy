@@ -1,9 +1,11 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
 
 import java.text.ParseException
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class ReportController {
 

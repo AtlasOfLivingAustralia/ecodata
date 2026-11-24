@@ -58,7 +58,7 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date = getProperty(surveyData, startDatePath)
+        def date = getValueAtPath(surveyData, startDatePath)
         if (!date) {
             date = getPropertyFromSurvey(surveyData, startDatePath)
         }
@@ -69,7 +69,7 @@ class ParatooProtocolConfig {
 
     def getPropertyFromSurvey(Map surveyData, String path) {
         surveyData = getSurveyData(surveyData)
-        getProperty(surveyData, path)
+        getValueAtPath(surveyData, path)
     }
 
     String getEndDate(Map surveyData) {
@@ -77,7 +77,7 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def date = getProperty(surveyData, endDatePath)
+        def date = getValueAtPath(surveyData, endDatePath)
         if (!date) {
             date = getPropertyFromSurvey(surveyData, endDatePath)
         }
@@ -87,7 +87,7 @@ class ParatooProtocolConfig {
     }
 
     Date getPlotLayoutUpdatedAt(Map surveyData) {
-        def date = getProperty(surveyData, plotLayoutUpdatedAtPath)
+        def date = getValueAtPath(surveyData, plotLayoutUpdatedAtPath)
         if (!date) {
             date = getPropertyFromSurvey(surveyData, plotLayoutUpdatedAtPath)
         }
@@ -101,7 +101,7 @@ class ParatooProtocolConfig {
             return null
         }
 
-        def result = getProperty(surveyData, surveyIdPath)
+        def result = getValueAtPath(surveyData, surveyIdPath)
         if (result == null) {
             result = getPropertyFromSurvey(surveyData, surveyIdPath)
         }
@@ -112,7 +112,7 @@ class ParatooProtocolConfig {
 
     private Map extractSiteDataFromPath(Map survey) {
         Map surveyData = getSurveyData(survey)
-        def geometryData = getProperty(surveyData, geometryPath)
+        def geometryData = getValueAtPath(surveyData, geometryPath)
         geometryData = getFirst(geometryData)
         extractGeometryFromSiteData(geometryData)
     }
@@ -197,7 +197,7 @@ class ParatooProtocolConfig {
         apiEndpoint
     }
 
-    def getProperty(def surveyData, String path) {
+    def getValueAtPath(def surveyData, String path) {
         if (!path) {
             return null
         }
@@ -237,19 +237,19 @@ class ParatooProtocolConfig {
     }
 
     Map getPlotVisit (Map surveyData) {
-        def result = getProperty(surveyData, plotVisitPath)
+        def result = getValueAtPath(surveyData, plotVisitPath)
         Map plotVisit = getFirst(result)
         copyWithExcludedProperty(plotVisit, ParatooService.PARATOO_DATAMODEL_PLOT_LAYOUT)
     }
 
     Map getPlotLayout (Map surveyData) {
-        def result = getProperty(surveyData, plotLayoutPath)
+        def result = getValueAtPath(surveyData, plotLayoutPath)
         Map plotLayout = getFirst(result)
         copyWithExcludedProperty(plotLayout, ParatooService.PARATOO_DATAMODEL_PLOT_SELECTION)
     }
 
     Map getPlotSelection (Map surveyData) {
-        def result = getProperty(surveyData, plotSelectionPath)
+        def result = getValueAtPath(surveyData, plotSelectionPath)
         Map plotSelection = getFirst(result)
         copyWithExcludedProperty(plotSelection)
     }
@@ -311,31 +311,31 @@ class ParatooProtocolConfig {
 
     private Map extractSiteDataFromPlotVisit(Map survey) {
         Map surveyData = getSurveyData(survey)
-        String plotLayoutId = getProperty(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
+        String plotLayoutId = getValueAtPath(surveyData, plotLayoutIdPath) // Currently an int, may become uuid?
 
         if (!plotLayoutId) {
             log.warn("No plot_layout found in survey at path ${plotLayoutIdPath}")
             return null
         }
 
-        List plotLayoutPoints = getProperty(surveyData, plotLayoutPointsPath)
-        Map plotSelection = getProperty(surveyData, plotSelectionPath)
+        List plotLayoutPoints = getValueAtPath(surveyData, plotLayoutPointsPath)
+        Map plotSelection = getValueAtPath(surveyData, plotSelectionPath)
         Map plotSelectionGeoJson = plotSelectionToGeoJson(plotSelection)
 
-        String plotLayoutTypeLabel = getProperty(surveyData, plotLayoutTypeLabelPath)
-        List faunaPlotPoints = getProperty(surveyData, faunaPlotPointPath)
+        String plotLayoutTypeLabel = getValueAtPath(surveyData, plotLayoutTypeLabelPath)
+        List faunaPlotPoints = getValueAtPath(surveyData, faunaPlotPointPath)
 
-        String name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' ('+CORE_PLOT_SHORT+')'
+        String name = plotSelectionGeoJson.get('properties').name + ' - ' + plotLayoutTypeLabel + ' ('+CORE_PLOT_SHORT+')'
 
-        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", CORE_PLOT_SHORT)
+        Map plotGeoJson = createFeatureFromGeoJSON(plotLayoutPoints, name, plotLayoutId, "${CORE_PLOT} ${plotSelectionGeoJson?.get('properties')?.notes?:""}", CORE_PLOT_SHORT)
 
         if (faunaPlotPoints) {
-            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + FAUNA_PLOT_SHORT + ')'
-            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.properties?.notes?:""}", FAUNA_PLOT_SHORT)
+            name = plotSelectionGeoJson.get('properties').name + ' - ' + plotLayoutTypeLabel + ' (' + FAUNA_PLOT_SHORT + ')'
+            Map faunaPlotGeoJson = createFeatureFromGeoJSON(faunaPlotPoints, name, plotLayoutId, "${FAUNA_PLOT} ${plotSelectionGeoJson?.get('properties')?.notes?:""}", FAUNA_PLOT_SHORT)
             List features = [plotGeoJson, faunaPlotGeoJson]
 
-            name = plotSelectionGeoJson.properties.name + ' - ' + plotLayoutTypeLabel + ' (' + CORE_PLOT_SHORT + ' + ' + FAUNA_PLOT_SHORT + ')'
-            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId, plotGeoJson.properties.notes)
+            name = plotSelectionGeoJson.get('properties').name + ' - ' + plotLayoutTypeLabel + ' (' + CORE_PLOT_SHORT + ' + ' + FAUNA_PLOT_SHORT + ')'
+            plotGeoJson = createConvexHullGeoJSON(features, name, plotLayoutId, plotGeoJson.get('properties').notes)
         }
 
         plotGeoJson
@@ -375,7 +375,7 @@ class ParatooProtocolConfig {
                 ]
         ]
         if (activityType) {
-            featureObject.properties.activityType = activityType
+            featureObject.get('properties').activityType = activityType
         }
         featureObject
     }
@@ -428,12 +428,13 @@ class ParatooProtocolConfig {
                 type:'Point',
                 coordinates: [plotSelectionData.recommended_location.lng, plotSelectionData.recommended_location.lat]
         ]
-        geoJson.properties = [
+        // Groovy 5: map.properties / map.get('properties') resolve to the read-only bean property, so use put().
+        geoJson.put('properties', [
                 name : plotSelectionData.plot_label,
                 externalId: plotSelectionData.uuid,
                 description: plotSelectionData.plot_label,
                 notes: plotSelectionData.comments
-        ]
+        ])
         geoJson
     }
 }

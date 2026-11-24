@@ -10,7 +10,7 @@
     </thead>
     <tbody>
 
-    <g:each in="${object.properties}" var="property">
+    <g:each in="${object.get('properties')}" var="property">
         <tr>
             <td class="property-name">${property.key}</td>
             <td class="property-mandatory">${required.contains(property.key)?'Yes':'No'}</td>

@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.S3ClientBuilder
 import software.amazon.awssdk.services.s3.model.*
 
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 import java.time.Duration
 
 @Slf4j

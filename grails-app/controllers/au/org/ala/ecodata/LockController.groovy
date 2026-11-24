@@ -1,4 +1,6 @@
 package au.org.ala.ecodata
+import grails.gorm.transactions.Transactional
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class LockController {
 

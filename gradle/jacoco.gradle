@@ -1,6 +1,6 @@
 apply plugin:"jacoco"
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.14" // Java 25 bytecode support
 }
 test {
     useJUnitPlatform()
@@ -28,9 +28,9 @@ jacocoTestReport {
         })
     }
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination file("${buildDir}/reports/jacocoHtml")
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/jacocoHtml')
     }
 }
 

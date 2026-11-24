@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
-import org.apache.commons.lang.time.FastDateFormat
+import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.http.HttpStatus
 
 import spock.lang.Specification
@@ -161,7 +161,9 @@ class ManagementUnitControllerSpec extends Specification implements ControllerUn
         props.each {
             println "${it.key}, ${it.value}"
             if (mu[it.key] instanceof Date) {
-                assert it.value == FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'").format(mu[it.key])
+                // Grails 8 binds ISO-8601 'Z' timestamps as UTC instants (Grails 7 treated 'Z' as a literal and
+                // used the JVM timezone), consistent with DateUtil, so compare in UTC.
+                assert it.value == FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone('UTC')).format(mu[it.key])
             }
             else {
                 assert it.value == mu[it.key]

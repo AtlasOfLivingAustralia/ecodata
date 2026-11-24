@@ -18,6 +18,10 @@ class Pagination {
 
     static Map asMap(Pagination pagination) {
         pagination = pagination ?: new Pagination() // Use defaults if it's null
-        pagination.properties
+        [max   : pagination.max,
+         offset: pagination.offset,
+         sort  : pagination.sort,
+         order : pagination.order]
+
     }
 }

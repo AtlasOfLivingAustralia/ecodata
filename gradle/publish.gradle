@@ -12,20 +12,11 @@ publishing {
     }
     publications {
         mavenJar(MavenPublication) {
-
-            pom.withXml {
-                def pomNode = asNode()
-                pomNode.dependencyManagement.replaceNode {}
-
-                // simply remove dependencies without a version
-                // version-less dependencies are handled with dependencyManagement
-                // see https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/8 for more complete solutions
-                pomNode.dependencies.dependency.findAll {
-                    it.version.text().isEmpty()
-                }.each {
-                    it.replaceNode {}
-                }
-            }
+            // Only the executable bootJar is published; no software component is attached, so the
+            // generated POM has no <dependencies> of its own.  The <dependencyManagement> section
+            // holding the Grails / Spring Boot BOM imports is appended by Gradle after the
+            // pom.withXml hook runs, so it cannot be stripped there (attempting to do so fails with
+            // "replaceNode() can only be used to replace a single node, but was applied to 0 nodes").
             artifact bootJar
         }
     }

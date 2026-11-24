@@ -6,7 +6,7 @@ import grails.core.GrailsApplication
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.pac4j.core.profile.UserProfile
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 class UserService {
 
@@ -44,9 +44,15 @@ class UserService {
         return _currentUser.get()
     }
 
-    def lookupUserDetails(String userId) {
+    def lookupUserDetails(String userId, boolean isSystemUser = false) {
 
-        def userDetails = getUserForUserId(userId)
+        def userDetails
+        if (!isSystemUser) {
+            userDetails = getUserForUserId(userId)
+        }
+        else {
+            userDetails = new UserDetails(userId: userId)
+        }
         if (!userDetails) {
             log.warn("Unable to lookup user details for userId: ${userId}")
             userDetails = new UserDetails(userId: userId, userName: 'unknown', displayName: 'Unknown')
@@ -82,9 +88,9 @@ class UserService {
      * It sets the user details in a thread local for extraction by the audit service.
      * @param userId
      */
-    def setCurrentUser(String userId) {
+    def setCurrentUser(String userId, boolean isSystemUser = false) {
 
-        def userDetails = lookupUserDetails(userId)
+        def userDetails = lookupUserDetails(userId, isSystemUser)
         if (userDetails) {
             _currentUser.set(userDetails)
             return userDetails
@@ -201,12 +207,14 @@ class UserService {
         // Otherwise, if the user has logged in interactively or supplies a bearer token which identifies the user
         // (e.g. the Monitor app passes the user token) the authService will be able to resolve the user from the token.
         // If the OIDC provider is CAS, authService.getUser() will return the clientId, if it's Cognito, it will return null.
+        boolean isSystemUser = false
         if (!userId) {
             userId = authService.getUserId()
 
             if (!userId) {
                 UserProfile profile = authService.delegateService.getUserProfile()
                 if (profile instanceof AlaM2MUserProfile) {
+                    isSystemUser = true
                     // get client id of the M2M user as the userId for the request.
                     // This is the case for the DAFF API M2M token as well as the Monitor core M2M token.
                     // Although they have an AlaM2MUserProfile, MERIT and BioCollect also use a delegate user
@@ -220,8 +228,7 @@ class UserService {
                 log.debug("Setting current user to ${userId}")
             }
 
-
-            userDetails = setCurrentUser(userId)
+            userDetails = setCurrentUser(userId, isSystemUser)
             if (userDetails) {
                 // We set the current user details in the request scope because
                 // the 'afterView' hook can be called prior to the actual rendering (despite the name)

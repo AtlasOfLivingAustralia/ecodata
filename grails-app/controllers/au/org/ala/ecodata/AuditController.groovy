@@ -2,9 +2,11 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.gorm.PagedResultList
+import grails.gorm.transactions.Transactional
 
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class AuditController {
 

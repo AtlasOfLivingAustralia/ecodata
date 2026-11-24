@@ -1,13 +1,12 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import au.org.ala.web.IAuthService
 import au.org.ala.web.Pac4jAuthService
 import au.org.ala.ws.security.profile.AlaM2MUserProfile
-import grails.test.mongodb.MongoSpec
 import grails.testing.services.ServiceUnitTest
 import grails.testing.web.GrailsWebUnitTest
 import org.pac4j.core.config.Config
+import grails.test.mongodb.MongoSpec
 import spock.lang.Unroll
 
 /**
@@ -71,7 +70,6 @@ class UserServiceSpec extends MongoSpec implements ServiceUnitTest<UserService>,
         setup:
         String hubId = "h1"
         String userId = "u1"
-        new Hub(hubId:hubId).save()
         Date loginTime1 = DateUtil.parse("2021-01-01T00:00:00Z")
         Date loginTime2 = DateUtil.parse("2021-01-01T00:00:00Z")
 

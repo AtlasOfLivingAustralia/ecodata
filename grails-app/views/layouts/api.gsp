@@ -20,7 +20,8 @@
     </div>
 
     <g:layoutBody />
-
+<asset:javascript src="bundle-vendor"/>
+<asset:javascript src="bundle-runtime"/>
 <asset:javascript src="application"/>
 <asset:deferredScripts/>
 

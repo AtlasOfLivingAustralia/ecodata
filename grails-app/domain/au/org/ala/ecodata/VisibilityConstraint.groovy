@@ -17,6 +17,5 @@ class VisibilityConstraint {
         embargoForDays nullable: true, min: 1, max: 180
         embargoOption nullable: true
         embargoUntil nullable: true
-        alaAdminEnforcedEmbargo nullable: true
     }
 }

@@ -4,7 +4,7 @@ import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.web.http.HttpHeaders
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 class ApiKeyInterceptor {
 

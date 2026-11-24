@@ -1,10 +1,9 @@
 package au.org.ala.ecodata
 
-import grails.test.mongodb.MongoSpec
-import grails.testing.services.ServiceUnitTest
 import com.mongodb.MongoBulkWriteException
-
-import javax.persistence.PessimisticLockException
+import grails.testing.services.ServiceUnitTest
+import jakarta.persistence.PessimisticLockException
+import grails.test.mongodb.MongoSpec
 
 class LockServiceSpec extends MongoSpec implements ServiceUnitTest<LockService> {
 

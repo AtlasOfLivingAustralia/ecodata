@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.springframework.http.HttpStatus
 
 import static au.org.ala.ecodata.Status.*
@@ -12,6 +13,7 @@ import static org.apache.http.HttpStatus.*
  *
  * @see au.org.ala.ecodata.UserPermission
  */
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class PermissionsController {
 

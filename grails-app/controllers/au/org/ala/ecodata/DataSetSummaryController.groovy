@@ -5,7 +5,9 @@ import au.org.ala.ecodata.paratoo.ParatooCollectionId
 import au.org.ala.ecodata.paratoo.ParatooInvocationContext
 import au.org.ala.ecodata.paratoo.ParatooProject
 import grails.converters.JSON
+import grails.gorm.transactions.Transactional
 import org.apache.http.HttpStatus
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class DataSetSummaryController {
 

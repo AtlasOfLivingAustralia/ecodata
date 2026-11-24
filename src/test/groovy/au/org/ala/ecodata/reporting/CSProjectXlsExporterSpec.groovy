@@ -3,8 +3,9 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.*
 import au.org.ala.ecodata.util.ExportTestUtils
 import com.mongodb.BasicDBObject
-import grails.testing.gorm.DataTest
+import grails.core.GrailsApplication
 import grails.util.Holders
+import org.apache.poi.ss.usermodel.Sheet
 
 /*
  * Copyright (C) 2021 Atlas of Living Australia
@@ -23,7 +24,6 @@ import grails.util.Holders
  * Created by Temi on 9/11/21.
  */
 
-import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.grails.testing.GrailsUnitTest
 import grails.test.mongodb.MongoSpec
@@ -33,7 +33,7 @@ import java.time.ZoneId
 /**
  * Spec for the csProjectXlsExporter
  */
-class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, DataTest {
+class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest {
 
     def projectService = Mock(ProjectService)
     def projectActivityService = Mock(ProjectActivityService)
@@ -84,11 +84,8 @@ class CSProjectXlsExporterSpec extends MongoSpec implements GrailsUnitTest, Data
         csProjectXlsExporter.documentService = documentService
     }
 
-    void teardown() {
-        outputFile.delete()
-    }
-
     def cleanup() {
+        outputFile.delete()
         Activity.collection.remove(new BasicDBObject())
         Record.collection.remove(new BasicDBObject())
     }

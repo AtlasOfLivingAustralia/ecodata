@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
-import javax.annotation.PostConstruct
+import groovy.xml.XmlParser
+import jakarta.annotation.PostConstruct
 import static java.lang.Math.*
 
 class SensitiveSpeciesService {

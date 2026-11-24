@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.MapKeyAccess
 import groovy.util.logging.Slf4j
 
 import java.text.DecimalFormat
@@ -31,7 +32,7 @@ class PropertyAccessor {
                 return false
             }
 
-            data = data[propertyToGroupOn[i]]
+            data = MapKeyAccess.valueAt(data, propertyToGroupOn[i])
             if (data instanceof List) {
                 return true
             }
@@ -47,19 +48,19 @@ class PropertyAccessor {
 
         while (i < propertyToGroupOn.length - 1) {
             String propertyName = propertyToGroupOn[i]
-            value = value[propertyName]
+            value = MapKeyAccess.valueAt(value, propertyName)
 
             if (value instanceof List) {
                 value.each {
                     Map unrolledCopy = new HashMap(output)
                     Map currentPropertyValue = unrolledCopy
                     for (int j=0; j<i; j ++) {
-                        def copy = new HashMap(currentPropertyValue[propertyToGroupOn[j]])
-                        currentPropertyValue[propertyToGroupOn[j]] = copy
+                        def copy = new HashMap(MapKeyAccess.mapEntry(currentPropertyValue, propertyToGroupOn[j]))
+                        currentPropertyValue.put(propertyToGroupOn[j], copy)
                         currentPropertyValue = copy
                     }
                     currentPropertyValue.remove(propertyName)
-                    currentPropertyValue[propertyName] = it
+                    currentPropertyValue.put(propertyName, it)
                     unrolled << unrolledCopy
 
                 }
@@ -98,7 +99,7 @@ class PropertyAccessor {
             if (!data) {
                 return null
             }
-            data = data[prop]
+            data = MapKeyAccess.valueAt(data, prop)
         }
         return data
     }

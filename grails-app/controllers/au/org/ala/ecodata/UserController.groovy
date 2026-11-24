@@ -1,6 +1,9 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.command.HubLoginTime
+import grails.gorm.transactions.Transactional
+
+@Transactional
 @au.ala.org.ws.security.RequireApiKey(scopesFromProperty=["app.readScope"])
 class UserController {
 

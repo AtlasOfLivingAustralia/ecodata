@@ -24,6 +24,7 @@ class Organisation {
     String entityName
     String sourceSystem // MERIT or Collectory
     String entityType // Type code from the ABN register
+    String entityTypeName // Type name from the ABN register
     String orgType // Type name as selected in BioCollect/ Name from the ABN register
     List<String> businessNames
     String state
@@ -61,6 +62,7 @@ class Organisation {
         abnStatus nullable: true
         entityName nullable: true
         entityType nullable: true
+        entityTypeName nullable: true
         orgType nullable: true
         businessNames nullable: true
         contractNames nullable: true

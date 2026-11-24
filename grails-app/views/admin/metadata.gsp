@@ -1,4 +1,4 @@
-<%@ page import="grails.converters.JSON; org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="grails.converters.JSON; org.apache.commons.lang3.StringEscapeUtils" %>
 <!doctype html>
 <html>
     <head>

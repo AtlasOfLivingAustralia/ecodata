@@ -443,7 +443,7 @@ class ElasticSearchServiceSpec extends Specification implements ServiceUnitTest<
         def activity = [:]
 
         activity.putAll(project)
-        activity.sites = site?[site]:[]
+        activity.sites = site ? [site] : []
         activity.putAll([activityId:'activity'+(++activityId), mainTheme:theme, startDate:startDate, endDate:endDate, publicationStatus:status, className:Activity.class.name])
 
         activity
