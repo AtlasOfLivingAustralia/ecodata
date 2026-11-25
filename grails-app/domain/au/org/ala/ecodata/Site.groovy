@@ -194,7 +194,7 @@ class Site {
         double aream2 = geometry.aream2 ?: 0
 
         geometry[facetName]?.each { String facet ->
-            double overlapArea = intersectionAreaByFacets[facetName]?['CURRENT']?[facet]
+            Double overlapArea = intersectionAreaByFacets[facetName]?['CURRENT']?[facet]
 
             if (overlapArea && aream2 > 0) {
                 states << [name: facet, overlapM2: overlapArea, overlapPercent: (overlapArea / aream2) * 100]
