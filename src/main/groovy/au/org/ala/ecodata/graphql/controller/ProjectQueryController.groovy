@@ -112,7 +112,7 @@ class ProjectQueryController implements DataBinder {
 
     @SchemaMapping(typeName = "MeritProject", field = "sitesVisibility")
     CompletableFuture<String> sitesVisibility(Project project, DataLoader<String, Program> programDataLoader) {
-        if (project.config?.containsKey('privateSites')) {
+        if (project.config?.privateSites != null) {
             return CompletableFuture.completedFuture(project.config.privateSites ? "HIDDEN" : "DEFAULT")
         }
         if (!project.programId) {
