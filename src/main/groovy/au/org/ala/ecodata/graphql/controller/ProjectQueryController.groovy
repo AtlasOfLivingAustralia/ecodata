@@ -110,6 +110,18 @@ class ProjectQueryController implements DataBinder {
         project.plannedEndDate
     }
 
+    @SchemaMapping(typeName = "MeritProject", field = "sitesVisibility")
+    CompletableFuture<String> sitesVisibility(Project project, DataLoader<String, Program> programDataLoader) {
+        if (project.config?.containsKey('privateSites')) {
+            return CompletableFuture.completedFuture(project.config.privateSites ? "HIDDEN" : "DEFAULT")
+        }
+        if (!project.programId) {
+            return CompletableFuture.completedFuture("DEFAULT")
+        }
+        programDataLoader.load(project.programId).thenApply { Program program ->
+            program.inheritedConfig?.privateSites ? "HIDDEN" : "DEFAULT"
+        }
+    }
 
     @SchemaMapping(typeName = "DataSetSummary", field = "service")
     Service service(DataSetSummary dataSetSummary) {
