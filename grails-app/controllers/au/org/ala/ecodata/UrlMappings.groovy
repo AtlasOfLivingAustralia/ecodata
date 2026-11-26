@@ -40,6 +40,7 @@ class UrlMappings {
 
         "/ws/site/getImages"( controller: 'site', action: 'getImages')
         "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
+        "/ws/site/standardiseGeoJSON"( controller: 'site', action: [POST: 'standardiseGeoJSON'])
 
         "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
 

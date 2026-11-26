@@ -102,7 +102,7 @@ class GraphQLConfig {
                 wiringBuilder.scalar(ExtendedScalars.Json)
 
 
-                registerEnumMapping(wiringBuilder, "SitePurposeCode", sitePurposeCodeEnumValues)
+                registerEnumMapping(wiringBuilder, "SitePurpose", sitePurposeCodeEnumValues)
                 registerEnumMapping(wiringBuilder, "Status", statusEnumValues)
                 registerEnumMapping(wiringBuilder, "PublicationStatus", publicationStatusValues)
                 registerEnumMapping(wiringBuilder, "Progress", progressEnumValues)

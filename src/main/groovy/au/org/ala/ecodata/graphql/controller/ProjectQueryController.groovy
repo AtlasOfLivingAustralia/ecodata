@@ -80,7 +80,7 @@ class ProjectQueryController implements DataBinder {
         if (!hub) {
             throw new IllegalArgumentException("A hub context is required to access project data")
         }
-        Project project = Project.findByProjectIdAndHubIdAndStatusNotEqual(projectId, hub.hubId, Status.DELETED)
+        Project project = Project.findByProjectIdAndHubIdAndStatusNotEqual(projectId, (String)hub.hubId, Status.DELETED)
         if (!project) {
             return null
         }
@@ -110,6 +110,18 @@ class ProjectQueryController implements DataBinder {
         project.plannedEndDate
     }
 
+    @SchemaMapping(typeName = "MeritProject", field = "sitesVisibility")
+    CompletableFuture<String> sitesVisibility(Project project, DataLoader<String, Program> programDataLoader) {
+        if (project.config?.privateSites != null) {
+            return CompletableFuture.completedFuture(project.config.privateSites ? "HIDDEN" : "DEFAULT")
+        }
+        if (!project.programId) {
+            return CompletableFuture.completedFuture("DEFAULT")
+        }
+        programDataLoader.load(project.programId).thenApply { Program program ->
+            program.inheritedConfig?.privateSites ? "HIDDEN" : "DEFAULT"
+        }
+    }
 
     @SchemaMapping(typeName = "DataSetSummary", field = "service")
     Service service(DataSetSummary dataSetSummary) {
@@ -252,7 +264,7 @@ class ProjectQueryController implements DataBinder {
         site.intersectingElectorates()
     }
 
-    @SchemaMapping(typeName = "Site", field = "purpose")
+    @SchemaMapping(typeName = "Site", field = "purposeCode")
     String purposeCode(Site site) {
         siteService.getPurpose([type:site.type, externalIds: site.externalIds])
     }
