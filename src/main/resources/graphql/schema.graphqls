@@ -357,6 +357,7 @@ type MeritProject implements Project {
     manager: String
     risks: Risks
 
+    sitesVisibility: Visibility
     statesAndElectorates: StatesAndElectorates
 }
 
@@ -602,6 +603,13 @@ enum YesNo {
 enum AscDesc {
     asc
     desc
+}
+
+enum Visibility {
+    "Sites are excluded from the search engine so won't appear on the Project Explorer, Organisation or Management Unit pages"
+    HIDDEN
+    "Site centroids can be viewed on the Project Explorer and can be used for faceted search"
+    DEFAULT
 }
 
 input ReportQuery {
